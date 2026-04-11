@@ -177,7 +177,7 @@ input[type=datetime-local]{color-scheme:dark}::placeholder{color:var(--fa)}
   <div id="frow">
     <input class="fi" id="fsearch" placeholder="🔍  Buscar ID, proyecto, código…"/>
     <select class="fi fsel" id="fproject"><option value="">Todos los proyectos</option></select>
-    <select class="fi fsel" id="fcat"><option value="">Todas las categorías</option><option value="1">📡 Cat.1 Monitoreo</option><option value="2">⚡ Cat.2 Generación</option><option value="3">🌩️ Cat.3 Ambiental</option><option value="4">🔧 Cat.4 Físico</option><option value="5">⭐ Cat.5 Personalizadas</option></select>
+    <select class="fi fsel" id="fcat"><option value="">Todas las categorías</option></select>
   </div>
   <div id="board-panel">
     <div id="empty"><div class="ei">☀️</div><h2>Sin fallas registradas</h2><p>Registra la primera falla del sistema.</p><button class="btn btn-pu" id="btn-empty-new">✚ Registrar Primera Falla</button></div>
@@ -196,31 +196,105 @@ input[type=datetime-local]{color-scheme:dark}::placeholder{color:var(--fa)}
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
 
 /* ══ CATÁLOGOS ══ */
-var CATS=[
-  {id:"1",lbl:"Monitoreo y Comunicación",ico:"📡",col:"#60A5FA",faults:[
-    {c:"1.1",l:"Pérdida de comunicación de inversores"},{c:"1.2",l:"Pérdida de comunicación de medidor bidireccional principal"},
-    {c:"1.3",l:"Pérdida de comunicación de medidor de respaldo"},{c:"1.4",l:"Módem Dañado"},{c:"1.5",l:"Medidor Dañado"},
-    {c:"1.7",l:"PT o CT dañado"},{c:"1.8",l:"Lecturas inconsistentes del medidor bidireccional"},{c:"1.9",l:"Lecturas inconsistentes Inversores"}]},
-  {id:"2",lbl:"Generación y Eléctrica",ico:"⚡",col:"#F6FF72",faults:[
-    {c:"2.1",l:"Pérdida de RED (Relé o inversor)"},{c:"2.2",l:"Sobrevoltaje o desbalance"},{c:"2.3",l:"Baja tensión (Relé o inversor)"},
-    {c:"2.4",l:"Sobrefrecuencia"},{c:"2.5",l:"Bajafrecuencia"},{c:"2.6",l:"Arco AC"},{c:"2.7",l:"Arco DC"},
-    {c:"2.8",l:"Falla por aislamiento"},{c:"2.9",l:"AFCI Self-Check Failure"},{c:"2.10",l:"Pérdida parcial de inversor"},
-    {c:"2.11",l:"Pérdida total de inversor"},{c:"2.12",l:"Pérdida total de panel solar"},{c:"2.13",l:"Punto caliente"},
-    {c:"2.14",l:"Inversor no responde"},{c:"2.15",l:"Panel no responde"},{c:"2.16",l:"Pérdida de red por mantenimiento"},
-    {c:"2.17",l:"Desconexión por mantenimiento"},{c:"2.18",l:"Falla por ventilación anormal"},{c:"2.19",l:"Red inestable"},{c:"2.20",l:"Tracker funcionando mal"}]},
-  {id:"3",lbl:"Ambiental y HSE",ico:"🌩️",col:"#FF5757",faults:[
-    {c:"3.1",l:"Incendio de subestación"},{c:"3.2",l:"Incendio de transformador"},{c:"3.3",l:"Descarga atmosférica"},
-    {c:"3.4",l:"Inundación de Subestación"},{c:"3.5",l:"Inundación que afecta inversores"},{c:"3.6",l:"Temblor"},{c:"3.7",l:"Huracán"},{c:"3.8",l:"Daño debido a Fauna"}]},
-  {id:"4",lbl:"Físico y Estructural",ico:"🔧",col:"#F97316",faults:[
-    {c:"4.1",l:"Panel quebrado"},{c:"4.2",l:"Panel quebrado o fisurado"},{c:"4.3",l:"Estructura en mal estado"},
-    {c:"4.4",l:"Tracker en mal estado"},{c:"4.5",l:"Panel menos eficiente"},{c:"4.6",l:"Inversor menos eficiente"}]},
-  {id:"5",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:[]}
-];
+var CATS=[{id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:[]}];
+var FAULT_DESCS={};   // código → descripción detallada (del Google Sheets)
+var FAULT_AFECTA={};  // código → a quién afecta (del Google Sheets)
+var CATALOG_READY=false;
 var ALL_F=[];
 function rebuildF(){ALL_F=[];CATS.forEach(function(c){c.faults.forEach(function(f){ALL_F.push({code:f.c,label:f.l,catId:c.id,catLbl:c.lbl,catCol:c.col,catIco:c.ico});});});}
 rebuildF();
 var PROJS=["Acanto","Almagran","AMC","Arboleda","Cedillanos","Coopsana Sub Proyecto 1","Coopsana Sub Proyecto 2","Cristo Rey","Cross","Ecoimagen","San Angelo","IBES","IML Empaques","IML Etiquetas","Laureles Aires 123","Laureles Aires Torre 4","Laureles Fuentes Torre 2","Laureles Fuentes Torre 3","Laureles Parques","Los Coches","Maderas","MDM","Nuevo Gimnasio School","Obelisco","Pola del Pub","Polikem","Salud Vegas","San Esteban Torre 1","San Esteban Torre 2","San Esteban Torre 3","San Simón","Savana Plaza","Seridme","Somer Torre 1","Somer Torre 2","Perija","El Son","Molino","La Puya","Villanueva","La Reserva","Cañahuate","La Paz Leyenda","La Paz Verso","San Pedro","La Paz Vallenata","Gandalf","Uruaco","Baraya","La Paz Esmeralda","El Merengue","El Olimpo","Ibirico","La Mesa","Cacica","Valencia 1","Valencia 2","Nestlé","San Diego Sur","Cumbia","Pilonera","Chiriguana N°2","Chiriguana N°4","Copey"];
-var RESOLS=["Reparación completa en sitio","Reemplazo de componente","Calibración / Ajuste","Reinicio remoto","Solicitud de garantía al fabricante","Intervención de operador de red","Mantenimiento preventivo ejecutado","Resolución temporal / workaround","Actualización de firmware/software","Limpieza e inspección","Cambio de procedimiento operativo"];
+var RESOLS=[
+  // ── Diagnóstico ──
+  "Diagnóstico en sitio – sin intervención requerida",
+  "Diagnóstico remoto – monitoreo y seguimiento continuo",
+  // ── Reinicios remotos ──
+  "Reinicio remoto de inversor",
+  "Reinicio remoto de datalogger / módem",
+  "Reinicio remoto del sistema de monitoreo / SCADA",
+  "Reinicio remoto del reconectador / RECO",
+  "Reinicio remoto del PLC / RTU de control",
+  // ── Reparaciones en sitio ──
+  "Reparación completa en sitio",
+  "Reparación de cableado o conector",
+  "Reparación de estructura de soporte",
+  "Reparación de transformador principal",
+  "Reparación de transformador de servicios auxiliares",
+  "Reparación de reconectador / celda MT",
+  "Reparación de tracker (mecánica)",
+  "Reparación de tablero eléctrico AC / DC",
+  "Reparación de totalizador / interruptor principal",
+  "Reparación de sistema de puesta a tierra",
+  "Reparación de sistema de drenaje / civil",
+  "Reparación de cerramiento / malla perimetral",
+  // ── Reemplazos de equipos ──
+  "Reemplazo de módulo fotovoltaico",
+  "Reemplazo de inversor",
+  "Reemplazo de fusible de string",
+  "Reemplazo de conector MC4",
+  "Reemplazo de cableado DC",
+  "Reemplazo de cableado AC",
+  "Reemplazo de DPS (protector de sobretensión)",
+  "Reemplazo de batería de UPS / respaldo",
+  "Reemplazo de ventilador de inversor",
+  "Reemplazo de filtro de aire de inversor",
+  "Reemplazo de condensador de inversor",
+  "Reemplazo de medidor bidireccional",
+  "Reemplazo de módem / router de telemedida",
+  "Reemplazo de sensor meteorológico (piranómetro / anemómetro)",
+  "Reemplazo de PT / CT de medida",
+  "Reemplazo de datalogger local",
+  "Reemplazo de totalizador / interruptor principal",
+  "Reemplazo de relé de protección",
+  "Reemplazo de junction box del módulo",
+  "Reemplazo de bypass diode del módulo",
+  // ── Calibración y ajustes ──
+  "Calibración / ajuste de protecciones eléctricas",
+  "Calibración de sensor de medición o irradiancia",
+  "Ajuste de parámetros del inversor (tensión / frecuencia)",
+  "Ajuste de configuración de comunicaciones (IP / MODBUS)",
+  "Ajuste de curvas de coordinación de relés",
+  "Ajuste de setpoint de potencia activa (curtailment)",
+  "Ajuste y sincronización horaria (NTP)",
+  // ── Actualizaciones de software / firmware ──
+  "Actualización de firmware del inversor",
+  "Actualización de firmware del datalogger",
+  "Actualización de software de monitoreo / SCADA",
+  "Actualización de firmware del reconectador",
+  // ── Limpieza y mantenimiento preventivo ──
+  "Limpieza de módulos fotovoltaicos",
+  "Limpieza de filtros de inversor",
+  "Limpieza de tablero eléctrico",
+  "Ajuste y apriete de conexiones eléctricas",
+  "Aplicación de tratamiento anticorrosivo",
+  "Poda y control de vegetación",
+  "Control de fauna (mallas / repelentes)",
+  "Mantenimiento preventivo programado ejecutado",
+  "Lubricación y mantenimiento mecánico de tracker",
+  // ── Gestión con terceros ──
+  "Intervención del operador de red (OR)",
+  "Espera de restablecimiento de red eléctrica",
+  "Coordinación y soporte técnico con fabricante",
+  "Solicitud de garantía al fabricante",
+  "Gestión ante aseguradora / apertura de siniestro",
+  "Reporte y denuncia ante autoridades (robo / vandalismo)",
+  "Reporte a autoridad ambiental (derrame / emergencia)",
+  "Coordinación con entidades de emergencia (bomberos / defensa civil)",
+  // ── Inspecciones técnicas especializadas ──
+  "Inspección termográfica infrarroja",
+  "Medición de resistencia de aislamiento (megóhmetro)",
+  "Prueba de curva IV (I-V tracer)",
+  "Inspección con electroluminiscencia (EL)",
+  "Inspección estructural / civil",
+  "Análisis de aceite dieléctrico del transformador",
+  "Prueba de capacidad del banco de baterías BESS",
+  // ── Otros ──
+  "Resolución temporal / workaround",
+  "Cambio de procedimiento operativo",
+  "Refuerzo de seguridad física (cerco / cámaras / alarmas)",
+  "Atención de emergencia médica / HSE",
+  "Sin intervención requerida – evento externo (red / clima)"
+];
 var ST={activa:{lbl:"Activa",ico:"●",col:"#FF5757",bg:"#FF575718",bdr:"#FF575750"},revision:{lbl:"En Revisión",ico:"◐",col:"#F6FF72",bg:"#F6FF7218",bdr:"#F6FF7250"},programada:{lbl:"Programada",ico:"◯",col:"#915BD8",bg:"#915BD818",bdr:"#915BD850"},terminada:{lbl:"Terminada",ico:"✓",col:"#4ADE80",bg:"#4ADE8018",bdr:"#4ADE8050"}};
 var faults=[],filterSt="all",curTab="board",photos=[],idN=1,pieInst=null,barInst=null,sdrProj=null,sdrFault=null,cData={name:"",email:""};
 
@@ -282,6 +356,8 @@ function toSheets(v){
 function mkId(){return "F-"+String(idN++).padStart(5,"0");}
 function fd(c){return ALL_F.find(function(x){return x.code===c;})||null;}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+// Hora actual en Colombia (UTC-5, sin horario de verano)
+function nowColombia(){return new Date().toLocaleString("sv-SE",{timeZone:"America/Bogota"}).replace(" ","T").slice(0,16);}
 function setSync(c,t){document.getElementById("sdot").className="sdot "+c;document.getElementById("stxt").textContent=t;}
 function toast(msg,dur){var t=document.getElementById("toast");t.textContent=msg;t.className="show";setTimeout(function(){t.className="";},dur||3500);}
 function openLb(url){document.getElementById("lb-img").src=url;document.getElementById("lb").className="open";}
@@ -513,6 +589,68 @@ function renderSelects(){
   PROJS.forEach(function(p){o+='<option value="'+esc(p)+'">'+esc(p)+'</option>';});
   ["fproject","chart-proj"].forEach(function(id){var e=document.getElementById(id);if(e){var v=e.value;e.innerHTML=o;e.value=v;}});
 }
+
+/* ══ CATÁLOGO DE FALLAS DESDE GOOGLE SHEETS ══ */
+var CAT_STYLES={
+  "1":{ico:"📡",col:"#60A5FA"},"2":{ico:"⚡",col:"#F6FF72"},
+  "3":{ico:"🌩️",col:"#FF5757"},"4":{ico:"🔧",col:"#F97316"},
+  "5":{ico:"🏗️",col:"#C47AFF"},"6":{ico:"🦺",col:"#4ADE80"},
+  "7":{ico:"🔋",col:"#7EC8E3"},"8":{ico:"📋",col:"#F4A460"},
+  "9":{ico:"🔌",col:"#FF6B6B"}
+};
+function buildCatsFromSheets(data){
+  var cats=[],map={};
+  FAULT_DESCS={};FAULT_AFECTA={};
+  try{
+    (data.table.rows||[]).forEach(function(row){
+      if(!row.c)return;
+      var g=function(i){return(row.c[i]&&row.c[i].v!=null)?String(row.c[i].v).trim():"";};
+      var tipo=g(0),evento=g(1),code=g(2),afecta=g(3),desc=g(4);
+      if(!tipo||!evento||!code)return;
+      var m=tipo.match(/^(\d+)/),catId=m?m[1]:"p";
+      var lbl=tipo.replace(/^\d+[\.\s]*/,"").replace(/^Fallas?\s+(de\s+|por\s+|por\s+s\s+)?/i,"").trim()||tipo;
+      if(!map[catId]){
+        var st=CAT_STYLES[catId]||{ico:"⭐",col:"#915BD8"};
+        map[catId]={id:catId,lbl:tipo.replace(/^\d+\.?\s*/,"").trim(),ico:st.ico,col:st.col,faults:[]};
+        cats.push(map[catId]);
+      }
+      map[catId].faults.push({c:code,l:evento});
+      if(desc)FAULT_DESCS[code]=desc;
+      if(afecta)FAULT_AFECTA[code]=afecta;
+    });
+  }catch(e){console.warn("Error al procesar catálogo:",e);}
+  var custom=CATS.find(function(c){return c.id==="p"||c.id==="5";});
+  cats.push({id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:custom?custom.faults:[]});
+  CATS=cats;
+  rebuildF();
+  updateFcatFilter();
+  CATALOG_READY=true;
+  toast("✓ Catálogo actualizado: "+ALL_F.length+" fallas disponibles",4000);
+}
+function updateFcatFilter(){
+  var sel=document.getElementById("fcat");if(!sel)return;
+  var cur=sel.value;
+  var html='<option value="">Todas las categorías</option>';
+  CATS.forEach(function(c){
+    if(c.id!=="p"||c.faults.length)
+      html+='<option value="'+esc(c.id)+'">'+esc(c.ico+" "+c.lbl)+'</option>';
+  });
+  sel.innerHTML=html;
+  sel.value=cur;
+}
+function loadCatalog(){
+  var SID="1Nk2psPViyHm_iu-65sRJS7PCa2Vsbt3Z",GID="174222320";
+  var url="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:json&gid="+GID+"&headers=1";
+  document.getElementById("lsub").textContent="Cargando catálogo de fallas…";
+  fetch(url,{cache:"no-cache"}).then(function(r){return r.text();}).then(function(txt){
+    var clean=txt.replace(/^[^\{]*/,"").replace(/\);?\s*$/,"");
+    buildCatsFromSheets(JSON.parse(clean));
+  }).catch(function(e){
+    console.warn("No se pudo cargar catálogo desde Sheets:",e);
+    rebuildF();updateFcatFilter();
+    toast("⚠ Catálogo no disponible — usando fallas personalizadas",5000);
+  });
+}
 function renderCharts(){renderPie();renderBar();}
 function renderPie(){
   var d={activa:0,revision:0,programada:0,terminada:0};
@@ -567,7 +705,7 @@ function openNewFault(){photos=[];showForm(null);}
 function openEditFault(id){var f=faults.find(function(x){return x.id===id;});if(!f)return;photos=(f.photos||[]).slice();showForm(f);}
 
 function showForm(f){
-  var isEdit=!!f,nowDT=new Date().toISOString().slice(0,16);
+  var isEdit=!!f,nowDT=nowColombia();
   var identDT=isEdit?toInput(f.date,f.time):"";if(!identDT)identDT=nowDT;
   var occVal="";
   if(f&&f.occ&&f.occ.trim()&&f.occ!=="—"){
@@ -601,7 +739,7 @@ function showForm(f){
       '<input type="datetime-local" class="fi" id="fend" value="'+esc(endVal)+'"/>'+
       '<div class="help">Se completa automáticamente si se deja vacío.</div>'+
     '</div>'+
-    '<div class="field"><label>Descripción <span class="req">*</span></label><textarea class="fi" id="fdesc" rows="4" style="resize:vertical;line-height:1.65" placeholder="Describe la falla, síntomas y condiciones…">'+esc(f&&f.desc||"")+'</textarea></div>'+
+    '<div class="field"><label>Descripción <span class="req">*</span> <span style="color:var(--pu);font-size:10px;font-weight:600">· Se precarga del catálogo al elegir el evento</span></label><textarea class="fi" id="fdesc" rows="5" style="resize:vertical;line-height:1.65" placeholder="Al elegir el evento se carga la descripción del catálogo. Puedes editarla y agregar detalles…">'+esc(f&&f.desc||"")+'</textarea></div>'+
     '<div class="field"><label>Seguimiento</label><textarea class="fi" id="fflw" rows="3" style="resize:vertical;line-height:1.65" placeholder="Acciones ejecutadas, avances, próximos pasos…">'+esc(f&&f.flw||"")+'</textarea></div>'+
     '<div class="field"><label>Centinela</label>'+centInfo+'</div>'+
     '<div class="field"><label>Fotografías <span style="color:var(--gr);font-size:10px;font-weight:700">· Se guardan en Drive — carpeta del proyecto</span></label>'+
@@ -636,7 +774,7 @@ function showForm(f){
     var t=this.value==="terminada";
     document.getElementById("fres-row").style.display=t?"":"none";
     document.getElementById("fend-row").style.display=t?"":"none";
-    if(t&&!document.getElementById("fend").value)document.getElementById("fend").value=new Date().toISOString().slice(0,16);
+    if(t&&!document.getElementById("fend").value)document.getElementById("fend").value=nowColombia();
   });
   document.getElementById("finput").addEventListener("change",function(){
     Array.from(this.files).forEach(function(file){var r=new FileReader();r.onload=function(e){photos.push({name:file.name,url:e.target.result});renderPhotoGrid();};r.readAsDataURL(file);});
@@ -645,13 +783,27 @@ function showForm(f){
   document.getElementById("form-save").addEventListener("click",function(){submitForm(isEdit&&f?f.id:null,isEdit&&f?f.creat:null,isEdit&&f?f.driveUrl:null);});
   if(isEdit&&document.getElementById("form-del"))document.getElementById("form-del").addEventListener("click",function(){confirmDel(f.id);});
   var chg=document.getElementById("chg-c");if(chg)chg.addEventListener("click",function(){closeModal();openSetup(true);});
+  // Quitar marca de auto-llenado cuando el usuario edita la descripción
+  var descEl3=document.getElementById("fdesc");
+  if(descEl3)descEl3.addEventListener("input",function(){delete this.dataset.autofilled;});
 }
 
 function updateHint(code){
   var h=document.getElementById("fhint");if(!h)return;
   var d=fd(code);
-  if(d){h.style.display="block";h.style.borderLeftColor=d.catCol;h.innerHTML='<b style="color:'+d.catCol+'">'+d.catIco+" "+d.code+'</b> · '+d.label;}
-  else h.style.display="none";
+  if(d){
+    h.style.display="block";h.style.borderLeftColor=d.catCol;
+    var afectaHtml=FAULT_AFECTA[code]?'<div style="font-size:11px;color:var(--fa);margin-top:5px">🎯 <b>Afecta:</b> '+esc(FAULT_AFECTA[code])+'</div>':'';
+    h.innerHTML='<b style="color:'+d.catCol+'">'+d.catIco+" "+d.code+'</b> · '+esc(d.label)+afectaHtml;
+    var descEl=document.getElementById("fdesc");
+    if(descEl&&FAULT_DESCS[code]){
+      var wasAuto=descEl.dataset.autofilled==="1";
+      if(!descEl.value.trim()||wasAuto){
+        descEl.value=FAULT_DESCS[code];
+        descEl.dataset.autofilled="1";
+      }
+    }
+  } else h.style.display="none";
 }
 function renderPhotoGrid(){
   var g=document.getElementById("pgrid");if(!g)return;
@@ -676,7 +828,7 @@ function submitForm(existingId,existingCreat,existingDrive){
 
   if(!proj||!code||!desc){toast("⚠ Completa: Proyecto, Falla y Descripción");return;}
   if(st==="terminada"&&!res){toast("⚠ Selecciona el tipo de resolución");return;}
-  if(st==="terminada"&&!endDT)endDT=new Date().toISOString().slice(0,16);
+  if(st==="terminada"&&!endDT)endDT=nowColombia();
 
   var exF=existingId?faults.find(function(x){return x.id===existingId;}):null;
   if(!occ&&exF&&exF.occ&&exF.occ.trim()&&exF.occ!=="—")occ=exF.occ;
@@ -689,7 +841,7 @@ function submitForm(existingId,existingCreat,existingDrive){
   var fault={id:faultId,proj:proj,code:code,faultLabel:fdd.label||code,st:st,
     date:dtVal.slice(0,10),time:dtVal.slice(11,16),occ:occ,endDT:endDT,res:res,
     desc:desc,flw:flw,centinela:getCLbl(),photos:photos.slice(),
-    driveUrl:existingDrive||"",creat:existingCreat||new Date().toISOString()};
+    driveUrl:existingDrive||"",creat:existingCreat||nowColombia()};
 
   var idx=faults.findIndex(function(x){return x.id===faultId;});
   if(idx>=0)faults[idx]=fault;else faults.unshift(fault);
@@ -814,6 +966,7 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("overlay").addEventListener("click",function(e){if(e.target===this)closeModal();});
   document.getElementById("lb").addEventListener("click",function(){this.className="";});
   renderSelects();
+  loadCatalog();
   if(loadC()&&cData.name&&cData.email){updC();loadFaults();}
   else{hideLoader();openSetup(false);}
   setInterval(loadFaults,60000);
