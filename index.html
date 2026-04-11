@@ -639,17 +639,36 @@ function updateFcatFilter(){
   sel.value=cur;
 }
 function loadCatalog(){
+  // Usamos JSONP (script tag) igual que apiGet — sin problemas de CORS
   var SID="1Nk2psPViyHm_iu-65sRJS7PCa2Vsbt3Z",GID="174222320";
-  var url="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:json&gid="+GID+"&headers=1";
-  document.getElementById("lsub").textContent="Cargando catálogo de fallas…";
-  fetch(url,{cache:"no-cache"}).then(function(r){return r.text();}).then(function(txt){
-    var clean=txt.replace(/^[^\{]*/,"").replace(/\);?\s*$/,"");
-    buildCatsFromSheets(JSON.parse(clean));
-  }).catch(function(e){
-    console.warn("No se pudo cargar catálogo desde Sheets:",e);
+  var cbName="_cat"+Date.now();
+  var lsub=document.getElementById("lsub");
+  if(lsub)lsub.textContent="Cargando catálogo de fallas…";
+  var to=setTimeout(function(){
+    delete window[cbName];
+    var s=document.getElementById(cbName);
+    if(s&&s.parentNode)s.parentNode.removeChild(s);
+    console.warn("Catálogo: timeout");
     rebuildF();updateFcatFilter();
-    toast("⚠ Catálogo no disponible — usando fallas personalizadas",5000);
-  });
+    toast("⚠ Catálogo no disponible — fallas personalizadas activas",5000);
+  },12000);
+  window[cbName]=function(data){
+    clearTimeout(to);
+    delete window[cbName];
+    var s=document.getElementById(cbName);
+    if(s&&s.parentNode)s.parentNode.removeChild(s);
+    buildCatsFromSheets(data);
+  };
+  var url="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:json;responseHandler:"+cbName+"&gid="+GID+"&headers=1";
+  var s=document.createElement("script");
+  s.id=cbName;s.src=url;
+  s.onerror=function(){
+    clearTimeout(to);delete window[cbName];
+    if(s.parentNode)s.parentNode.removeChild(s);
+    rebuildF();updateFcatFilter();
+    toast("⚠ Catálogo no disponible — fallas personalizadas activas",5000);
+  };
+  document.head.appendChild(s);
 }
 function renderCharts(){renderPie();renderBar();}
 function renderPie(){
