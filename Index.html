@@ -196,7 +196,128 @@ input[type=datetime-local]{color-scheme:dark}::placeholder{color:var(--fa)}
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
 
 /* ══ CATÁLOGOS ══ */
-var CATS=[{id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:[]}];
+// ══ CATÁLOGO COMPLETO (99 fallas hardcodeadas — fuente: fallas_unergy_formato) ══
+var DEFAULT_CATS=[
+  {id:"1",lbl:"Fallas de Medición",ico:"📡",col:"#60A5FA",faults:[
+    {c:"1.1",l:"Pérdida de comunicación de inversores"},
+    {c:"1.2",l:"Pérdida de comunicación de medidor bidireccional"},
+    {c:"1.3",l:"Módem dañado"},
+    {c:"1.4",l:"Medidor dañado"},
+    {c:"1.5",l:"PT o CT mal instalado / dañado"},
+    {c:"1.6",l:"Lecturas inconsistentes del medidor bidireccional"},
+    {c:"1.7",l:"Lecturas inconsistentes de inversores"},
+    {c:"1.8",l:"Pérdida de comunicación de estación meteorológica"},
+    {c:"1.9",l:"Sensor de irradiancia dañado o descalibrado"},
+    {c:"1.10",l:"Sensor de temperatura de módulo dañado"},
+    {c:"1.11",l:"Falla en plataforma de monitoreo / SCADA"},
+    {c:"1.12",l:"Falla de datalogger local"},
+    {c:"1.13",l:"Error de sincronización horaria (NTP) en equipos de medición"},
+    {c:"1.14",l:"Falla de anemómetro o veleta (sensor de viento)"},
+    {c:"1.15",l:"Pérdida o corrupción de datos históricos de generación"}
+  ]},
+  {id:"2",lbl:"Fallas Eléctricas",ico:"⚡",col:"#F6FF72",faults:[
+    {c:"2.0",l:"Desconexión del proyecto sin causa identificada"},
+    {c:"2.1",l:"Pérdida de red eléctrica (utility)"},
+    {c:"2.2",l:"Avería en TP o CT de potencia"},
+    {c:"2.3",l:"Falla de reconectador (RECO)"},
+    {c:"2.4",l:"Relé de protección acciona o falla en operar"},
+    {c:"2.5",l:"Falla de transformador de servicios auxiliares (baja tensión)"},
+    {c:"2.6",l:"Falla de transformador principal (elevador)"},
+    {c:"2.7",l:"Disparo de interruptor AC (trafo/inversores)"},
+    {c:"2.8",l:"Falla de inversor"},
+    {c:"2.9",l:"Falla de resistencia de aislamiento (IR) en strings o cableado DC"},
+    {c:"2.10",l:"Fusible de string quemado"},
+    {c:"2.11",l:"Tracker no opera correctamente"},
+    {c:"2.12",l:"Falla en sistema de puesta a tierra"},
+    {c:"2.13",l:"Falla de DPS (pararrayos / protector de sobretensión)"},
+    {c:"2.14",l:"Punto caliente (hotspot) en módulo o conector"},
+    {c:"2.15",l:"Disparo del totalizador por sobrecorriente"},
+    {c:"2.16",l:"Disparo del totalizador por cortocircuito"},
+    {c:"2.17",l:"Disparo del totalizador por falla a tierra"},
+    {c:"2.18",l:"Disparo del totalizador por sobretensión en AC"},
+    {c:"2.19",l:"Disparo del totalizador por subtensión en AC"},
+    {c:"2.20",l:"Disparo del totalizador por pérdida de fase"},
+    {c:"2.21",l:"Disparo del totalizador por sobretemperatura del interruptor"},
+    {c:"2.22",l:"Falla mecánica del totalizador (no abre o no cierra)"},
+    {c:"2.23",l:"Disparo del totalizador por protección diferencial"},
+    {c:"2.24",l:"Disparo del totalizador por error de maniobra (operación humana)"},
+    {c:"2.25",l:"Totalizador disparado sin causa aparente (falsa operación)"}
+  ]},
+  {id:"3",lbl:"Fallas por Eventos Adversos",ico:"🌩️",col:"#FF5757",faults:[
+    {c:"3.1",l:"Incendio"},
+    {c:"3.2",l:"Descarga atmosférica (rayo)"},
+    {c:"3.3",l:"Inundación"},
+    {c:"3.4",l:"Sismo / Temblor"},
+    {c:"3.5",l:"Huracán / Vendaval severo"},
+    {c:"3.6",l:"Daño causado por fauna"},
+    {c:"3.7",l:"Granizo"},
+    {c:"3.8",l:"Vandalismo / Robo de equipos"},
+    {c:"3.9",l:"Contaminación severa (ceniza, polvo industrial, sal)"},
+    {c:"3.10",l:"Niebla o neblina densa persistente"},
+    {c:"3.11",l:"Helada o nieve (zonas de altitud)"},
+    {c:"3.12",l:"Accidente de vehículo dentro de la planta"},
+    {c:"3.13",l:"Incendio forestal o quema agrícola en zonas aledañas"},
+    {c:"3.14",l:"Derrame de sustancias peligrosas en la planta"}
+  ]},
+  {id:"4",lbl:"Fallos por Desgaste / Degradación",ico:"🔧",col:"#F97316",faults:[
+    {c:"4.1",l:"Panel quebrado o con fisura en vidrio"},
+    {c:"4.2",l:"Módulo con microfisuras (crack invisible)"},
+    {c:"4.3",l:"Estructura de soporte en mal estado"},
+    {c:"4.4",l:"Tracker en mal estado (desgaste mecánico)"},
+    {c:"4.5",l:"Módulo con degradación acelerada (por debajo de garantía)"},
+    {c:"4.6",l:"Inversor con derating o eficiencia reducida"},
+    {c:"4.7",l:"Degradación acelerada por PID (Potential Induced Degradation)"},
+    {c:"4.8",l:"Corrosión de conectores MC4 o terminales"},
+    {c:"4.9",l:"Degradación de cableado DC/AC (aislamiento)"},
+    {c:"4.10",l:"Decoloración o delaminación del encapsulante del módulo"},
+    {c:"4.11",l:"Falla de junction box (caja de conexiones del módulo)"},
+    {c:"4.12",l:"Falla de bypass diode del módulo"},
+    {c:"4.13",l:"Obstrucción de filtros de aire del inversor"},
+    {c:"4.14",l:"Falla de ventilador de refrigeración del inversor"},
+    {c:"4.15",l:"Falla de condensadores electrolíticos del inversor"},
+    {c:"4.16",l:"Suciedad acumulada en módulos (soiling)"}
+  ]},
+  {id:"5",lbl:"Fallas Civiles / Estructurales",ico:"🏗️",col:"#C47AFF",faults:[
+    {c:"5.1",l:"Daño en cimentación o anclaje de estructura"},
+    {c:"5.2",l:"Deterioro de vías internas / acceso restringido"},
+    {c:"5.3",l:"Falla en sistema de drenaje de la planta"},
+    {c:"5.4",l:"Daño en cerramiento / malla perimetral"},
+    {c:"5.5",l:"Crecimiento excesivo de vegetación bajo módulos"},
+    {c:"5.6",l:"Erosión o socavación del terreno bajo módulos"}
+  ]},
+  {id:"6",lbl:"Fallas HSE / Seguridad Laboral",ico:"🦺",col:"#4ADE80",faults:[
+    {c:"6.1",l:"Accidente laboral durante labores de O&M"},
+    {c:"6.2",l:"Exposición a arco eléctrico o contacto con partes energizadas"},
+    {c:"6.3",l:"Caída en altura durante mantenimiento de módulos o estructura"},
+    {c:"6.4",l:"Golpe de calor / exposición térmica extrema del personal"}
+  ]},
+  {id:"7",lbl:"Fallas BESS / Almacenamiento (si aplica)",ico:"🔋",col:"#7EC8E3",faults:[
+    {c:"7.1",l:"Falla del BMS (Battery Management System)"},
+    {c:"7.2",l:"Sobrecalentamiento de celda de batería (thermal runaway)"},
+    {c:"7.3",l:"Falla del PCS (Power Conversion System) del BESS"},
+    {c:"7.4",l:"Degradación de capacidad de almacenamiento"}
+  ]},
+  {id:"8",lbl:"Fallas Administrativas / Regulatorias",ico:"📋",col:"#F4A460",faults:[
+    {c:"8.1",l:"Vencimiento de permiso o licencia operativa"},
+    {c:"8.2",l:"Incumplimiento de condiciones técnicas de conexión con el OR"},
+    {c:"8.3",l:"Falla en reporte regulatorio (AGC, telemando, disponibilidad)"},
+    {c:"8.4",l:"Falla en la gestión de garantías de equipos"}
+  ]},
+  {id:"9",lbl:"Sin Suministro Eléctrico en el Proyecto",ico:"🔌",col:"#FF6B6B",faults:[
+    {c:"9.0",l:"Sin suministro eléctrico – causa no identificada"},
+    {c:"9.1",l:"Ausencia total de red eléctrica (blackout del OR)"},
+    {c:"9.2",l:"Falla de acometida de servicios auxiliares (alimentación interna)"},
+    {c:"9.3",l:"UPS agotado: sin respaldo para sistemas de control y comunicaciones"},
+    {c:"9.4",l:"Interruptor de acometida principal de SSAA disparado"},
+    {c:"9.5",l:"Falla del generador de respaldo (planta eléctrica)"},
+    {c:"9.6",l:"Robo o vandalismo del cableado de servicios auxiliares"},
+    {c:"9.7",l:"Falla en el tablero de distribución de servicios auxiliares (TSA)"},
+    {c:"9.8",l:"Sin suministro por mantenimiento programado del OR (ventana de mantenimiento)"},
+    {c:"9.9",l:"Sin suministro por limitación de capacidad de red (restricción técnica del OR)"}
+  ]},
+  {id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:[]}
+];
+var CATS=DEFAULT_CATS.map(function(c){return{id:c.id,lbl:c.lbl,ico:c.ico,col:c.col,faults:c.faults.slice()};});
 var FAULT_DESCS={};   // código → descripción detallada (del Google Sheets)
 var FAULT_AFECTA={};  // código → a quién afecta (del Google Sheets)
 var CATALOG_READY=false;
@@ -599,33 +720,25 @@ var CAT_STYLES={
   "9":{ico:"🔌",col:"#FF6B6B"}
 };
 function buildCatsFromSheets(data){
-  var cats=[],map={};
+  // El Sheets solo aporta DESCRIPCIONES y AFECTA — el catálogo base está hardcodeado
   FAULT_DESCS={};FAULT_AFECTA={};
+  var sheetsCount=0;
   try{
     (data.table.rows||[]).forEach(function(row){
       if(!row.c)return;
       var g=function(i){return(row.c[i]&&row.c[i].v!=null)?String(row.c[i].v).trim():"";};
-      var tipo=g(0),evento=g(1),code=g(2),afecta=g(3),desc=g(4);
-      if(!tipo||!evento||!code)return;
-      var m=tipo.match(/^(\d+)/),catId=m?m[1]:"p";
-      var lbl=tipo.replace(/^\d+[\.\s]*/,"").replace(/^Fallas?\s+(de\s+|por\s+|por\s+s\s+)?/i,"").trim()||tipo;
-      if(!map[catId]){
-        var st=CAT_STYLES[catId]||{ico:"⭐",col:"#915BD8"};
-        map[catId]={id:catId,lbl:tipo.replace(/^\d+\.?\s*/,"").trim(),ico:st.ico,col:st.col,faults:[]};
-        cats.push(map[catId]);
-      }
-      map[catId].faults.push({c:code,l:evento});
-      if(desc)FAULT_DESCS[code]=desc;
+      var code=g(2),afecta=g(3),desc=g(4);
+      if(!code)return;
+      if(desc){FAULT_DESCS[code]=desc;sheetsCount++;}
       if(afecta)FAULT_AFECTA[code]=afecta;
     });
-  }catch(e){console.warn("Error al procesar catálogo:",e);}
-  var custom=CATS.find(function(c){return c.id==="p"||c.id==="5";});
-  cats.push({id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:custom?custom.faults:[]});
-  CATS=cats;
+  }catch(e){console.warn("Error al procesar catálogo de Sheets:",e);}
+  // Refrescar filtro (catálogo ya estaba en CATS desde DEFAULT_CATS)
   rebuildF();
   updateFcatFilter();
   CATALOG_READY=true;
-  toast("✓ Catálogo actualizado: "+ALL_F.length+" fallas disponibles",4000);
+  if(sheetsCount>0)
+    toast("✓ Descripciones actualizadas desde Sheets ("+sheetsCount+")",3000);
 }
 function updateFcatFilter(){
   var sel=document.getElementById("fcat");if(!sel)return;
@@ -643,7 +756,7 @@ function loadCatalog(){
   var SID="1Nk2psPViyHm_iu-65sRJS7PCa2Vsbt3Z",GID="174222320";
   var cbName="_cat"+Date.now();
   var lsub=document.getElementById("lsub");
-  if(lsub)lsub.textContent="Cargando catálogo de fallas…";
+  if(lsub)lsub.textContent="Cargando descripciones del catálogo…";
   var to=setTimeout(function(){
     delete window[cbName];
     var s=document.getElementById(cbName);
