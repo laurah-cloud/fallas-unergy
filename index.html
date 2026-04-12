@@ -718,7 +718,7 @@ function uploadPhotos(proj,code,label,dateStr,faultId,photosArr,cb){
 }
 
 /* ══ RENDER ══ */
-function renderAll(){renderPills();renderBoard();renderKPIs();renderSelects();if(curTab==="charts")renderCharts();}
+function renderAll(){renderPills();renderBoard();renderSelects();if(curTab==="charts")renderCharts();}
 function renderPills(){
   var cnt={all:faults.length,activa:0,revision:0,programada:0,terminada:0};
   faults.forEach(function(f){if(cnt[f.st]!==undefined)cnt[f.st]++;});
@@ -1219,9 +1219,9 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
   ["all","activa","revision","programada","terminada"].forEach(function(k){document.getElementById("pill-"+k).addEventListener("click",function(){filterSt=k;renderPills();renderBoard();});});
-  document.getElementById("fsearch").addEventListener("input",renderBoard);
-  document.getElementById("fproject").addEventListener("change",renderBoard);
-  document.getElementById("fcat").addEventListener("change",renderBoard);
+  document.getElementById("fsearch").addEventListener("input",function(){renderBoard();});
+  document.getElementById("fproject").addEventListener("change",function(){renderBoard();});
+  document.getElementById("fcat").addEventListener("change",function(){renderBoard();});
   document.getElementById("chart-proj").addEventListener("change",function(){if(curTab==="charts")renderBar();});
   document.getElementById("btn-new").addEventListener("click",openNewFault);
   document.getElementById("btn-sync").addEventListener("click",loadFaults);
@@ -1237,9 +1237,10 @@ document.addEventListener("DOMContentLoaded",function(){
   var _btnT=document.getElementById("btn-theme");if(_btnT)_btnT.addEventListener("click",function(){applyTheme(!isLight);});
   var _btnE=document.getElementById("btn-export");if(_btnE)_btnE.addEventListener("click",exportCSV);
   // New filter listeners
-  var _fi=document.getElementById("fimp");if(_fi)_fi.addEventListener("change",renderBoard);
-  var _fd1=document.getElementById("fdate-from");if(_fd1)_fd1.addEventListener("change",renderBoard);
-  var _fd2=document.getElementById("fdate-to");if(_fd2)_fd2.addEventListener("change",renderBoard);
+  function renderBoardAndKPIs(){renderBoard();}  // renderBoard already calls renderKPIs at end
+  var _fi=document.getElementById("fimp");if(_fi)_fi.addEventListener("change",renderBoardAndKPIs);
+  var _fd1=document.getElementById("fdate-from");if(_fd1)_fd1.addEventListener("change",renderBoardAndKPIs);
+  var _fd2=document.getElementById("fdate-to");if(_fd2)_fd2.addEventListener("change",renderBoardAndKPIs);
   document.getElementById("overlay").addEventListener("click",function(e){if(e.target===this)closeModal();});
   document.getElementById("lb").addEventListener("click",function(){this.className="";});
   renderSelects();
