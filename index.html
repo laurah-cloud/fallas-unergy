@@ -650,7 +650,8 @@ function serverSave(f,cb){
     desc:f.desc||"",followUp:f.flw||"",
     driveUrl:f.driveUrl||"",
     endTime:toSheets(f.endDT),
-    centinela:f.centinela||"",prioridad:f.prio||""
+    centinela:f.centinela||"",prioridad:f.prio||"",
+    notify:f.notify===true
   };
   apiPost({action:"saveFault",data:payload}).then(function(r){
     setSync(r&&r.ok?"ok":"err",r&&r.ok?"Guardado ✓":"Error: "+(r&&r.error||"?"));
@@ -1003,6 +1004,9 @@ function showForm(f){
     '<div class="field"><label>Descripción <span class="req">*</span> <span style="color:var(--pu);font-size:10px;font-weight:600">· Se precarga del catálogo al elegir el evento</span></label><textarea class="fi" id="fdesc" rows="5" style="resize:vertical;line-height:1.65" placeholder="Al elegir el evento se carga la descripción del catálogo. Puedes editarla y agregar detalles…">'+esc(f&&f.desc||"")+'</textarea></div>'+
     '<div class="field"><label>Seguimiento</label><textarea class="fi" id="fflw" rows="3" style="resize:vertical;line-height:1.65" placeholder="Acciones ejecutadas, avances, próximos pasos…">'+esc(f&&f.flw||"")+'</textarea></div>'+
     '<div class="field"><label>Centinela</label>'+centInfo+'</div>'+
+    '<div class="field" style="margin-bottom:10px"><label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;font-size:13px;color:var(--cr);font-weight:600;letter-spacing:0">'+
+    '<input type="checkbox" id="fnotify" checked style="width:16px;height:16px;accent-color:var(--pu);cursor:pointer"/> '+
+    '📧 Notificar por correo a los responsables del proyecto</label></div>'+
     '<div class="field"><label>Fotografías <span style="color:var(--gr);font-size:10px;font-weight:700">· Se guardan en Drive — carpeta del proyecto</span></label>'+
       '<div class="pgrid" id="pgrid"></div>'+
       '<input type="file" id="finput" accept="image/*" multiple style="display:none"/>'+
@@ -1087,6 +1091,7 @@ function submitForm(existingId,existingCreat,existingDrive){
   var desc=document.getElementById("fdesc").value;
   var flw=document.getElementById("fflw").value;
   var prioEl=document.getElementById("fprio");var prio=prioEl?prioEl.value:"";
+  var notifyEl=document.getElementById("fnotify");var notify=notifyEl?notifyEl.checked:false;
 
   if(!proj||!code||!desc){toast("⚠ Completa: Proyecto, Falla y Descripción");return;}
   if(st==="terminada"&&!res){toast("⚠ Selecciona el tipo de resolución");return;}
@@ -1103,7 +1108,7 @@ function submitForm(existingId,existingCreat,existingDrive){
   var fault={id:faultId,proj:proj,code:code,faultLabel:fdd.label||code,st:st,
     date:dtVal.slice(0,10),time:dtVal.slice(11,16),occ:occ,endDT:endDT,res:res,
     desc:desc,flw:flw,prio:prio,centinela:getCLbl(),photos:photos.slice(),
-    driveUrl:existingDrive||"",creat:existingCreat||nowColombia()};
+    driveUrl:existingDrive||"",creat:existingCreat||nowColombia(),notify:notify};
 
   var photosCopy=photos.slice(); // ← capture BEFORE closeModal clears photos
   var idx=faults.findIndex(function(x){return x.id===faultId;});
