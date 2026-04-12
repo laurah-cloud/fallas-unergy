@@ -718,7 +718,7 @@ function uploadPhotos(proj,code,label,dateStr,faultId,photosArr,cb){
 }
 
 /* ══ RENDER ══ */
-function renderAll(){renderKPIs();renderPills();renderBoard();renderSelects();if(curTab==="charts")renderCharts();}
+function renderAll(){renderPills();renderBoard();renderKPIs();renderSelects();if(curTab==="charts")renderCharts();}
 function renderPills(){
   var cnt={all:faults.length,activa:0,revision:0,programada:0,terminada:0};
   faults.forEach(function(f){if(cnt[f.st]!==undefined)cnt[f.st]++;});
@@ -789,6 +789,7 @@ function renderBoard(){
   });
   document.getElementById("board").innerHTML=html;
   document.querySelectorAll(".card").forEach(function(el){el.addEventListener("click",function(){openDetail(this.dataset.id);});});
+  renderKPIs(); // actualizar KPIs con el mismo filtro activo
 }
 function renderSelects(){
   var o='<option value="">Todos los proyectos</option>';
@@ -798,10 +799,12 @@ function renderSelects(){
 
 /* ══ KPIs ══ */
 function renderKPIs(){
+  // Usa la lista FILTRADA para que los KPIs reflejen los filtros activos
+  var list=getFiltered();
   var now=new Date(),mS=new Date(now.getFullYear(),now.getMonth(),1),yS=new Date(now.getFullYear(),0,1);
-  var crit=0,rev=0,prog=0,clM=0,clY=0;
-  faults.forEach(function(f){
-    if(f.st==="activa"&&f.prio==="Alta")crit++;
+  var act=0,crit=0,rev=0,prog=0,clM=0,clY=0;
+  list.forEach(function(f){
+    if(f.st==="activa"){act++;if(f.prio==="Alta")crit++;}
     if(f.st==="revision")rev++;
     if(f.st==="programada")prog++;
     if(f.st==="terminada"){
@@ -810,11 +813,18 @@ function renderKPIs(){
       if(m){var d=s.match(/^\d{4}/)?new Date(+m[1],+m[2]-1,+m[3]):new Date(+m[3],+m[2]-1,+m[1]);if(d>=mS)clM++;if(d>=yS)clY++;}
     }
   });
+  // Indica si hay filtros activos
+  var isFiltered=list.length<faults.length;
+  var totalLbl=isFiltered?(list.length+" de "+faults.length):(faults.length+"");
+  var totalSub=isFiltered?"filtradas de "+faults.length+" totales":"total en el sistema";
   function sv(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-  sv("kv-t",faults.length);sv("ks-t",faults.length+" falla"+(faults.length!==1?"s":""));
+  sv("kv-t",totalLbl);sv("ks-t",totalSub);
   sv("kv-c",crit);
-  sv("kv-r",rev+prog);sv("ks-r",prog+" programada"+(prog!==1?"s":""));
+  sv("kv-r",rev+prog);sv("ks-r",rev+" revisión · "+prog+" programadas");
   sv("kv-m",clM);sv("ks-m",clY+" este año");
+  // Highlight KPI cards when filtered
+  var kT=document.getElementById("kpi-t");
+  if(kT)kT.style.borderColor=isFiltered?"var(--pu)":"var(--br)";
 }
 
 /* ══ CATÁLOGO DE FALLAS DESDE GOOGLE SHEETS ══ */
@@ -1094,11 +1104,10 @@ function submitForm(existingId,existingCreat,existingDrive){
     desc:desc,flw:flw,prio:prio,centinela:getCLbl(),photos:photos.slice(),
     driveUrl:existingDrive||"",creat:existingCreat||nowColombia()};
 
+  var photosCopy=photos.slice(); // ← capture BEFORE closeModal clears photos
   var idx=faults.findIndex(function(x){return x.id===faultId;});
   if(idx>=0)faults[idx]=fault;else faults.unshift(fault);
   closeModal();renderAll();
-
-  var photosCopy=photos.slice();
   if(photosCopy.length>0){
     toast("📷 Guardando falla y fotos…",10000);
     serverSave(fault,function(){
