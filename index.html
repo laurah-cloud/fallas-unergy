@@ -212,7 +212,7 @@ body.light select option{background:var(--s1);color:var(--cr)}
   </div>
 </div>
 <div id="app">
-  <div id="kpis"><div class="kpi" id="kpi-t"><div class="kpi-ico">🗂</div><div class="kpi-val" id="kv-t">0</div><div class="kpi-lbl">Total Fallas</div><div class="kpi-sub" id="ks-t">—</div></div><div class="kpi kred" id="kpi-c"><div class="kpi-ico">🔴</div><div class="kpi-val" id="kv-c">0</div><div class="kpi-lbl">Activas Críticas</div><div class="kpi-sub">prioridad Alta</div></div><div class="kpi kye" id="kpi-r"><div class="kpi-ico">⏳</div><div class="kpi-val" id="kv-r">0</div><div class="kpi-lbl">En Revisión</div><div class="kpi-sub" id="ks-r">—</div></div><div class="kpi kgr" id="kpi-m"><div class="kpi-ico">✅</div><div class="kpi-val" id="kv-m">0</div><div class="kpi-lbl">Cerradas Este Mes</div><div class="kpi-sub" id="ks-m">—</div></div></div>
+  <div id="kpis"><div class="kpi" id="kpi-t"><div class="kpi-ico">🗂</div><div class="kpi-val" id="kv-t">0</div><div class="kpi-lbl">Total Fallas</div><div class="kpi-sub" id="ks-t">total en el sistema</div></div><div class="kpi kred" id="kpi-c"><div class="kpi-ico">🔴</div><div class="kpi-val" id="kv-c">0</div><div class="kpi-lbl">Activas Críticas</div><div class="kpi-sub">prioridad Alta</div></div><div class="kpi kye" id="kpi-r"><div class="kpi-ico">⏳</div><div class="kpi-val" id="kv-r">0</div><div class="kpi-lbl">En Revisión</div><div class="kpi-sub" id="ks-r">—</div></div><div class="kpi kgr" id="kpi-m"><div class="kpi-ico">✅</div><div class="kpi-val" id="kv-m">0</div><div class="kpi-lbl">Total Terminadas</div><div class="kpi-sub" id="ks-m">— este mes</div></div></div>
   <div id="pills">
     <button class="pill on" id="pill-all" style="color:var(--pu)">🗂 Todas <span class="cn" id="cnt-all">0</span></button>
     <button class="pill" id="pill-activa" style="color:var(--re)">● Activas <span class="cn" id="cnt-activa">0</span></button>
@@ -821,7 +821,8 @@ function renderKPIs(){
   sv("kv-t",totalLbl);sv("ks-t",totalSub);
   sv("kv-c",crit);
   sv("kv-r",rev+prog);sv("ks-r",rev+" revisión · "+prog+" programadas");
-  sv("kv-m",clM);sv("ks-m",clY+" este año");
+  var totalTerm=list.filter(function(f){return f.st==="terminada";}).length;
+  sv("kv-m",totalTerm);sv("ks-m",clM+" cerradas este mes");
   // Highlight KPI cards when filtered
   var kT=document.getElementById("kpi-t");
   if(kT)kT.style.borderColor=isFiltered?"var(--pu)":"var(--br)";
