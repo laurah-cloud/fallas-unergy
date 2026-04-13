@@ -180,6 +180,33 @@ body.light select option{background:var(--s1);color:var(--cr)}
 @media(max-width:1100px){#kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){#charts{grid-template-columns:1fr}.chart-full{grid-column:span 1}}
 @media(max-width:580px){#kpis{grid-template-columns:1fr 1fr}.kpi-val{font-size:22px}.fdate,.fimp{width:100%}}
+
+/* ── Login overlay ── */
+#login-ov{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#1A0F2E,#2C2039);z-index:1000;align-items:center;justify-content:center;padding:16px}
+#login-ov.open{display:flex}
+.login-card{background:var(--bg);border:1px solid var(--br);border-radius:18px;width:100%;max-width:400px;overflow:hidden;box-shadow:0 30px 80px #00000080}
+.login-header{background:#1A0F2E;padding:26px 32px;display:flex;align-items:center;gap:14px}
+.login-logo-svg{width:40px;height:33px;flex-shrink:0}
+.login-body{padding:28px 32px}
+.login-step{display:none}.login-step.active{display:block}
+.login-title{font-size:20px;font-weight:800;color:var(--cr);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--mu);margin-bottom:22px;line-height:1.6}
+.login-err{font-size:12px;color:var(--re);margin-top:6px;min-height:18px}
+.login-code-inp{background:#1a1025;border:2px solid var(--pu);border-radius:10px;color:var(--cr);font-size:28px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:10px;text-align:center;padding:14px;width:100%;outline:none}
+.login-code-inp:focus{border-color:var(--ye)}
+.login-resend{background:none;border:none;color:var(--mu);font-size:12px;cursor:pointer;font-family:'Sora',sans-serif;margin-top:10px;text-decoration:underline}
+.login-resend:hover{color:var(--pu)}
+.login-back{background:none;border:none;color:var(--fa);font-size:11px;cursor:pointer;font-family:'Sora',sans-serif;margin-top:8px}
+.login-spinner{text-align:center;padding:20px 0;color:var(--mu);font-size:13px}
+/* ── Client mode — hide monitor-only elements ── */
+body.client-mode #btn-new{display:none!important}
+body.client-mode #btn-addproj{display:none!important}
+body.client-mode #btn-addfault{display:none!important}
+body.client-mode #fab{display:none!important}
+body.client-mode #btn-empty-new{display:none!important}
+body.client-mode #btn-export{display:inline-flex!important}
+/* ── Client badge in topbar ── */
+.client-badge{background:#915BD818;border:1px solid #915BD850;border-radius:20px;padding:4px 12px;font-size:11px;color:var(--pu);font-weight:700}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes sp{to{transform:rotate(360deg)}}
 @keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
@@ -190,14 +217,54 @@ body.light select option{background:var(--s1);color:var(--cr)}
 </head>
 <body>
 <div id="loader"><div class="licon">☀️</div><div class="ltitle"><span>Unergy</span> · Gestión de Fallas</div><div class="lsub" id="lsub">Conectando con Google Sheets…</div><div class="spin"></div></div>
-<div id="setup-ov">
-  <div class="setup-card">
-    <div style="font-size:32px;margin-bottom:12px">👤</div>
-    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">¿Quién eres?</h2>
-    <p style="font-size:13px;color:var(--mu);margin-bottom:20px">Tu nombre y correo se guardan como centinela en cada falla. Solo se pide una vez.</p>
-    <div class="field"><label>Nombre completo <span class="req">*</span></label><input class="fi" id="su-name" placeholder="Ej. Laura Hernández"/></div>
-    <div class="field"><label>Correo electrónico <span class="req">*</span></label><input class="fi" id="su-email" type="email" placeholder="laura@unergy.co"/></div>
-    <button class="btn btn-ye" id="su-save" style="width:100%;padding:11px;font-size:14px;margin-top:6px">✓ Guardar y continuar</button>
+<div id="login-ov" class="open">
+  <div class="login-card">
+    <div class="login-header">
+      <svg class="login-logo-svg" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+      <div>
+        <div style="color:#fff;font-size:18px;font-weight:800;letter-spacing:1px;">UNERGY</div>
+        <div style="color:#6B5F80;font-size:10px;letter-spacing:.8px;text-transform:uppercase;margin-top:2px;">Gestión de Fallas</div>
+      </div>
+    </div>
+    <div class="login-body">
+      <!-- Paso 1: Email -->
+      <div class="login-step active" id="ls-email">
+        <div class="login-title">Bienvenido</div>
+        <div class="login-sub">Ingresa tu correo para acceder al portal de fallas.</div>
+        <div class="field"><label>Correo electrónico <span class="req">*</span></label>
+          <input class="fi" id="li-email" type="email" placeholder="tu@correo.com" autocomplete="email"/>
+        </div>
+        <div class="login-err" id="li-email-err"></div>
+        <button class="btn btn-ye" id="li-email-go" style="width:100%;padding:12px;font-size:14px;margin-top:4px">Continuar →</button>
+      </div>
+      <!-- Paso 2a: Nombre (monitor Unergy) -->
+      <div class="login-step" id="ls-name">
+        <div class="login-title">Equipo Unergy 💜</div>
+        <div class="login-sub">Ingresa tu nombre completo. Se guardará como centinela en cada falla.</div>
+        <div class="field"><label>Nombre completo <span class="req">*</span></label>
+          <input class="fi" id="li-name" placeholder="Ej. Laura Hernández"/>
+        </div>
+        <div class="login-err" id="li-name-err"></div>
+        <button class="btn btn-ye" id="li-name-go" style="width:100%;padding:12px;font-size:14px;margin-top:4px">Acceder →</button>
+        <button class="login-back" id="li-name-back">← Cambiar correo</button>
+      </div>
+      <!-- Paso 2b: Código verificación (cliente) -->
+      <div class="login-step" id="ls-code">
+        <div class="login-title">Verifica tu identidad</div>
+        <div class="login-sub">Enviamos un código de 6 dígitos a <b id="ls-code-em" style="color:var(--pu)"></b>. Válido por 10 minutos.</div>
+        <input class="login-code-inp" id="li-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"/>
+        <div class="login-err" id="li-code-err"></div>
+        <button class="btn btn-ye" id="li-code-go" style="width:100%;padding:12px;font-size:14px;margin-top:12px">Verificar →</button>
+        <div style="text-align:center">
+          <button class="login-resend" id="li-resend">Reenviar código</button>
+          <button class="login-back" id="li-code-back">← Cambiar correo</button>
+        </div>
+      </div>
+      <!-- Cargando -->
+      <div class="login-step" id="ls-loading">
+        <div class="login-spinner"><div class="spin" style="margin:0 auto 12px"></div>Un momento…</div>
+      </div>
+    </div>
   </div>
 </div>
 <div id="topbar">
@@ -205,6 +272,7 @@ body.light select option{background:var(--s1);color:var(--cr)}
   <div class="tabs"><button class="tab on" id="tab-board">⊞ Tablero</button><button class="tab" id="tab-charts">📊 Gráficos</button></div>
   <div class="acts">
     <button class="cbadge hmob" id="cbtn"><span style="width:7px;height:7px;border-radius:50%;background:var(--gr);display:block"></span><span id="clbl">…</span></button>
+    <span class="client-badge" id="client-badge-lbl" style="display:none">👁 Cliente</span>
     <button class="btn btn-gh btn-sm hmob" id="btn-addproj">+ Proyecto</button>
     <button class="btn btn-gh btn-sm hmob" id="btn-addfault">+ Falla</button>
     <button class="btn-theme hmob" id="btn-theme">🌙</button><button class="btn-exp hmob" id="btn-export">⬇ CSV</button><button class="btn btn-gr btn-sm" id="btn-sync">↻</button>
@@ -477,11 +545,139 @@ var RESOLS=[
 var ST={activa:{lbl:"Activa",ico:"●",col:"#FF5757",bg:"#FF575718",bdr:"#FF575750"},revision:{lbl:"En Revisión",ico:"◐",col:"#F6FF72",bg:"#F6FF7218",bdr:"#F6FF7250"},programada:{lbl:"Programada",ico:"◯",col:"#915BD8",bg:"#915BD818",bdr:"#915BD850"},terminada:{lbl:"Terminada",ico:"✓",col:"#4ADE80",bg:"#4ADE8018",bdr:"#4ADE8050"}};
 var faults=[],filterSt="all",curTab="board",photos=[],idN=1,pieInst=null,barInst=null,sdrProj=null,sdrFault=null,cData={name:"",email:""};
 
-/* ══ CENTINELA ══ */
-function loadC(){try{var s=localStorage.getItem("uc");if(s){cData=JSON.parse(s);return true;}}catch(e){}return false;}
-function saveC(n,e){cData={name:n,email:e};localStorage.setItem("uc",JSON.stringify(cData));updC();}
+/* ══ SESIÓN Y ROLES ══ */
+var userRole="monitor"; // "monitor" | "cliente"
+var clientProjects=[]; // proyectos visibles para el cliente
+var pendingEmail="";   // email en proceso de verificación
+
+function loadSession(){
+  try{
+    var s=localStorage.getItem("unergy_session");
+    if(!s)return false;
+    var sess=JSON.parse(s);
+    // Verificar expiración
+    if(sess.expires&&Date.now()>sess.expires)return false;
+    userRole=sess.role||"monitor";
+    clientProjects=sess.projects||[];
+    cData={name:sess.name||"",email:sess.email||""};
+    return true;
+  }catch(e){return false;}
+}
+function saveSession(role,email,name,projects){
+  var expires=role==="cliente"?(Date.now()+24*60*60*1000):null; // clientes: 24h
+  var sess={role:role,email:email,name:name||"",projects:projects||[],expires:expires};
+  try{localStorage.setItem("unergy_session",JSON.stringify(sess));}catch(e){}
+  userRole=role;clientProjects=projects||[];
+  cData={name:name||"",email:email};
+}
+function clearSession(){
+  try{localStorage.removeItem("unergy_session");}catch(e){}
+  userRole="monitor";clientProjects=[];cData={name:"",email:""};
+}
+function isMonitorEmail(email){
+  return email.toLowerCase().endsWith("@unergy.io")||email.toLowerCase().endsWith("@unergy.co");
+}
+function applyRole(){
+  if(userRole==="cliente"){
+    document.body.classList.add("client-mode");
+    // Badge en topbar
+    var cb=document.getElementById("clbl");
+    if(cb)cb.textContent=cData.email;
+    var badge=document.getElementById("client-badge-lbl");
+    if(badge){badge.textContent="👁 Cliente";badge.style.display="inline-flex";}
+  } else {
+    document.body.classList.remove("client-mode");
+    updC();
+    var badge2=document.getElementById("client-badge-lbl");
+    if(badge2)badge2.style.display="none";
+  }
+}
+/* ── Legacy compat ── */
+function loadC(){return loadSession();}
+function saveC(n,e){saveSession("monitor",e,n,[]);updC();}
 function getCLbl(){return cData.name?(cData.name+" <"+cData.email+">"):(cData.email||"");}
 function updC(){var el=document.getElementById("clbl");if(el)el.textContent=cData.name||cData.email||"…";}
+function openSetup(opt){showLoginStep("email");document.getElementById("login-ov").className="open";}
+
+/* ══ LOGIN UI ══ */
+function showLoginStep(step){
+  ["email","name","code","loading"].forEach(function(s){
+    var el=document.getElementById("ls-"+s);if(el)el.className="login-step"+(s===step?" active":"");
+  });
+}
+function loginSetLoading(on){showLoginStep(on?"loading":(pendingEmail?"email":"email"));}
+
+function loginEmailGo(){
+  var email=(document.getElementById("li-email").value||"").trim().toLowerCase();
+  var err=document.getElementById("li-email-err");
+  if(!email||email.indexOf("@")<0){err.textContent="⚠ Ingresa un correo válido";return;}
+  err.textContent="";
+  pendingEmail=email;
+  if(isMonitorEmail(email)){
+    // Monitor: pedir nombre
+    var li=document.getElementById("li-name");if(li)li.value="";
+    showLoginStep("name");
+    setTimeout(function(){var el=document.getElementById("li-name");if(el)el.focus();},80);
+  } else {
+    // Cliente: enviar código
+    showLoginStep("loading");
+    apiGet({action:"sendCode",email:email},15000).then(function(r){
+      if(r&&r.ok){
+        var em=document.getElementById("ls-code-em");if(em)em.textContent=email;
+        var ci=document.getElementById("li-code");if(ci)ci.value="";
+        var ce=document.getElementById("li-code-err");if(ce)ce.textContent="";
+        showLoginStep("code");
+        setTimeout(function(){var el=document.getElementById("li-code");if(el)el.focus();},80);
+      } else {
+        showLoginStep("email");
+        var err2=document.getElementById("li-email-err");
+        if(err2)err2.textContent="⚠ "+(r&&r.error?"No se pudo enviar el código. Verifica que tu correo esté registrado.":"Error al enviar código");
+      }
+    }).catch(function(){
+      showLoginStep("email");
+      var err3=document.getElementById("li-email-err");
+      if(err3)err3.textContent="⚠ Sin conexión. Intenta de nuevo.";
+    });
+  }
+}
+
+function loginNameGo(){
+  var name=(document.getElementById("li-name").value||"").trim();
+  var err=document.getElementById("li-name-err");
+  if(!name){err.textContent="⚠ Ingresa tu nombre";return;}
+  err.textContent="";
+  saveSession("monitor",pendingEmail,name,[]);
+  document.getElementById("login-ov").className="";
+  applyRole();loadFaults();
+}
+
+function loginCodeGo(){
+  var code=(document.getElementById("li-code").value||"").trim();
+  var err=document.getElementById("li-code-err");
+  if(code.length!==6||!/^\d{6}$/.test(code)){err.textContent="⚠ Ingresa el código de 6 dígitos";return;}
+  err.textContent="";
+  showLoginStep("loading");
+  apiGet({action:"verifyCode",email:pendingEmail,code:code},15000).then(function(r){
+    if(r&&r.ok){
+      var projs=r.projects||[];
+      saveSession("cliente",pendingEmail,"",projs);
+      document.getElementById("login-ov").className="";
+      applyRole();
+      if(projs.length===0){
+        toast("⚠ Tu cuenta no tiene proyectos asignados. Contacta al administrador.",6000);
+        hideLoader();renderAll();
+      } else {
+        loadFaults();
+      }
+    } else {
+      showLoginStep("code");
+      err.textContent="⚠ "+(r&&r.error?r.error:"Código incorrecto o expirado");
+    }
+  }).catch(function(){
+    showLoginStep("code");
+    err.textContent="⚠ Sin conexión. Intenta de nuevo.";
+  });
+}
 
 /* ══ HELPERS FECHA ══ */
 function padT(t){if(!t)return "";var p=String(t).trim().split(":");if(p.length<2)return "";return p[0].padStart(2,"0")+":"+p[1].padStart(2,"0");}
@@ -737,6 +933,8 @@ function getFiltered(){
   var dto=document.getElementById("fdate-to")?document.getElementById("fdate-to").value||"":" ";
   fim=fim.trim();dfrom=dfrom.trim();dto=dto.trim();
   return faults.filter(function(f){
+    // Filtro por proyectos del cliente
+    if(userRole==="cliente"&&clientProjects.length>0&&clientProjects.indexOf(f.proj)<0)return false;
     if(filterSt!=="all"&&f.st!==filterSt)return false;
     if(fp&&f.proj!==fp)return false;
     if(fc){var di=fd(f.code);if(!di||di.catId!==fc)return false;}
@@ -793,8 +991,9 @@ function renderBoard(){
   renderKPIs(); // actualizar KPIs con el mismo filtro activo
 }
 function renderSelects(){
+  var visProjs=(userRole==="cliente"&&clientProjects.length>0)?clientProjects:PROJS;
   var o='<option value="">Todos los proyectos</option>';
-  PROJS.forEach(function(p){o+='<option value="'+esc(p)+'">'+esc(p)+'</option>';});
+  visProjs.forEach(function(p){o+='<option value="'+esc(p)+'">'+esc(p)+'</option>';});
   ["fproject","chart-proj"].forEach(function(id){var e=document.getElementById(id);if(e){var v=e.value;e.innerHTML=o;e.value=v;}});
 }
 
@@ -1175,10 +1374,10 @@ function openDetail(id){
     f.photos.forEach(function(p){html+='<div class="pthumb"><img src="'+p.url+'" data-url="'+p.url+'" style="cursor:zoom-in"/></div>';});
     html+='</div>';
   }
-  html+='<div class="mactions"><button class="btn btn-re" id="det-del">🗑 Eliminar</button><button class="btn btn-pu" id="det-edit">✏️ Editar</button></div>';
+  html+='<div class="mactions">'+(userRole==="monitor"?'<button class="btn btn-re" id="det-del">🗑 Eliminar</button><button class="btn btn-pu" id="det-edit">✏️ Editar</button>':'')+'</div>';
   openModal("Detalle de Falla",html);
-  document.getElementById("det-del").addEventListener("click",function(){confirmDel(id);});
-  document.getElementById("det-edit").addEventListener("click",function(){closeModal();openEditFault(id);});
+  var _ddel=document.getElementById("det-del");if(_ddel)_ddel.addEventListener("click",function(){confirmDel(id);});
+  var _dedit=document.getElementById("det-edit");if(_dedit)_dedit.addEventListener("click",function(){closeModal();openEditFault(id);});
   var dp=document.getElementById("dp");if(dp)dp.querySelectorAll("img").forEach(function(img){img.addEventListener("click",function(){openLb(this.dataset.url);});});
 }
 function confirmDel(id){
@@ -1217,10 +1416,28 @@ document.addEventListener("DOMContentLoaded",function(){
     }
   },15000);
 
-  document.getElementById("su-save").addEventListener("click",function(){
-    var n=document.getElementById("su-name").value.trim(),e=document.getElementById("su-email").value.trim();
-    if(!n||!e){toast("⚠ Completa nombre y correo");return;}
-    saveC(n,e);document.getElementById("setup-ov").className="";toast("✓ Perfil guardado");loadFaults();
+  // ── Login listeners ──
+  document.getElementById("li-email-go").addEventListener("click",loginEmailGo);
+  document.getElementById("li-email").addEventListener("keydown",function(e){if(e.key==="Enter")loginEmailGo();});
+  document.getElementById("li-name-go").addEventListener("click",loginNameGo);
+  document.getElementById("li-name").addEventListener("keydown",function(e){if(e.key==="Enter")loginNameGo();});
+  document.getElementById("li-code-go").addEventListener("click",loginCodeGo);
+  document.getElementById("li-code").addEventListener("keydown",function(e){if(e.key==="Enter")loginCodeGo();});
+  document.getElementById("li-name-back").addEventListener("click",function(){pendingEmail="";showLoginStep("email");setTimeout(function(){document.getElementById("li-email").focus();},80);});
+  document.getElementById("li-code-back").addEventListener("click",function(){pendingEmail="";showLoginStep("email");setTimeout(function(){document.getElementById("li-email").focus();},80);});
+  document.getElementById("li-resend").addEventListener("click",function(){
+    if(!pendingEmail)return;
+    showLoginStep("loading");
+    apiGet({action:"sendCode",email:pendingEmail},15000).then(function(r){
+      if(r&&r.ok){showLoginStep("code");toast("✓ Código reenviado");}
+      else{showLoginStep("code");var e=document.getElementById("li-code-err");if(e)e.textContent="⚠ No se pudo reenviar";}
+    }).catch(function(){showLoginStep("code");});
+  });
+  // Logout desde cbtn (mantener perfil para monitor, limpiar sesión)
+  document.getElementById("cbtn").addEventListener("click",function(){
+    if(userRole==="cliente"){
+      if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }
+    } else { openSetup(true); }
   });
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
@@ -1251,9 +1468,17 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("lb").addEventListener("click",function(){this.className="";});
   renderSelects();
   loadCatalog();
-  if(loadC()&&cData.name&&cData.email){updC();loadFaults();}
-  else{hideLoader();openSetup(false);}
-  setInterval(loadFaults,60000);
+  if(loadSession()){
+    applyRole();
+    document.getElementById("login-ov").className="";
+    loadFaults();
+  } else {
+    hideLoader();
+    showLoginStep("email");
+    document.getElementById("login-ov").className="open";
+    setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
+  }
+  setInterval(function(){if(userRole!=="none")loadFaults();},60000);
 });
 </script>
 </body>
