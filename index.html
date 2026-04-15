@@ -1838,6 +1838,28 @@ document.addEventListener("DOMContentLoaded",function(){
   });
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
+  // ── Generación tab ──
+  var _tg=document.getElementById("tab-gen");
+  if(_tg)_tg.addEventListener("click",function(){
+    curTab="gen";
+    document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
+    this.className="tab on";
+    document.getElementById("board-panel").style.display="none";
+    document.getElementById("frow").style.display="none";
+    document.getElementById("charts").style.display="none";
+    document.getElementById("gen-panel").style.display="block";
+    loadGenProjects();
+  });
+  // Reset gen-panel when switching to other tabs
+  document.getElementById("tab-board").addEventListener("click",function(){
+    var gp=document.getElementById("gen-panel");if(gp)gp.style.display="none";
+  });
+  var _gl=document.getElementById("gen-load");if(_gl)_gl.addEventListener("click",loadGeneracion);
+  var _gp=document.getElementById("gen-period");if(_gp)_gp.addEventListener("change",function(){
+    var custom=this.value==="custom";
+    var gf=document.getElementById("gen-from");if(gf)gf.style.display=custom?"":"none";
+    var gt=document.getElementById("gen-to");if(gt)gt.style.display=custom?"":"none";
+  });
   ["all","activa","revision","programada","terminada"].forEach(function(k){document.getElementById("pill-"+k).addEventListener("click",function(){filterSt=k;renderPills();renderBoard();});});
   document.getElementById("fsearch").addEventListener("input",function(){renderBoard();});
   document.getElementById("fproject").addEventListener("change",function(){renderBoard();});
