@@ -220,6 +220,24 @@ input[type=date].fi::-webkit-calendar-picker-indicator{
 input[type=date].fi::-webkit-calendar-picker-indicator:hover{opacity:1}
 @media(max-width:1100px){#kpis-client{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){#kpis-client{grid-template-columns:1fr 1fr}}
+
+/* ── Client portal light mode ── */
+body.light .tblock{background:var(--s1);color:var(--cr)}
+body.light .drow .dval{color:var(--cr)}
+body.light .slbl{color:var(--mu)}
+body.light #kpis-client .kpi{background:var(--s1)}
+body.light .login-card{background:#fff}
+body.light .login-body{background:#fff}
+
+/* ── Client portal light mode ── */
+body.light .tblock{background:var(--s1)!important;color:var(--cr)!important}
+body.light .dval{color:var(--cr)!important}
+body.light .slbl{color:var(--mu)!important}
+/* ── Client portal light mode ── */
+body.light .tblock{background:var(--s1)!important;color:var(--cr)!important}
+body.light .dval{color:var(--cr)!important}
+body.light .slbl{color:var(--mu)!important}
+body.light #kpis-client .kpi{background:var(--s1)}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes sp{to{transform:rotate(360deg)}}
 @keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
@@ -595,13 +613,17 @@ function isMonitorEmail(email){
 function applyRole(){
   if(userRole==="cliente"){
     document.body.classList.add("client-mode");
+    // Restaurar tema guardado (cliente elige modo claro u oscuro)
+    try{var _t=localStorage.getItem("unergy_theme");applyTheme(_t==="light");}catch(e){}
+    var th=document.getElementById("btn-theme");if(th)th.style.display="";
     var cb=document.getElementById("clbl");if(cb)cb.textContent=cData.email;
     var badge=document.getElementById("client-badge-lbl");
-    if(badge){badge.textContent="👁 Cliente";badge.style.display="inline-flex";}
+    if(badge){badge.textContent="👁 Portal Cliente";badge.style.display="inline-flex";}
     var btnE=document.getElementById("btn-export");
     if(btnE){btnE.textContent="⬇ Excel";btnE.title="Descargar informe Excel";}
   } else {
     document.body.classList.remove("client-mode");
+    var th2=document.getElementById("btn-theme");if(th2)th2.style.display="";
     updC();
     var badge2=document.getElementById("client-badge-lbl");if(badge2)badge2.style.display="none";
     var btnE2=document.getElementById("btn-export");
@@ -751,7 +773,13 @@ function fd(c){return ALL_F.find(function(x){return x.code===c;})||null;}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 // Hora actual en Colombia (UTC-5, sin horario de verano)
 function nowColombia(){return new Date().toLocaleString("sv-SE",{timeZone:"America/Bogota"}).replace(" ","T").slice(0,16);}
-function applyTheme(light){isLight=light;document.body.className=light?"light":"";var b=document.getElementById("btn-theme");if(b)b.textContent=light?"☀️":"🌙";try{localStorage.setItem("unergy_theme",light?"light":"dark");}catch(e){}}
+function applyTheme(light){
+  isLight=light;
+  if(light){document.body.classList.add("light");}
+  else{document.body.classList.remove("light");}
+  var b=document.getElementById("btn-theme");if(b)b.textContent=light?"☀️":"🌙";
+  try{localStorage.setItem("unergy_theme",light?"light":"dark");}catch(e){}
+}
 function exportCSV(){
   var list=getFiltered();if(!list.length){toast("⚠ Sin datos para exportar");return;}
   var isClient=(userRole==="cliente");
@@ -1463,12 +1491,12 @@ function openDetail(id){
   if(isClient){
     var faultName=fdd?(f.code+" · "+fdd.label):(f.code||"Falla registrada");
     html=
-      '<div style="background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:9px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">'
+      '<div style="background:'+s.bg+';border:1.5px solid '+s.bdr+';border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">'
       +'<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'
       +(resOk?'<span class="badge" style="color:#4ADE80;background:#4ADE8018;border-color:#4ADE8040">✓ '+esc(f.res)+'</span>':'')
       +'</div>'
-      +'<div style="background:#1a1025;border-left:3px solid '+(fdd?fdd.catCol:'#915BD8')+';border-radius:8px;padding:10px 14px;margin-bottom:16px">'
-      +'<div style="font-size:10px;color:var(--mu);font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:4px">Falla identificada</div>'
+      +'<div style="background:var(--s1);border-left:3px solid '+(fdd?fdd.catCol:'#915BD8')+';border-radius:8px;padding:10px 14px;margin-bottom:16px">'
+      +'<div style="font-size:10px;color:var(--mu);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">Falla identificada</div>'
       +'<div style="font-size:14px;font-weight:700;color:var(--cr)">'+esc(faultName)+'</div>'
       +'</div>'
       +'<div class="drow"><span class="dlbl">📁 Proyecto</span><span class="dval">'+esc(f.proj)+'</span></div>'
@@ -1478,10 +1506,13 @@ function openDetail(id){
         ?'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:#4ADE80;font-weight:700">'+fmtDT(f.endDT)+'</span></div>'
         :'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:var(--fa)">Pendiente</span></div>');
     if(driveOk)
-      html+='<div style="margin:14px 0"><a href="'+esc(f.driveUrl)+'" target="_blank" style="display:flex;align-items:center;gap:10px;background:#0d1b2a;border:1.5px solid #378ADD;border-radius:10px;padding:12px 16px;color:#60A5FA;font-weight:700;font-size:13px;text-decoration:none">'
-        +'<span style="font-size:22px">🖼️</span>'
-        +'<div><div style="font-size:14px;font-weight:700;color:#60A5FA">Abrir fotos de la falla</div>'+'<div style="font-size:11px;opacity:.7;margin-top:3px">Haz clic para ver las fotos en Google Drive → '+esc(f.proj)+'</div></div>'
-        +'<span style="margin-left:auto;font-size:20px">📸</span></a></div>';
+      html+='<div style="margin:14px 0">'
+        +'<a href="'+esc(f.driveUrl)+'" target="_blank" style="display:flex;align-items:center;gap:12px;background:var(--s1);border:1.5px solid #4285F440;border-radius:10px;padding:13px 16px;text-decoration:none;cursor:pointer">'
+        +'<svg width="20" height="18" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--cr)">Abrir fotos en Google Drive</div>'
+        +'<div style="font-size:11px;color:var(--mu);margin-top:3px">'+esc(f.proj)+' · Haz clic para abrir</div></div>'
+        +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--mu);flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+        +'</a></div>';
     else
       html+='<div class="drow"><span class="dlbl">📷 Fotos</span><span class="dval" style="color:var(--fa)">Sin fotos registradas</span></div>';
     if(f.desc&&f.desc.trim())html+='<div class="slbl">📋 Descripción</div><div class="tblock">'+esc(f.desc)+'</div>';
