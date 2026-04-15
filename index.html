@@ -1800,3 +1800,83 @@ function renderGenChart(r,subProj,range){
     var klEl=document.querySelector("#gen-kpis .kpi.kgr .kpi-lbl");
     if(klEl)klEl.textContent="% vs P90 Esperado";
     sv("gks-pct",pctLabel+" · "+Math.round(p90Expected).toLocaleString("es-CO")+" kWh esperados");
+  }
+}
+
+/* ══ INIT ══ */
+document.addEventListener("DOMContentLoaded",function(){
+  // Ocultar loader máximo en 15s
+  setTimeout(function(){
+    if(document.getElementById("loader").style.display!=="none"){
+      hideLoader();setSync("err","Sin conexión");renderAll();
+      toast("⚠ Sin respuesta. Verifica el script de Apps Script.");
+    }
+  },15000);
+
+  // ── Login listeners ──
+  document.getElementById("li-email-go").addEventListener("click",loginEmailGo);
+  document.getElementById("li-email").addEventListener("keydown",function(e){if(e.key==="Enter")loginEmailGo();});
+  document.getElementById("li-name-go").addEventListener("click",loginNameGo);
+  document.getElementById("li-name").addEventListener("keydown",function(e){if(e.key==="Enter")loginNameGo();});
+  document.getElementById("li-code-go").addEventListener("click",loginCodeGo);
+  document.getElementById("li-code").addEventListener("keydown",function(e){if(e.key==="Enter")loginCodeGo();});
+  document.getElementById("li-name-back").addEventListener("click",function(){pendingEmail="";showLoginStep("email");setTimeout(function(){document.getElementById("li-email").focus();},80);});
+  document.getElementById("li-code-back").addEventListener("click",function(){pendingEmail="";showLoginStep("email");setTimeout(function(){document.getElementById("li-email").focus();},80);});
+  document.getElementById("li-resend").addEventListener("click",function(){
+    if(!pendingEmail)return;
+    showLoginStep("loading");
+    apiGet({action:"sendCode",email:pendingEmail},15000).then(function(r){
+      if(r&&r.ok){showLoginStep("code");toast("✓ Código reenviado");}
+      else{showLoginStep("code");var e=document.getElementById("li-code-err");if(e)e.textContent="⚠ No se pudo reenviar";}
+    }).catch(function(){showLoginStep("code");});
+  });
+  // Logout desde cbtn (mantener perfil para monitor, limpiar sesión)
+  document.getElementById("cbtn").addEventListener("click",function(){
+    if(userRole==="cliente"){
+      if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }
+    } else { openSetup(true); }
+  });
+  document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
+  document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
+  ["all","activa","revision","programada","terminada"].forEach(function(k){document.getElementById("pill-"+k).addEventListener("click",function(){filterSt=k;renderPills();renderBoard();});});
+  document.getElementById("fsearch").addEventListener("input",function(){renderBoard();});
+  document.getElementById("fproject").addEventListener("change",function(){renderBoard();});
+  document.getElementById("fcat").addEventListener("change",function(){renderBoard();});
+  document.getElementById("chart-proj").addEventListener("change",function(){if(curTab==="charts")renderBar();});
+  document.getElementById("btn-new").addEventListener("click",openNewFault);
+  document.getElementById("btn-sync").addEventListener("click",loadFaults);
+  document.getElementById("btn-addproj").addEventListener("click",openProjModal);
+  document.getElementById("btn-addfault").addEventListener("click",openAddFaultM);
+  document.getElementById("fab").addEventListener("click",openNewFault);
+  document.getElementById("btn-empty-new").addEventListener("click",openNewFault);
+  document.getElementById("cbtn").addEventListener("click",function(){openSetup(true);});
+  document.getElementById("mclose").addEventListener("click",closeModal);
+  // Theme restore
+  try{var _t=localStorage.getItem("unergy_theme");if(_t==="light")applyTheme(true);}catch(e){}
+  // New buttons (safe null checks)
+  var _btnT=document.getElementById("btn-theme");if(_btnT)_btnT.addEventListener("click",function(){applyTheme(!isLight);});
+  var _btnE=document.getElementById("btn-export");if(_btnE)_btnE.addEventListener("click",exportCSV);
+  // New filter listeners
+  function renderBoardAndKPIs(){renderBoard();}  // renderBoard already calls renderKPIs at end
+  var _fi=document.getElementById("fimp");if(_fi)_fi.addEventListener("change",renderBoardAndKPIs);
+  var _fd1=document.getElementById("fdate-from");if(_fd1)_fd1.addEventListener("change",renderBoardAndKPIs);
+  var _fd2=document.getElementById("fdate-to");if(_fd2)_fd2.addEventListener("change",renderBoardAndKPIs);
+  document.getElementById("overlay").addEventListener("click",function(e){if(e.target===this)closeModal();});
+  document.getElementById("lb").addEventListener("click",function(){this.className="";});
+  renderSelects();
+  loadCatalog();
+  if(loadSession()){
+    applyRole();
+    document.getElementById("login-ov").className="";
+    loadFaults();
+  } else {
+    hideLoader();
+    showLoginStep("email");
+    document.getElementById("login-ov").className="open";
+    setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
+  }
+  setInterval(function(){if(userRole!=="none")loadFaults();},60000);
+});
+</script>
+</body>
+</html>
