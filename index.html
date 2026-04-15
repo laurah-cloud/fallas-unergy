@@ -348,7 +348,7 @@ body.light #kpis-client .kpi{background:var(--s1)}
   <div id="gen-panel" style="display:none">
     <div id="gen-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
       <div class="kpi"><div class="kpi-ico">☀️</div><div class="kpi-val" id="gkv-hoy">—</div><div class="kpi-lbl">Generación Ayer</div><div class="kpi-sub" id="gks-hoy">kWh</div></div>
-      <div class="kpi kgr"><div class="kpi-ico">📊</div><div class="kpi-val" id="gkv-pct">—</div><div class="kpi-lbl">% vs P90 Esperado</div><div class="kpi-sub" id="gks-pct">—</div></div>
+      <div class="kpi kgr"><div class="kpi-ico">📊</div><div class="kpi-val" id="gkv-pct">—</div><div class="kpi-lbl">% vs P90 Mes</div><div class="kpi-sub" id="gks-pct">acumulado</div></div>
       <div class="kpi kye"><div class="kpi-ico">📅</div><div class="kpi-val" id="gkv-mes">—</div><div class="kpi-lbl">Generación del Mes</div><div class="kpi-sub" id="gks-mes">kWh acumulados</div></div>
       <div class="kpi" style="border-color:#915BD840"><div class="kpi-ico">🎯</div><div class="kpi-val" id="gkv-sim">—</div><div class="kpi-lbl">P90 Mensual</div><div class="kpi-sub" id="gks-sim">simulado</div></div>
     </div>
@@ -1785,21 +1785,79 @@ function renderGenChart(r,subProj,range){
   if(sim){
     sv("gkv-sim",Math.round(sim.p90_monthly).toLocaleString("es-CO"));
     sv("gks-sim","kWh P90 mensual esperado");
-    // ── % vs P90 esperado al día de hoy ──────────────────────────
-    // Lógica: P90_diario = P90_mensual / días_del_mes
-    // P90_esperado_acumulado = P90_diario × días_transcurridos_del_período
-    // % = generación_real / P90_esperado_acumulado × 100
-    var daysInPeriod=days.length;  // días con datos en el período
-    var p90Expected=sim.p90_daily?Math.round(sim.p90_daily*daysInPeriod):0;
-    var pct=p90Expected>0?Math.round((totalKwh/p90Expected)*100):0;
-    var pctCol=pct>=100?"#4ADE80":pct>=90?"#F6FF72":"#FF5757";
-    var pctLabel=pct>=100?"✅ Va a cumplir":pct>=90?"⚠️ En riesgo":"❌ Por debajo";
+    var pct=sim.p90_monthly>0?Math.round((totalKwh/sim.p90_monthly)*100):0;
+    var pctCol=pct>=100?"#4ADE80":pct>=80?"#F6FF72":"#FF5757";
     var kvEl=document.getElementById("gkv-pct");
     if(kvEl){kvEl.textContent=pct+"%";kvEl.style.color=pctCol;}
-    // Update KPI label
-    var klEl=document.querySelector("#gen-kpis .kpi.kgr .kpi-lbl");
-    if(klEl)klEl.textContent="% vs P90 Esperado";
-    sv("gks-pct",pctLabel+" · "+Math.round(p90Expected).toLocaleString("es-CO")+" kWh esperados");
+    sv("gks-pct","de "+Math.round(sim.p90_monthly).toLocaleString("es-CO")+" kWh P90");
+  }
+
+  // Render chart
+  var cv=document.getElementById("genC");if(!cv)return;
+  if(genChart)genChart.destroy();
+  var datasets=[{
+    type:"bar",label:"Generación real (kWh)",
+    data:kwhPerDay,
+    backgroundColor:barColors,borderColor:barBorders,borderWidth:1,borderRadius:3,
+    order:2
+  }];
+  if(p90daily){
+    datasets.push({
+      type:"line",label:"P90 diario esperado",
+      data:p90Line,
+      borderColor:"#F6FF72",borderWidth:2,
+      pointRadius:0,fill:false,tension:0,
+      borderDash:[6,3],order:1
+    });
+  }
+
+  genChart=new Chart(cv.getContext("2d"),{
+    data:{labels:days,datasets:datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          title:function(items){
+            var d=items[0].label;
+            return d+(faultDays[d]?" ⚡ "+faultDays[d].length+" falla(s)":"");
+          },
+          label:function(item){
+            return item.dataset.label+": "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+          }
+        }}
+      },
+      scales:{
+        x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},grid:{display:false},border:{color:"transparent"}},
+        y:{ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}},grid:{color:"#4A356030"},border:{color:"transparent"}}
+      }
+    }
+  });
+
+  // Fault list below chart
+  var faultList=Object.keys(faultDays).sort();
+  if(faultList.length>0){
+    var box=document.getElementById("gen-faults-box");
+    var list=document.getElementById("gen-faults-list");
+    if(box&&list){
+      box.style.display="block";
+      var html="";
+      faultList.forEach(function(day){
+        faultDays[day].forEach(function(f){
+          var fdd=fd(f.code);var s=ST[f.st]||ST.activa;
+          html+='<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="openDetail(\''+esc(f.id)+'\')">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center">'
+            +'<span style="font-size:11px;color:var(--fa)">📅 '+day+'</span>'
+            +'<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'
+            +'</div>'
+            +'<div style="font-size:13px;font-weight:700;color:var(--cr);margin:4px 0">'+(fdd?f.code+' · '+fdd.label:f.code)+'</div>'
+            +'<div style="font-size:11px;color:var(--mu)">'+esc(f.proj)+'</div>'
+            +'</div>';
+        });
+      });
+      list.innerHTML=html;
+    }
   }
 }
 
@@ -1838,6 +1896,38 @@ document.addEventListener("DOMContentLoaded",function(){
   });
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
+  var _tg=document.getElementById("tab-gen");if(_tg)_tg.addEventListener("click",function(){
+    curTab="gen";
+    document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
+    this.className="tab on";
+    document.getElementById("board-panel").style.display="none";
+    document.getElementById("frow").style.display="none";
+    document.getElementById("charts").style.display="none";
+    document.getElementById("gen-panel").style.display="block";
+    // Si el cliente tiene muy pocos proyectos en sesión, puede ser sesión vieja
+    if(userRole==="cliente"&&clientProjects.length<=1){
+      toast("🔄 Actualizando tus proyectos… por favor espera",3000);
+      // Force re-verify via code (only if session is client)
+      clearSession();
+      document.getElementById("gen-panel").style.display="none";
+      document.getElementById("login-ov").className="open";
+      showLoginStep("email");
+      setTimeout(function(){var el=document.getElementById("li-email");if(el){el.value=cData.email||"";el.focus();}},200);
+      return;
+    }
+    loadGenProjects();
+  });
+  document.getElementById("tab-board").addEventListener("click",function(){
+    document.getElementById("gen-panel").style.display="none";
+    document.getElementById("board-panel").style.display="block";
+    document.getElementById("frow").style.display="flex";
+  });
+  var _gl=document.getElementById("gen-load");if(_gl)_gl.addEventListener("click",loadGeneracion);
+  var _gp=document.getElementById("gen-period");if(_gp)_gp.addEventListener("change",function(){
+    var custom=this.value==="custom";
+    var gf=document.getElementById("gen-from");if(gf)gf.style.display=custom?"":"none";
+    var gt=document.getElementById("gen-to");if(gt)gt.style.display=custom?"":"none";
+  });
   ["all","activa","revision","programada","terminada"].forEach(function(k){document.getElementById("pill-"+k).addEventListener("click",function(){filterSt=k;renderPills();renderBoard();});});
   document.getElementById("fsearch").addEventListener("input",function(){renderBoard();});
   document.getElementById("fproject").addEventListener("change",function(){renderBoard();});
