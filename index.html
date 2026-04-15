@@ -1717,11 +1717,21 @@ function loadGeneracion(){
 
 function renderGenChart(r,subProj,range){
   var data=r.data||[];
+  // Hide chart card, show empty state
+  var chartCard=document.querySelector("#gen-panel .chart-card");
   if(!data.length){
-    document.getElementById("gen-empty").style.display="block";
-    document.getElementById("gen-empty").innerHTML='<div style="font-size:32px;margin-bottom:12px">📭</div><div>Sin datos de generación para este período</div>';
+    if(chartCard)chartCard.style.display="none";
+    var emptyEl=document.getElementById("gen-empty");
+    if(emptyEl){
+      emptyEl.style.display="block";
+      emptyEl.innerHTML='<div style="font-size:32px;margin-bottom:12px">📭</div>'+
+        '<div style="font-size:14px;margin-bottom:8px">Sin datos de generación para este período</div>'+
+        '<div style="font-size:12px;color:var(--fa)">Verifica que el proyecto tenga datos en la API de Unergy o prueba con otro rango de fechas</div>';
+    }
     return;
   }
+  if(chartCard)chartCard.style.display="block";
+  document.getElementById("gen-empty").style.display="none";
 
   // Agrupar por día
   var dayMap={};
@@ -1795,6 +1805,79 @@ function renderGenChart(r,subProj,range){
     var klEl=document.querySelector("#gen-kpis .kpi.kgr .kpi-lbl");
     if(klEl)klEl.textContent="% vs P90 Esperado";
     sv("gks-pct",pctLabel+" · "+Math.round(p90Expected).toLocaleString("es-CO")+" kWh esperados");
+  }
+
+  // ── Render Chart.js ──────────────────────────────────────
+  var cv=document.getElementById("genC");
+  if(!cv)return;
+  if(genChart){genChart.destroy();genChart=null;}
+
+  var datasets=[{
+    type:"bar",label:"Generación real (kWh)",
+    data:kwhPerDay,
+    backgroundColor:barColors,borderColor:barBorders,
+    borderWidth:1,borderRadius:3,order:2
+  }];
+  if(p90daily){
+    datasets.push({
+      type:"line",label:"P90 diario esperado",
+      data:p90Line,
+      borderColor:"#F6FF72",borderWidth:2,
+      pointRadius:0,fill:false,tension:0,
+      borderDash:[6,3],order:1
+    });
+  }
+
+  genChart=new Chart(cv.getContext("2d"),{
+    data:{labels:days,datasets:datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          title:function(items){
+            var d=items[0].label;
+            return d+(faultDays[d]?" ⚡ "+faultDays[d].length+" falla(s)":"");
+          },
+          label:function(item){
+            return item.dataset.label+": "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+          }
+        }}
+      },
+      scales:{
+        x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},
+           grid:{display:false},border:{color:"transparent"}},
+        y:{ticks:{color:"#A89EC0",font:{size:10},
+             callback:function(v){return v.toLocaleString("es-CO");}},
+           grid:{color:"#4A356030"},border:{color:"transparent"}}
+      }
+    }
+  });
+
+  // ── Faults list below chart ──
+  var faultList=Object.keys(faultDays).sort();
+  if(faultList.length>0){
+    var box=document.getElementById("gen-faults-box");
+    var list=document.getElementById("gen-faults-list");
+    if(box&&list){
+      box.style.display="block";
+      var html="";
+      faultList.forEach(function(day){
+        faultDays[day].forEach(function(f){
+          var fdd=fd(f.code);var s=ST[f.st]||ST.activa;
+          html+='<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="openDetail(\''+esc(f.id)+'\')">'+
+            '<div style="display:flex;justify-content:space-between;align-items:center">'+
+            '<span style="font-size:11px;color:var(--fa)">📅 '+day+'</span>'+
+            '<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'+
+            '</div>'+
+            '<div style="font-size:13px;font-weight:700;color:var(--cr);margin:4px 0">'+(fdd?f.code+' · '+fdd.label:f.code)+'</div>'+
+            '<div style="font-size:11px;color:var(--mu)">'+esc(f.proj)+'</div>'+
+            '</div>';
+        });
+      });
+      list.innerHTML=html;
+    }
   }
 }
 
