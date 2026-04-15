@@ -238,6 +238,9 @@ body.light .tblock{background:var(--s1)!important;color:var(--cr)!important}
 body.light .dval{color:var(--cr)!important}
 body.light .slbl{color:var(--mu)!important}
 body.light #kpis-client .kpi{background:var(--s1)}
+
+/* ── Generation tab ── */
+#gen-panel{padding:0}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes sp{to{transform:rotate(360deg)}}
 @keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
@@ -301,7 +304,8 @@ body.light #kpis-client .kpi{background:var(--s1)}
 </div>
 <div id="topbar">
   <div class="logo"><div class="logo-icon">☀️</div><div><div class="logo-brand">Unergy <span style="color:var(--mu);font-weight:600;font-size:12px">· Fallas</span></div><div class="sync-row"><span class="sdot" id="sdot"></span><span id="stxt">Cargando…</span></div></div></div>
-  <div class="tabs"><button class="tab on" id="tab-board">⊞ Tablero</button><button class="tab" id="tab-charts">📊 Gráficos</button></div>
+  <div class="tabs"><button class="tab on" id="tab-board">⊞ Tablero</button><button class="tab" id="tab-charts">📊 Gráficos</button>
+    <button class="tab" id="tab-gen">☀️ Generación</button></div>
   <div class="acts">
     <button class="cbadge hmob" id="cbtn"><span style="width:7px;height:7px;border-radius:50%;background:var(--gr);display:block"></span><span id="clbl">…</span></button>
     <span class="client-badge" id="client-badge-lbl" style="display:none">👁 Cliente</span>
@@ -342,7 +346,50 @@ body.light #kpis-client .kpi{background:var(--s1)}
 </div>
 <button id="fab">+</button>
 <div id="toast"></div>
-<div id="lb"><img id="lb-img" src="" alt=""/></div>
+<div id="lb"><img id="lb-img" src="" alt=""/>
+  <div id="gen-panel" style="display:none">
+    <div id="gen-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
+      <div class="kpi"><div class="kpi-ico">☀️</div><div class="kpi-val" id="gkv-hoy">—</div><div class="kpi-lbl">Generación Ayer</div><div class="kpi-sub" id="gks-hoy">kWh</div></div>
+      <div class="kpi kgr"><div class="kpi-ico">📊</div><div class="kpi-val" id="gkv-pct">—</div><div class="kpi-lbl">% vs P90 Mes</div><div class="kpi-sub" id="gks-pct">acumulado</div></div>
+      <div class="kpi kye"><div class="kpi-ico">📅</div><div class="kpi-val" id="gkv-mes">—</div><div class="kpi-lbl">Generación del Mes</div><div class="kpi-sub" id="gks-mes">kWh acumulados</div></div>
+      <div class="kpi" style="border-color:#915BD840"><div class="kpi-ico">🎯</div><div class="kpi-val" id="gkv-sim">—</div><div class="kpi-lbl">P90 Mensual</div><div class="kpi-sub" id="gks-sim">simulado</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+      <select class="fi fsel" id="gen-proj" style="min-width:200px"><option value="">Selecciona proyecto…</option></select>
+      <select class="fi fsel" id="gen-period" style="width:160px">
+        <option value="month">Este mes</option>
+        <option value="yesterday">Ayer</option>
+        <option value="week">Última semana</option>
+        <option value="custom">Personalizado</option>
+      </select>
+      <input type="date" class="fi fdate" id="gen-from" style="display:none"/>
+      <input type="date" class="fi fdate" id="gen-to" style="display:none"/>
+      <button class="btn btn-pu" id="gen-load" style="padding:7px 18px;font-size:13px">Consultar ↻</button>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+        <div>
+          <div class="chart-title">Generación Diaria vs Simulación P90</div>
+          <div class="chart-sub" style="font-size:11px;color:var(--fa);margin-top:2px">kWh por día · barras = real · línea = P90 esperado</div>
+        </div>
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--mu);flex-shrink:0">
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#915BD8;border-radius:3px"></div>Real</div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:20px;height:2px;background:#F6FF72;border-radius:2px;margin:5px 0"></div>P90</div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#FF575760;border-radius:2px"></div>Falla</div>
+        </div>
+      </div>
+      <div style="position:relative;height:280px"><canvas id="genC"></canvas></div>
+    </div>
+    <div id="gen-faults-box" style="display:none">
+      <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período</div>
+      <div id="gen-faults-list"></div>
+    </div>
+    <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
+      <div style="font-size:32px;margin-bottom:12px">☀️</div>
+      <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
+    </div>
+  </div>
+</div>
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
@@ -1590,6 +1637,214 @@ function openSetup(optional){
   if(optional){document.getElementById("su-name").value=cData.name||"";document.getElementById("su-email").value=cData.email||"";}
 }
 
+
+/* ══ GENERACIÓN ══ */
+var genChart=null;
+var genData=null;
+var genProjects=[];
+
+function loadGenProjects(){
+  if(genProjects.length>0)return;
+  apiGet({action:"getProjects"},10000).then(function(r){
+    if(!r||!r.ok)return;
+    var projs=(userRole==="cliente"&&clientProjects.length>0)
+      ?r.projects.filter(function(p){return clientProjects.indexOf(p.nombre_bitacora)>=0||clientProjects.indexOf(p.nombre_display)>=0;})
+      :r.projects;
+    genProjects=projs;
+    var sel=document.getElementById("gen-proj");if(!sel)return;
+    sel.innerHTML='<option value="">Selecciona proyecto…</option>';
+    projs.forEach(function(p){
+      sel.innerHTML+='<option value="'+esc(p.sub_project)+'">'+esc(p.nombre_display)+'</option>';
+    });
+  }).catch(function(){});
+}
+
+function getGenDateRange(){
+  var period=document.getElementById("gen-period").value;
+  var now=new Date();
+  var pad=function(n){return String(n).padStart(2,"0");};
+  var fmt=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
+  if(period==="yesterday"){
+    var y=new Date(now);y.setDate(y.getDate()-1);
+    return{from:fmt(y),to:fmt(y)};
+  }
+  if(period==="week"){
+    var w=new Date(now);w.setDate(w.getDate()-7);
+    return{from:fmt(w),to:fmt(now)};
+  }
+  if(period==="custom"){
+    return{
+      from:document.getElementById("gen-from").value||fmt(new Date(now.getFullYear(),now.getMonth(),1)),
+      to:document.getElementById("gen-to").value||fmt(now)
+    };
+  }
+  // month (default)
+  return{from:fmt(new Date(now.getFullYear(),now.getMonth(),1)),to:fmt(now)};
+}
+
+function loadGeneracion(){
+  var proj=document.getElementById("gen-proj").value;
+  if(!proj){toast("⚠ Selecciona un proyecto");return;}
+  var range=getGenDateRange();
+  document.getElementById("gen-empty").style.display="none";
+  document.getElementById("gen-faults-box").style.display="none";
+  // Show spinner in chart area
+  var btn=document.getElementById("gen-load");if(btn){btn.textContent="⏳ Cargando…";btn.disabled=true;}
+
+  apiGet({action:"getGeneration",sub_project:proj,date_from:range.from,date_to:range.to},30000)
+  .then(function(r){
+    if(btn){btn.textContent="Consultar ↻";btn.disabled=false;}
+    if(!r||!r.ok){toast("⚠ Error: "+(r&&r.error?r.error:"sin respuesta"));return;}
+    genData=r;
+    renderGenChart(r,proj,range);
+  })
+  .catch(function(e){
+    if(btn){btn.textContent="Consultar ↻";btn.disabled=false;}
+    toast("⚠ Error al cargar generación");
+  });
+}
+
+function renderGenChart(r,subProj,range){
+  var data=r.data||[];
+  if(!data.length){
+    document.getElementById("gen-empty").style.display="block";
+    document.getElementById("gen-empty").innerHTML='<div style="font-size:32px;margin-bottom:12px">📭</div><div>Sin datos de generación para este período</div>';
+    return;
+  }
+
+  // Agrupar por día
+  var dayMap={};
+  data.forEach(function(d){
+    if(!dayMap[d.date])dayMap[d.date]=0;
+    dayMap[d.date]+=d.kwh;
+  });
+  var days=Object.keys(dayMap).sort();
+  var kwhPerDay=days.map(function(d){return Math.round(dayMap[d]*100)/100;});
+
+  // P90 diario desde simulación
+  var sim=r.simulation;
+  var p90daily=sim?sim.p90_daily:null;
+  var p90Line=days.map(function(){return p90daily;});
+
+  // Fallas en el período
+  var faultDays={};
+  faults.forEach(function(f){
+    if(userRole==="cliente"&&clientProjects.length>0&&clientProjects.indexOf(f.proj)<0)return;
+    var projMatch=false;
+    if(subProj){
+      // Match sub_project → nombre_bitacora
+      var projCfg=genProjects.find(function(p){return p.sub_project===subProj;});
+      if(projCfg&&(f.proj===projCfg.nombre_bitacora||f.proj===projCfg.nombre_display))projMatch=true;
+    } else {projMatch=true;}
+    if(!projMatch)return;
+    var fd2=String(f.date||"").trim();
+    var iso="";
+    var m1=fd2.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    var m2=fd2.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
+    if(m1)iso=fd2.slice(0,10);else if(m2)iso=m2[3]+"-"+m2[2]+"-"+m2[1].padStart(2,"0");
+    if(iso&&iso>=range.from&&iso<=range.to){
+      if(!faultDays[iso])faultDays[iso]=[];
+      faultDays[iso].push(f);
+    }
+  });
+
+  // Bar colors: red if fault day, purple otherwise
+  var barColors=days.map(function(d){
+    return faultDays[d]?'rgba(255,87,87,0.75)':'rgba(145,91,216,0.75)';
+  });
+  var barBorders=days.map(function(d){
+    return faultDays[d]?'#FF5757':'#915BD8';
+  });
+
+  // KPIs
+  var totalKwh=kwhPerDay.reduce(function(a,b){return a+b;},0);
+  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  var ymd=yesterday.getFullYear()+"-"+String(yesterday.getMonth()+1).padStart(2,"0")+"-"+String(yesterday.getDate()).padStart(2,"0");
+  var kwhYest=dayMap[ymd]||0;
+  function sv(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  sv("gkv-hoy",Math.round(kwhYest).toLocaleString("es-CO"));
+  sv("gks-hoy","kWh generados ayer");
+  sv("gkv-mes",Math.round(totalKwh).toLocaleString("es-CO"));
+  sv("gks-mes","kWh en el período");
+  if(sim){
+    sv("gkv-sim",Math.round(sim.p90_monthly).toLocaleString("es-CO"));
+    sv("gks-sim","kWh P90 mensual esperado");
+    var pct=sim.p90_monthly>0?Math.round((totalKwh/sim.p90_monthly)*100):0;
+    var pctCol=pct>=100?"#4ADE80":pct>=80?"#F6FF72":"#FF5757";
+    var kvEl=document.getElementById("gkv-pct");
+    if(kvEl){kvEl.textContent=pct+"%";kvEl.style.color=pctCol;}
+    sv("gks-pct","de "+Math.round(sim.p90_monthly).toLocaleString("es-CO")+" kWh P90");
+  }
+
+  // Render chart
+  var cv=document.getElementById("genC");if(!cv)return;
+  if(genChart)genChart.destroy();
+  var datasets=[{
+    type:"bar",label:"Generación real (kWh)",
+    data:kwhPerDay,
+    backgroundColor:barColors,borderColor:barBorders,borderWidth:1,borderRadius:3,
+    order:2
+  }];
+  if(p90daily){
+    datasets.push({
+      type:"line",label:"P90 diario esperado",
+      data:p90Line,
+      borderColor:"#F6FF72",borderWidth:2,
+      pointRadius:0,fill:false,tension:0,
+      borderDash:[6,3],order:1
+    });
+  }
+
+  genChart=new Chart(cv.getContext("2d"),{
+    data:{labels:days,datasets:datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          title:function(items){
+            var d=items[0].label;
+            return d+(faultDays[d]?" ⚡ "+faultDays[d].length+" falla(s)":"");
+          },
+          label:function(item){
+            return item.dataset.label+": "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+          }
+        }}
+      },
+      scales:{
+        x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},grid:{display:false},border:{color:"transparent"}},
+        y:{ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}},grid:{color:"#4A356030"},border:{color:"transparent"}}
+      }
+    }
+  });
+
+  // Fault list below chart
+  var faultList=Object.keys(faultDays).sort();
+  if(faultList.length>0){
+    var box=document.getElementById("gen-faults-box");
+    var list=document.getElementById("gen-faults-list");
+    if(box&&list){
+      box.style.display="block";
+      var html="";
+      faultList.forEach(function(day){
+        faultDays[day].forEach(function(f){
+          var fdd=fd(f.code);var s=ST[f.st]||ST.activa;
+          html+='<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="openDetail(\''+esc(f.id)+'\')">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center">'
+            +'<span style="font-size:11px;color:var(--fa)">📅 '+day+'</span>'
+            +'<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'
+            +'</div>'
+            +'<div style="font-size:13px;font-weight:700;color:var(--cr);margin:4px 0">'+(fdd?f.code+' · '+fdd.label:f.code)+'</div>'
+            +'<div style="font-size:11px;color:var(--mu)">'+esc(f.proj)+'</div>'
+            +'</div>';
+        });
+      });
+      list.innerHTML=html;
+    }
+  }
+}
+
 /* ══ INIT ══ */
 document.addEventListener("DOMContentLoaded",function(){
   // Ocultar loader máximo en 15s
@@ -1625,6 +1880,27 @@ document.addEventListener("DOMContentLoaded",function(){
   });
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
+  var _tg=document.getElementById("tab-gen");if(_tg)_tg.addEventListener("click",function(){
+    curTab="gen";
+    document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
+    this.className="tab on";
+    document.getElementById("board-panel").style.display="none";
+    document.getElementById("frow").style.display="none";
+    document.getElementById("charts").style.display="none";
+    document.getElementById("gen-panel").style.display="block";
+    loadGenProjects();
+  });
+  document.getElementById("tab-board").addEventListener("click",function(){
+    document.getElementById("gen-panel").style.display="none";
+    document.getElementById("board-panel").style.display="block";
+    document.getElementById("frow").style.display="flex";
+  });
+  var _gl=document.getElementById("gen-load");if(_gl)_gl.addEventListener("click",loadGeneracion);
+  var _gp=document.getElementById("gen-period");if(_gp)_gp.addEventListener("change",function(){
+    var custom=this.value==="custom";
+    var gf=document.getElementById("gen-from");if(gf)gf.style.display=custom?"":"none";
+    var gt=document.getElementById("gen-to");if(gt)gt.style.display=custom?"":"none";
+  });
   ["all","activa","revision","programada","terminada"].forEach(function(k){document.getElementById("pill-"+k).addEventListener("click",function(){filterSt=k;renderPills();renderBoard();});});
   document.getElementById("fsearch").addEventListener("input",function(){renderBoard();});
   document.getElementById("fproject").addEventListener("change",function(){renderBoard();});
