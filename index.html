@@ -1649,9 +1649,28 @@ function loadGenProjects(){
   if(genProjects.length>0)return;
   apiGet({action:"getProjects"},10000).then(function(r){
     if(!r||!r.ok)return;
-    var projs=(userRole==="cliente"&&clientProjects.length>0)
-      ?r.projects.filter(function(p){return clientProjects.indexOf(p.nombre_bitacora)>=0||clientProjects.indexOf(p.nombre_display)>=0;})
-      :r.projects;
+    var projs;
+    if(userRole==="cliente"&&clientProjects.length>0){
+      projs=r.projects.filter(function(p){
+        return clientProjects.some(function(cp){
+          var cpL=cp.toLowerCase().trim();
+          // Check all 4 name fields
+          var fields=[
+            (p.nombre_clientes||"").toLowerCase().trim(),
+            (p.nombre_bitacora||"").toLowerCase().trim(),
+            (p.nombre_display||"").toLowerCase().trim(),
+            (p.sub_project||"").toLowerCase().trim()
+          ];
+          if(fields.indexOf(cpL)>=0)return true;
+          // Remove "MGS/MSG " prefix from all
+          var strip=function(s){return s.replace(/^m[gs]+\.?s?\.?\s+/,"").trim();};
+          var cpS=strip(cpL);
+          return fields.some(function(f){return strip(f)===cpS||f.indexOf(cpS)>=0||cpS.indexOf(strip(f))>=0;});
+        });
+      });
+    } else {
+      projs=r.projects;
+    }
     genProjects=projs;
     var sel=document.getElementById("gen-proj");if(!sel)return;
     sel.innerHTML='<option value="">Selecciona proyecto…</option>';
