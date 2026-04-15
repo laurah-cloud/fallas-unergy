@@ -207,6 +207,16 @@ body.client-mode #btn-empty-new{display:none!important}
 body.client-mode #btn-export{display:inline-flex!important}
 /* ── Client badge in topbar ── */
 .client-badge{background:#915BD818;border:1px solid #915BD850;border-radius:20px;padding:4px 12px;font-size:11px;color:var(--pu);font-weight:700}
+
+/* ── 5-KPI client panel ── */
+#kpis-client{display:none;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+body.client-mode #kpis{display:none!important}
+body.client-mode #kpis-client{display:grid!important}
+/* ── Date calendar icon ── */
+input[type=date].fi{cursor:pointer;color-scheme:dark}
+input[type=date].fi::-webkit-calendar-picker-indicator{filter:invert(.8);opacity:.7;cursor:pointer;margin-left:4px}
+@media(max-width:1100px){#kpis-client{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){#kpis-client{grid-template-columns:1fr 1fr}}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes sp{to{transform:rotate(360deg)}}
 @keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
@@ -214,6 +224,7 @@ body.client-mode #btn-export{display:inline-flex!important}
 @media(max-width:900px){#board{grid-template-columns:1fr 1fr}#charts{grid-template-columns:1fr}}
 @media(max-width:580px){#board{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}#frow{flex-direction:column}.fsel{width:100%}#topbar{padding:0 12px}.hmob{display:none!important}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <div id="loader"><div class="licon">☀️</div><div class="ltitle"><span>Unergy</span> · Gestión de Fallas</div><div class="lsub" id="lsub">Conectando con Google Sheets…</div><div class="spin"></div></div>
@@ -275,12 +286,13 @@ body.client-mode #btn-export{display:inline-flex!important}
     <span class="client-badge" id="client-badge-lbl" style="display:none">👁 Cliente</span>
     <button class="btn btn-gh btn-sm hmob" id="btn-addproj">+ Proyecto</button>
     <button class="btn btn-gh btn-sm hmob" id="btn-addfault">+ Falla</button>
-    <button class="btn-theme hmob" id="btn-theme">🌙</button><button class="btn-exp hmob" id="btn-export">⬇ CSV</button><button class="btn btn-gr btn-sm" id="btn-sync">↻</button>
+    <button class="btn-theme hmob" id="btn-theme">🌙</button><button class="btn-exp hmob" id="btn-export" title="Descargar informe Excel">⬇ Excel</button><button class="btn btn-gr btn-sm" id="btn-sync">↻</button>
     <button class="btn btn-ye" id="btn-new">✚ Nueva Falla</button>
   </div>
 </div>
 <div id="app">
   <div id="kpis"><div class="kpi" id="kpi-t"><div class="kpi-ico">🗂</div><div class="kpi-val" id="kv-t">0</div><div class="kpi-lbl">Total Fallas</div><div class="kpi-sub" id="ks-t">total en el sistema</div></div><div class="kpi kred" id="kpi-c"><div class="kpi-ico">🔴</div><div class="kpi-val" id="kv-c">0</div><div class="kpi-lbl">Activas Críticas</div><div class="kpi-sub">prioridad Alta</div></div><div class="kpi kye" id="kpi-r"><div class="kpi-ico">⏳</div><div class="kpi-val" id="kv-r">0</div><div class="kpi-lbl">En Revisión</div><div class="kpi-sub" id="ks-r">—</div></div><div class="kpi kgr" id="kpi-m"><div class="kpi-ico">✅</div><div class="kpi-val" id="kv-m">0</div><div class="kpi-lbl">Total Terminadas</div><div class="kpi-sub" id="ks-m">— este mes</div></div></div>
+  <div id="kpis-client"><div class="kpi kred"><div class="kpi-ico">🔴</div><div class="kpi-val" id="ckv-act">0</div><div class="kpi-lbl">Fallas Activas</div><div class="kpi-sub" id="cks-act">de tus proyectos</div></div><div class="kpi" style="border-color:#FF575540"><div class="kpi-ico">⚠️</div><div class="kpi-val" id="ckv-crit">0</div><div class="kpi-lbl">Activas Críticas</div><div class="kpi-sub">prioridad Alta</div></div><div class="kpi kye"><div class="kpi-ico">⏳</div><div class="kpi-val" id="ckv-rev">0</div><div class="kpi-lbl">En Revisión</div><div class="kpi-sub" id="cks-rev">de tus proyectos</div></div><div class="kpi" style="border-color:#915BD840"><div class="kpi-ico">◯</div><div class="kpi-val" id="ckv-prog">0</div><div class="kpi-lbl">Programadas</div><div class="kpi-sub">pendiente ejecución</div></div><div class="kpi kgr"><div class="kpi-ico">✅</div><div class="kpi-val" id="ckv-term">0</div><div class="kpi-lbl">Terminadas</div><div class="kpi-sub" id="cks-term">total resueltas</div></div></div>
   <div id="pills">
     <button class="pill on" id="pill-all" style="color:var(--pu)">🗂 Todas <span class="cn" id="cnt-all">0</span></button>
     <button class="pill" id="pill-activa" style="color:var(--re)">● Activas <span class="cn" id="cnt-activa">0</span></button>
@@ -736,12 +748,94 @@ function nowColombia(){return new Date().toLocaleString("sv-SE",{timeZone:"Ameri
 function applyTheme(light){isLight=light;document.body.className=light?"light":"";var b=document.getElementById("btn-theme");if(b)b.textContent=light?"☀️":"🌙";try{localStorage.setItem("unergy_theme",light?"light":"dark");}catch(e){}}
 function exportCSV(){
   var list=getFiltered();if(!list.length){toast("⚠ Sin datos para exportar");return;}
-  var hdr=["ID","Proyecto","Código","Evento","Impacto","Estado","Prioridad","Días Abierta","Fecha","Descripción","Seguimiento","Centinela"];
-  var rows=list.map(function(f){var fdd=fd(f.code);var imp=getImpStyle(f.code);var d=getDaysOpen(f);return[f.id,f.proj,f.code,fdd?fdd.label:"",imp.l,ST[f.st]?ST[f.st].lbl:"",f.prio||"",d||"",fmtD(f.date),f.desc||"",f.flw||"",f.centinela||""];});
-  var csv=[hdr].concat(rows).map(function(r){return r.map(function(v){return'"'+String(v||"").replace(/"/g,'""')+'"';}).join(",");}).join("\n");
-  var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,﻿"+encodeURIComponent(csv);a.download="fallas_unergy_"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();setTimeout(function(){document.body.removeChild(a);},200);
-  toast("✓ CSV exportado: "+list.length+" fallas");
+  var isClient=(userRole==="cliente");
+
+  // ── Columnas según rol ──
+  var hdr=isClient
+    ?["Proyecto","Falla","Código","Estado","Fecha Identificación","Ocurrencia","Terminación","Descripción","Seguimiento","Solución"]
+    :["ID","Proyecto","Código","Tipo de Falla","Categoría","Estado","Prioridad","Días Abierta","Fecha Identificación","Descripción","Seguimiento","Centinela"];
+
+  var rows=list.map(function(f){
+    var fdd=fd(f.code);
+    if(isClient)return[f.proj,fdd?fdd.label:"",f.code,ST[f.st]?ST[f.st].lbl:"",
+      fmtD(f.date)+(f.time?" "+padT(f.time):""),fmtDT(f.occ),fmtDT(f.endDT),
+      f.desc||"",f.flw||"",f.res||""];
+    var imp=getImpStyle(f.code);var d=getDaysOpen(f);
+    return[f.id,f.proj,f.code,fdd?fdd.label:"",imp.l,ST[f.st]?ST[f.st].lbl:"",
+      f.prio||"",d||"",fmtD(f.date),f.desc||"",f.flw||"",f.centinela||""];
+  });
+
+  // ── Build workbook with SheetJS ──
+  if(typeof XLSX==="undefined"){toast("⚠ Cargando librería Excel, intenta en 2 segundos");return;}
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet([hdr].concat(rows));
+
+  // ── Column widths ──
+  var wscols=hdr.map(function(h,i){
+    var maxLen=h.length;
+    rows.forEach(function(r){var v=String(r[i]||"");if(v.length>maxLen)maxLen=v.length;});
+    return{wch:Math.min(Math.max(maxLen+2,10),60)};
+  });
+  ws["!cols"]=wscols;
+
+  // ── Style header row (background + bold) ──
+  var range=XLSX.utils.decode_range(ws["!ref"]);
+  for(var C=range.s.c;C<=range.e.c;C++){
+    var cell=ws[XLSX.utils.encode_cell({r:0,c:C})];
+    if(!cell)continue;
+    cell.s={
+      fill:{fgColor:{rgb:"2C2039"},patternType:"solid"},
+      font:{bold:true,color:{rgb:"F6FF72"},name:"Arial",sz:10},
+      alignment:{horizontal:"center",vertical:"center",wrapText:true},
+      border:{bottom:{style:"thin",color:{rgb:"915BD8"}}}
+    };
+  }
+
+  // ── Status color per row ──
+  var stColors={activa:"FFEDED",revision:"FFFDE7",programada:"F3EEF9",terminada:"EDFFF4"};
+  rows.forEach(function(row,ri){
+    var stVal=row[isClient?3:5]||"";
+    var stKey=Object.keys(ST).find(function(k){return ST[k].lbl===stVal;})||"";
+    var fillColor=stColors[stKey]||"FFFFFF";
+    for(var C=0;C<=hdr.length-1;C++){
+      var cell=ws[XLSX.utils.encode_cell({r:ri+1,c:C})];
+      if(!cell)continue;
+      if(!cell.s)cell.s={};
+      cell.s.fill={fgColor:{rgb:fillColor},patternType:"solid"};
+      cell.s.alignment={vertical:"top",wrapText:true};
+      cell.s.font={name:"Arial",sz:9};
+    }
+  });
+
+  // ── Freeze header row ──
+  ws["!freeze"]={xSplit:0,ySplit:1,topLeftCell:"A2"};
+
+  var sheetName=isClient?"Mis Fallas":"Fallas Unergy";
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+
+  // ── Meta sheet for client: project summary ──
+  if(isClient&&clientProjects.length>0){
+    var sumRows=[["Proyecto","Activas","En Revisión","Programadas","Terminadas","Total"]];
+    clientProjects.forEach(function(p){
+      var pf=list.filter(function(f){return f.proj===p;});
+      sumRows.push([p,
+        pf.filter(function(f){return f.st==="activa";}).length,
+        pf.filter(function(f){return f.st==="revision";}).length,
+        pf.filter(function(f){return f.st==="programada";}).length,
+        pf.filter(function(f){return f.st==="terminada";}).length,
+        pf.length
+      ]);
+    });
+    var ws2=XLSX.utils.aoa_to_sheet(sumRows);
+    ws2["!cols"]=[{wch:30},{wch:10},{wch:12},{wch:13},{wch:12},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,ws2,"Resumen");
+  }
+
+  var fname="Informe_Fallas_Unergy_"+new Date().toISOString().slice(0,10)+".xlsx";
+  XLSX.writeFile(wb,fname);
+  toast("✓ Excel generado: "+list.length+" fallas"+(isClient?" · "+clientProjects.length+" proyecto"+(clientProjects.length!==1?"s":""):""));
 }
+
 function setSync(c,t){document.getElementById("sdot").className="sdot "+c;document.getElementById("stxt").textContent=t;}
 function toast(msg,dur){var t=document.getElementById("toast");t.textContent=msg;t.className="show";setTimeout(function(){t.className="";},dur||3500);}
 function openLb(url){document.getElementById("lb-img").src=url;document.getElementById("lb").className="open";}
@@ -917,13 +1011,17 @@ function uploadPhotos(proj,code,label,dateStr,faultId,photosArr,cb){
 /* ══ RENDER ══ */
 function renderAll(){renderPills();renderBoard();renderSelects();if(curTab==="charts")renderCharts();}
 function renderPills(){
-  var cnt={all:faults.length,activa:0,revision:0,programada:0,terminada:0};
-  faults.forEach(function(f){if(cnt[f.st]!==undefined)cnt[f.st]++;});
+  var base=(userRole==="cliente"&&clientProjects.length>0)
+    ?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;})
+    :faults;
+  var cnt={all:base.length,activa:0,revision:0,programada:0,terminada:0};
+  base.forEach(function(f){if(cnt[f.st]!==undefined)cnt[f.st]++;});
   ["all","activa","revision","programada","terminada"].forEach(function(k){
     var e=document.getElementById("cnt-"+k);if(e)e.textContent=cnt[k]||0;
     var p=document.getElementById("pill-"+k);if(p)p.className="pill"+(filterSt===k?" on":"");
   });
 }
+
 function getFiltered(){
   var q=(document.getElementById("fsearch").value||"").toLowerCase();
   var fp=document.getElementById("fproject").value||"";
@@ -999,7 +1097,7 @@ function renderSelects(){
 
 /* ══ KPIs ══ */
 function renderKPIs(){
-  // Usa la lista FILTRADA para que los KPIs reflejen los filtros activos
+  if(userRole==="cliente"){renderClientKPIs();return;}
   var list=getFiltered();
   var now=new Date(),mS=new Date(now.getFullYear(),now.getMonth(),1),yS=new Date(now.getFullYear(),0,1);
   var act=0,crit=0,rev=0,prog=0,clM=0,clY=0;
@@ -1009,33 +1107,43 @@ function renderKPIs(){
     if(f.st==="programada")prog++;
     if(f.st==="terminada"){
       var s=String(f.endDT||f.creat||"");
-      var m=s.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/)||s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-      if(m){var d=s.match(/^\d{4}/)?new Date(+m[1],+m[2]-1,+m[3]):new Date(+m[3],+m[2]-1,+m[1]);if(d>=mS)clM++;if(d>=yS)clY++;}
+      var mm=s.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/)||s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(mm){var d=s.match(/^\d{4}/)?new Date(+mm[1],+mm[2]-1,+mm[3]):new Date(+mm[3],+mm[2]-1,+mm[1]);if(d>=mS)clM++;if(d>=yS)clY++;}
     }
   });
-  // Indica si hay filtros activos
   var isFiltered=list.length<faults.length;
-  var totalLbl=isFiltered?(list.length+" de "+faults.length):(faults.length+"");
-  var totalSub=isFiltered?"filtradas de "+faults.length+" totales":"total en el sistema";
   function sv(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-  sv("kv-t",totalLbl);sv("ks-t",totalSub);
+  sv("kv-t",isFiltered?(list.length+" de "+faults.length):(faults.length+""));
+  sv("ks-t",isFiltered?"filtradas de "+faults.length+" totales":"total en el sistema");
   sv("kv-c",crit);
   sv("kv-r",rev+prog);sv("ks-r",rev+" revisión · "+prog+" programadas");
   var totalTerm=list.filter(function(f){return f.st==="terminada";}).length;
   sv("kv-m",totalTerm);sv("ks-m",clM+" cerradas este mes");
-  // Highlight KPI cards when filtered
   var kT=document.getElementById("kpi-t");
   if(kT)kT.style.borderColor=isFiltered?"var(--pu)":"var(--br)";
 }
 
-/* ══ CATÁLOGO DE FALLAS DESDE GOOGLE SHEETS ══ */
-var CAT_STYLES={
-  "1":{ico:"📡",col:"#60A5FA"},"2":{ico:"⚡",col:"#F6FF72"},
-  "3":{ico:"🌩️",col:"#FF5757"},"4":{ico:"🔧",col:"#F97316"},
-  "5":{ico:"🏗️",col:"#C47AFF"},"6":{ico:"🦺",col:"#4ADE80"},
-  "7":{ico:"🔋",col:"#7EC8E3"},"8":{ico:"📋",col:"#F4A460"},
-  "9":{ico:"🔌",col:"#FF6B6B"}
-};
+function renderClientKPIs(){
+  var list=getFiltered();
+  var act=0,crit=0,rev=0,prog=0,term=0;
+  list.forEach(function(f){
+    if(f.st==="activa"){act++;if(f.prio==="Alta")crit++;}
+    if(f.st==="revision")rev++;
+    if(f.st==="programada")prog++;
+    if(f.st==="terminada")term++;
+  });
+  function sv(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  sv("ckv-act",act);sv("cks-act",act+" falla"+(act!==1?"s":""));
+  sv("ckv-crit",crit);
+  sv("ckv-rev",rev);sv("cks-rev",rev+" falla"+(rev!==1?"s":""));
+  sv("ckv-prog",prog);
+  sv("ckv-term",term);sv("cks-term",term+" resuelta"+(term!==1?"s":""));
+  // Sync pills counts to client scope
+  function sp(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  sp("cnt-all",list.length);sp("cnt-activa",act);sp("cnt-revision",rev);
+  sp("cnt-programada",prog);sp("cnt-terminada",term);
+}
+
 function buildCatsFromSheets(data){
   // El Sheets solo aporta DESCRIPCIONES y AFECTA — el catálogo base está hardcodeado
   FAULT_DESCS={};FAULT_AFECTA={};
@@ -1104,7 +1212,8 @@ function renderCharts(){renderPie();renderBar();renderImpactChart();}
 function renderImpactChart(){
   var cv=document.getElementById("impC");if(!cv)return;
   var agg={};
-  faults.forEach(function(f){if(f.st==="terminada")return;var imp=getImpStyle(f.code);var k=imp.l;if(!agg[k])agg[k]={l:imp.l,i:imp.i,c:imp.c,v:0};agg[k].v++;});
+  var _if=(userRole==="cliente"&&clientProjects.length>0)?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;}):faults;
+  _if.forEach(function(f){if(f.st==="terminada")return;var imp=getImpStyle(f.code);var k=imp.l;if(!agg[k])agg[k]={l:imp.l,i:imp.i,c:imp.c,v:0};agg[k].v++;});
   var items=Object.values(agg).sort(function(a,b){return b.v-a.v;});
   if(!items.length)return;
   if(impInst)impInst.destroy();
@@ -1114,7 +1223,8 @@ function renderImpactChart(){
 }
 function renderPie(){
   var d={activa:0,revision:0,programada:0,terminada:0};
-  faults.forEach(function(f){if(d[f.st]!==undefined)d[f.st]++;});
+  var _pf=(userRole==="cliente"&&clientProjects.length>0)?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;}):faults;
+  _pf.forEach(function(f){if(d[f.st]!==undefined)d[f.st]++;});
   var lb=["Activas","En Revisión","Programadas","Terminadas"],co=["#FF5757","#F6FF72","#915BD8","#4ADE80"],da=[d.activa,d.revision,d.programada,d.terminada];
   if(pieInst)pieInst.destroy();
   pieInst=new Chart(document.getElementById("pieC").getContext("2d"),{type:"doughnut",data:{labels:lb,datasets:[{data:da,backgroundColor:co.map(function(c){return c+"BB";}),borderColor:co,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:"58%"}});
@@ -1123,7 +1233,8 @@ function renderPie(){
 }
 function renderBar(){
   var fp=document.getElementById("chart-proj").value||"";
-  var src=fp?faults.filter(function(f){return f.proj===fp;}):faults;
+  var _base=(userRole==="cliente"&&clientProjects.length>0)?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;}):faults;
+  var src=fp?_base.filter(function(f){return f.proj===fp;}):_base;
   var map={};src.forEach(function(f){var d=fd(f.code);if(!d)return;var k=f.code+" · "+(d.label.length>28?d.label.slice(0,28)+"…":d.label);map[k]=(map[k]||0)+1;});
   var s=Object.keys(map).map(function(k){return{n:k,v:map[k]};}).sort(function(a,b){return b.v-a.v;}).slice(0,8);
   if(barInst)barInst.destroy();
@@ -1337,10 +1448,45 @@ function submitForm(existingId,existingCreat,existingDrive){
 function openDetail(id){
   var f=faults.find(function(x){return x.id===id;});if(!f)return;
   var fdd=fd(f.code),s=ST[f.st]||ST.activa;
+  var isClient=(userRole==="cliente");
   var resOk=f.res&&f.res.trim()&&f.res.length>3&&!/^\d/.test(f.res)&&!f.res.includes("/")&&!f.res.includes("GMT");
   var endOk=f.endDT&&f.endDT.trim()&&f.endDT!=="—"&&(f.endDT.includes("/")||f.endDT.includes("-")||f.endDT.includes("T"));
   var driveOk=f.driveUrl&&f.driveUrl.startsWith("http");
-  var html=
+  var html;
+
+  if(isClient){
+    var faultName=fdd?(f.code+" · "+fdd.label):(f.code||"Falla registrada");
+    html=
+      '<div style="background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:9px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">'
+      +'<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'
+      +(resOk?'<span class="badge" style="color:#4ADE80;background:#4ADE8018;border-color:#4ADE8040">✓ '+esc(f.res)+'</span>':'')
+      +'</div>'
+      +'<div style="background:#1a1025;border-left:3px solid '+(fdd?fdd.catCol:'#915BD8')+';border-radius:8px;padding:10px 14px;margin-bottom:16px">'
+      +'<div style="font-size:10px;color:var(--mu);font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-bottom:4px">Falla identificada</div>'
+      +'<div style="font-size:14px;font-weight:700;color:var(--cr)">'+esc(faultName)+'</div>'
+      +'</div>'
+      +'<div class="drow"><span class="dlbl">📁 Proyecto</span><span class="dval">'+esc(f.proj)+'</span></div>'
+      +'<div class="drow"><span class="dlbl">📅 Identificación</span><span class="dval">'+fmtD(f.date)+(f.time&&f.time.trim()?" — "+padT(f.time):"")+'</span></div>'
+      +'<div class="drow"><span class="dlbl">⏱ Ocurrencia</span><span class="dval">'+(f.occ&&f.occ.trim()&&f.occ!=="—"?fmtDT(f.occ):"—")+'</span></div>'
+      +(endOk
+        ?'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:#4ADE80;font-weight:700">'+fmtDT(f.endDT)+'</span></div>'
+        :'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:var(--fa)">Pendiente</span></div>');
+    if(driveOk)
+      html+='<div style="margin:14px 0"><a href="'+esc(f.driveUrl)+'" target="_blank" style="display:flex;align-items:center;gap:10px;background:#0d1b2a;border:1.5px solid #378ADD;border-radius:10px;padding:12px 16px;color:#60A5FA;font-weight:700;font-size:13px;text-decoration:none">'
+        +'<span style="font-size:22px">🖼️</span>'
+        +'<div><div style="font-size:14px;font-weight:700;color:#60A5FA">Abrir fotos de la falla</div>'+'<div style="font-size:11px;opacity:.7;margin-top:3px">Haz clic para ver las fotos en Google Drive → '+esc(f.proj)+'</div></div>'
+        +'<span style="margin-left:auto;font-size:20px">📸</span></a></div>';
+    else
+      html+='<div class="drow"><span class="dlbl">📷 Fotos</span><span class="dval" style="color:var(--fa)">Sin fotos registradas</span></div>';
+    if(f.desc&&f.desc.trim())html+='<div class="slbl">📋 Descripción</div><div class="tblock">'+esc(f.desc)+'</div>';
+    if(f.flw&&f.flw.trim()&&f.flw!=="—")html+='<div class="slbl">📝 Seguimiento</div><div class="tblock">'+esc(f.flw)+'</div>';
+    if(resOk)html+='<div class="slbl">🔧 Solución aplicada</div><div class="tblock">'+esc(f.res)+'</div>';
+    html+='<div class="mactions"></div>';
+    openModal("Detalle de Falla",html);
+    return;
+  }
+
+  html=
     '<div style="background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:9px;padding:11px 15px;margin-bottom:16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">'+
     '<span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:'+s.col+';font-weight:800">'+esc(f.id)+'</span>'+
     '<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'+
@@ -1364,8 +1510,8 @@ function openDetail(id){
   if(driveOk)html+=
     '<a href="'+esc(f.driveUrl)+'" target="_blank" class="drive-btn">'+
     '<span class="icon">📁</span>'+
-    '<div><div style="font-size:13px">Abrir carpeta de fotos en Google Drive</div>'+
-    '<div style="font-size:10px;opacity:.6;margin-top:2px">Carpeta del proyecto: '+esc(f.proj)+'</div></div>'+
+    '<div><div style="font-size:13px">Abrir carpeta en Google Drive</div>'+
+    '<div style="font-size:10px;opacity:.6;margin-top:2px">Proyecto: '+esc(f.proj)+'</div></div>'+
     '<span style="margin-left:auto;font-size:16px">↗</span></a>';
   if(f.desc&&f.desc.trim())html+='<div class="slbl">📋 Descripción</div><div class="tblock">'+esc(f.desc)+'</div>';
   if(f.flw&&f.flw.trim()&&f.flw!=="—")html+='<div class="slbl">📝 Seguimiento</div><div class="tblock">'+esc(f.flw)+'</div>';
@@ -1374,12 +1520,13 @@ function openDetail(id){
     f.photos.forEach(function(p){html+='<div class="pthumb"><img src="'+p.url+'" data-url="'+p.url+'" style="cursor:zoom-in"/></div>';});
     html+='</div>';
   }
-  html+='<div class="mactions">'+(userRole==="monitor"?'<button class="btn btn-re" id="det-del">🗑 Eliminar</button><button class="btn btn-pu" id="det-edit">✏️ Editar</button>':'')+'</div>';
+  html+='<div class="mactions"><button class="btn btn-re" id="det-del">🗑 Eliminar</button><button class="btn btn-pu" id="det-edit">✏️ Editar</button></div>';
   openModal("Detalle de Falla",html);
   var _ddel=document.getElementById("det-del");if(_ddel)_ddel.addEventListener("click",function(){confirmDel(id);});
   var _dedit=document.getElementById("det-edit");if(_dedit)_dedit.addEventListener("click",function(){closeModal();openEditFault(id);});
   var dp=document.getElementById("dp");if(dp)dp.querySelectorAll("img").forEach(function(img){img.addEventListener("click",function(){openLb(this.dataset.url);});});
 }
+
 function confirmDel(id){
   if(!confirm("¿Eliminar esta falla? No se puede deshacer."))return;
   faults=faults.filter(function(f){return f.id!==id;});
