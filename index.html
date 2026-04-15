@@ -1646,38 +1646,33 @@ var genData=null;
 var genProjects=[];
 
 function loadGenProjects(){
-  if(genProjects.length>0)return;
   apiGet({action:"getProjects"},10000).then(function(r){
     if(!r||!r.ok)return;
+    var allProjs=r.projects||[];
     var projs;
     if(userRole==="cliente"&&clientProjects.length>0){
-      projs=r.projects.filter(function(p){
+      projs=allProjs.filter(function(p){
+        var nc=(p.nombre_clientes||"").trim();
+        var nb=(p.nombre_bitacora||"").trim();
+        var nd=(p.nombre_display||"").trim();
         return clientProjects.some(function(cp){
-          var cpL=cp.toLowerCase().trim();
-          // Check all 4 name fields
-          var fields=[
-            (p.nombre_clientes||"").toLowerCase().trim(),
-            (p.nombre_bitacora||"").toLowerCase().trim(),
-            (p.nombre_display||"").toLowerCase().trim(),
-            (p.sub_project||"").toLowerCase().trim()
-          ];
-          if(fields.indexOf(cpL)>=0)return true;
-          // Remove "MGS/MSG " prefix from all
-          var strip=function(s){return s.replace(/^m[gs]+\.?s?\.?\s+/,"").trim();};
-          var cpS=strip(cpL);
-          return fields.some(function(f){return strip(f)===cpS||f.indexOf(cpS)>=0||cpS.indexOf(strip(f))>=0;});
+          cp=cp.trim();
+          return cp===nc||cp===nb||cp===nd;
         });
       });
+      // Debug: log what matched
+      console.log("clientProjects:",clientProjects);
+      console.log("genProjects after filter:",projs.map(function(p){return p.nombre_clientes;}));
     } else {
-      projs=r.projects;
+      projs=allProjs;
     }
     genProjects=projs;
     var sel=document.getElementById("gen-proj");if(!sel)return;
     sel.innerHTML='<option value="">Selecciona proyecto…</option>';
     projs.forEach(function(p){
-      sel.innerHTML+='<option value="'+esc(p.sub_project)+'">'+esc(p.nombre_display)+'</option>';
+      sel.innerHTML+='<option value="'+esc(p.sub_project)+'">'+esc(p.nombre_clientes||p.nombre_display)+'</option>';
     });
-  }).catch(function(){});
+  }).catch(function(e){console.error("loadGenProjects error:",e);});
 }
 
 function getGenDateRange(){
@@ -1909,6 +1904,17 @@ document.addEventListener("DOMContentLoaded",function(){
     document.getElementById("frow").style.display="none";
     document.getElementById("charts").style.display="none";
     document.getElementById("gen-panel").style.display="block";
+    // Si el cliente tiene muy pocos proyectos en sesión, puede ser sesión vieja
+    if(userRole==="cliente"&&clientProjects.length<=1){
+      toast("🔄 Actualizando tus proyectos… por favor espera",3000);
+      // Force re-verify via code (only if session is client)
+      clearSession();
+      document.getElementById("gen-panel").style.display="none";
+      document.getElementById("login-ov").className="open";
+      showLoginStep("email");
+      setTimeout(function(){var el=document.getElementById("li-email");if(el){el.value=cData.email||"";el.focus();}},200);
+      return;
+    }
     loadGenProjects();
   });
   document.getElementById("tab-board").addEventListener("click",function(){
