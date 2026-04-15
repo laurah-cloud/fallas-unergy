@@ -214,7 +214,10 @@ body.client-mode #kpis{display:none!important}
 body.client-mode #kpis-client{display:grid!important}
 /* ── Date calendar icon ── */
 input[type=date].fi{cursor:pointer;color-scheme:dark}
-input[type=date].fi::-webkit-calendar-picker-indicator{filter:invert(.8);opacity:.7;cursor:pointer;margin-left:4px}
+input[type=date].fi::-webkit-calendar-picker-indicator{
+  filter:invert(1) brightness(1.5);opacity:.85;cursor:pointer;
+  margin-left:4px;padding:2px;border-radius:3px}
+input[type=date].fi::-webkit-calendar-picker-indicator:hover{opacity:1}
 @media(max-width:1100px){#kpis-client{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){#kpis-client{grid-template-columns:1fr 1fr}}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
@@ -592,16 +595,17 @@ function isMonitorEmail(email){
 function applyRole(){
   if(userRole==="cliente"){
     document.body.classList.add("client-mode");
-    // Badge en topbar
-    var cb=document.getElementById("clbl");
-    if(cb)cb.textContent=cData.email;
+    var cb=document.getElementById("clbl");if(cb)cb.textContent=cData.email;
     var badge=document.getElementById("client-badge-lbl");
     if(badge){badge.textContent="👁 Cliente";badge.style.display="inline-flex";}
+    var btnE=document.getElementById("btn-export");
+    if(btnE){btnE.textContent="⬇ Excel";btnE.title="Descargar informe Excel";}
   } else {
     document.body.classList.remove("client-mode");
     updC();
-    var badge2=document.getElementById("client-badge-lbl");
-    if(badge2)badge2.style.display="none";
+    var badge2=document.getElementById("client-badge-lbl");if(badge2)badge2.style.display="none";
+    var btnE2=document.getElementById("btn-export");
+    if(btnE2){btnE2.textContent="⬇ Excel";btnE2.title="Descargar informe Excel";}
   }
 }
 /* ── Legacy compat ── */
@@ -672,6 +676,7 @@ function loginCodeGo(){
   apiGet({action:"verifyCode",email:pendingEmail,code:code},15000).then(function(r){
     if(r&&r.ok){
       var projs=r.projects||[];
+      console.log("Cliente verificado. Proyectos:",projs);
       saveSession("cliente",pendingEmail,"",projs);
       document.getElementById("login-ov").className="";
       applyRole();
@@ -679,6 +684,7 @@ function loginCodeGo(){
         toast("⚠ Tu cuenta no tiene proyectos asignados. Contacta al administrador.",6000);
         hideLoader();renderAll();
       } else {
+        toast("✓ Acceso concedido · "+projs.length+" proyecto"+(projs.length!==1?"s":""),3000);
         loadFaults();
       }
     } else {
