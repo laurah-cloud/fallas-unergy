@@ -343,11 +343,8 @@ body.light #kpis-client .kpi{background:var(--s1)}
     <div class="chart-card"><div class="chart-hd"><div><div class="chart-title">Fallas más Frecuentes</div><div class="chart-sub">Top 8 por ocurrencias</div></div><select class="fi" style="width:170px;font-size:11px;padding:5px 8px" id="chart-proj"><option value="">Todos los proyectos</option></select></div><div class="chart-wrap"><canvas id="barC"></canvas></div></div>
     <div class="chart-card chart-full"><div class="chart-title">Fallas por Área de Impacto</div><div class="chart-sub" style="font-size:11px;color:var(--fa);margin-bottom:13px">Fallas abiertas por categoría de impacto</div><div style="position:relative;height:200px"><canvas id="impC"></canvas></div><div class="legend" id="imp-leg" style="display:flex;flex-wrap:wrap;gap:9px;margin-top:11px"></div></div>
   </div>
-</div>
-<button id="fab">+</button>
-<div id="toast"></div>
-<div id="lb"><img id="lb-img" src="" alt=""/>
-</div>
+
+
   <div id="gen-panel" style="display:none">
     <div id="gen-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
       <div class="kpi"><div class="kpi-ico">☀️</div><div class="kpi-val" id="gkv-hoy">—</div><div class="kpi-lbl">Generación Ayer</div><div class="kpi-sub" id="gks-hoy">kWh</div></div>
@@ -390,6 +387,11 @@ body.light #kpis-client .kpi{background:var(--s1)}
       <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
     </div>
   </div>
+</div>
+<button id="fab">+</button>
+<div id="toast"></div>
+<div id="lb"><img id="lb-img" src="" alt=""/>
+</div>
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
