@@ -381,7 +381,7 @@ body.light #kpis-client .kpi{background:var(--s1)}
     <div style="position:relative;height:280px"><canvas id="genC"></canvas></div>
   </div>
   <div id="gen-faults-box" style="display:none">
-    <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período</div>
+    <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período <span id="gen-faults-count" style="font-size:12px;color:var(--fa);font-weight:400"></span></div>
     <div id="gen-faults-list"></div>
   </div>
   <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
@@ -1837,15 +1837,41 @@ function renderGenChart(r,subProj,range){
       interaction:{mode:"index",intersect:false},
       plugins:{
         legend:{display:false},
-        tooltip:{callbacks:{
-          title:function(items){
-            var d=items[0].label;
-            return d+(faultDays[d]?" ⚡ "+faultDays[d].length+" falla(s)":"");
-          },
-          label:function(item){
-            return item.dataset.label+": "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+        tooltip:{
+          backgroundColor:"#1E1529",
+          borderColor:"#4A3560",
+          borderWidth:1,
+          padding:12,
+          titleColor:"#FDFAF7",
+          bodyColor:"#A89EC0",
+          callbacks:{
+            title:function(items){
+              var d=items[0].label;
+              var fs=faultDays[d];
+              if(fs&&fs.length){
+                return d+" · ⚡ "+fs.length+" falla"+(fs.length>1?"s":"")+" activa"+(fs.length>1?"s":"");
+              }
+              return d;
+            },
+            label:function(item){
+              if(item.dataset.type==="line")return "  P90 esperado: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+              return "  Generación real: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
+            },
+            afterBody:function(items){
+              var d=items[0].label;
+              var fs=faultDays[d];
+              if(!fs||!fs.length)return [];
+              var lines=[""];
+              fs.forEach(function(f){
+                var fdd=fd(f.code);
+                var s=ST[f.st]||ST.activa;
+                lines.push("  "+s.ico+" ["+f.code+"] "+(fdd?fdd.label:f.faultLabel||f.code));
+                lines.push("     Estado: "+s.lbl+(f.prio?" · Prioridad: "+f.prio:""));
+              });
+              return lines;
+            }
           }
-        }}
+        }
       },
       scales:{
         x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},
@@ -1859,27 +1885,73 @@ function renderGenChart(r,subProj,range){
 
   // ── Faults list below chart ──
   var faultList=Object.keys(faultDays).sort();
-  if(faultList.length>0){
-    var box=document.getElementById("gen-faults-box");
-    var list=document.getElementById("gen-faults-list");
-    if(box&&list){
-      box.style.display="block";
-      var html="";
-      faultList.forEach(function(day){
-        faultDays[day].forEach(function(f){
-          var fdd=fd(f.code);var s=ST[f.st]||ST.activa;
-          html+='<div class="card" style="margin-bottom:8px;cursor:pointer" onclick="openDetail(\''+esc(f.id)+'\')">'+
-            '<div style="display:flex;justify-content:space-between;align-items:center">'+
-            '<span style="font-size:11px;color:var(--fa)">📅 '+day+'</span>'+
-            '<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>'+
-            '</div>'+
-            '<div style="font-size:13px;font-weight:700;color:var(--cr);margin:4px 0">'+(fdd?f.code+' · '+fdd.label:f.code)+'</div>'+
-            '<div style="font-size:11px;color:var(--mu)">'+esc(f.proj)+'</div>'+
-            '</div>';
-        });
+  var box=document.getElementById("gen-faults-box");
+  var list=document.getElementById("gen-faults-list");
+  if(faultList.length>0&&box&&list){
+    box.style.display="block";
+    var cntEl=document.getElementById("gen-faults-count");
+    if(cntEl){var totalF=faultList.reduce(function(a,d){return a+faultDays[d].length;},0);cntEl.textContent="· "+totalF+" falla"+(totalF!==1?"s":"")+" en "+faultList.length+" día"+(faultList.length!==1?"s":"");}
+    var html='<div style="display:flex;flex-direction:column;gap:10px">';
+    faultList.forEach(function(day){
+      var dayFaults=faultDays[day];
+      // Header del día
+      var dayKwh=Math.round(dayMap[day]||0);
+      var p90ref=p90daily?Math.round(p90daily):null;
+      var pctDay=p90ref&&p90ref>0?Math.round((dayKwh/p90ref)*100):null;
+      var pctCol=pctDay!==null?(pctDay>=100?"#4ADE80":pctDay>=80?"#F6FF72":"#FF5757"):"#A89EC0";
+      html+='<div style="background:var(--s1);border:1px solid var(--br);border-left:3px solid #FF5757;border-radius:10px;overflow:hidden;">';
+      // Día header
+      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#FF575710;border-bottom:1px solid var(--br)">';
+      html+='<div style="display:flex;align-items:center;gap:9px">';
+      html+='<div style="background:#FF5757;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;color:#fff">⚡ '+dayFaults.length+' falla'+(dayFaults.length>1?'s':'')+'</div>';
+      html+='<span style="font-size:12px;font-weight:700;color:var(--cr)">📅 '+day+'</span>';
+      html+='</div>';
+      html+='<div style="display:flex;align-items:center;gap:12px">';
+      html+='<span style="font-size:11px;color:var(--mu)">Generado: <b style="color:var(--cr)">'+dayKwh.toLocaleString("es-CO")+'</b> kWh</span>';
+      if(pctDay!==null){
+        html+='<span style="font-size:11px;font-weight:800;color:'+pctCol+'">'+pctDay+'% P90</span>';
+      }
+      html+='</div>';
+      html+='</div>';
+      // Fallas del día
+      html+='<div style="padding:8px 14px;display:flex;flex-direction:column;gap:7px">';
+      dayFaults.forEach(function(f){
+        var fdd=fd(f.code);
+        var s=ST[f.st]||ST.activa;
+        var catStyle=getImpStyle(f.code);
+        html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border-radius:8px;cursor:pointer;border:1px solid var(--br);transition:border-color .2s" onclick="openDetail(\''+esc(f.id)+'\')" onmouseover="this.style.borderColor=\'#915BD8\'" onmouseout="this.style.borderColor=\'\'  ">';
+        // Ícono categoría
+        html+='<div style="width:34px;height:34px;border-radius:8px;background:'+catStyle.col+'22;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">'+catStyle.ico+'</div>';
+        // Info principal
+        html+='<div style="flex:1;min-width:0">';
+        html+='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">';
+        html+='<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--pu)">'+esc(f.code)+'</span>';
+        html+='<span style="font-size:12px;font-weight:700;color:var(--cr)">'+esc(fdd?fdd.label:(f.faultLabel||f.code))+'</span>';
+        html+='</div>';
+        html+='<div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;align-items:center">';
+        html+='<span style="font-size:10px;color:var(--fa)">'+esc(f.proj)+'</span>';
+        if(f.time){html+='<span style="font-size:10px;color:var(--fa)">· '+esc(f.time)+' h</span>';}
+        if(f.centinela){html+='<span style="font-size:10px;color:var(--fa)">· 👤 '+esc(f.centinela.split(" ").slice(0,2).join(" "))+'</span>';}
+        html+='</div>';
+        html+='</div>';
+        // Estado + prioridad
+        html+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">';
+        html+='<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>';
+        if(f.prio){
+          var prioCol=f.prio==="Alta"?"#FF5757":f.prio==="Media"?"#F6FF72":"#A89EC0";
+          html+='<span style="font-size:9px;font-weight:800;color:'+prioCol+'">▲ '+esc(f.prio)+'</span>';
+        }
+        html+='</div>';
+        html+='<div style="font-size:16px;color:var(--fa);flex-shrink:0">›</div>';
+        html+='</div>';
       });
-      list.innerHTML=html;
-    }
+      html+='</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+    list.innerHTML=html;
+  } else if(box){
+    box.style.display="none";
   }
 }
 
