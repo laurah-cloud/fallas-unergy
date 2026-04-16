@@ -344,50 +344,52 @@ body.light #kpis-client .kpi{background:var(--s1)}
 </div>
 <button id="fab">+</button>
 <div id="toast"></div>
-<div id="lb"><img id="lb-img" src="" alt=""/>
-  <div id="gen-panel" style="display:none;padding:0">
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
-      <div class="kpi"><div class="kpi-ico">☀️</div><div class="kpi-val" id="gkv-hoy">—</div><div class="kpi-lbl">Generación Ayer</div><div class="kpi-sub" id="gks-hoy">kWh</div></div>
-      <div class="kpi kgr"><div class="kpi-ico">📊</div><div class="kpi-val" id="gkv-pct">—</div><div class="kpi-lbl">% vs P90 Esperado</div><div class="kpi-sub" id="gks-pct">—</div></div>
-      <div class="kpi kye"><div class="kpi-ico">📅</div><div class="kpi-val" id="gkv-mes">—</div><div class="kpi-lbl">Generación del Mes</div><div class="kpi-sub" id="gks-mes">kWh</div></div>
-      <div class="kpi" style="border-color:#915BD840"><div class="kpi-ico">🎯</div><div class="kpi-val" id="gkv-sim">—</div><div class="kpi-lbl">P90 Mensual</div><div class="kpi-sub" id="gks-sim">simulado</div></div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
-      <select class="fi fsel" id="gen-proj" style="min-width:200px"><option value="">Selecciona proyecto…</option></select>
-      <select class="fi fsel" id="gen-period" style="width:160px">
-        <option value="month">Este mes</option>
-        <option value="yesterday">Ayer</option>
-        <option value="week">Última semana</option>
-        <option value="custom">Personalizado</option>
-      </select>
-      <input type="date" class="fi fdate" id="gen-from" style="display:none"/>
-      <input type="date" class="fi fdate" id="gen-to" style="display:none"/>
-      <button class="btn btn-pu" id="gen-load" style="padding:7px 18px;font-size:13px">Consultar ↻</button>
-    </div>
-    <div class="chart-card" style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-        <div>
-          <div class="chart-title">Generación Diaria vs Simulación P90</div>
-          <div style="font-size:11px;color:var(--fa);margin-top:2px">kWh por día · barras = real · línea = P90 esperado</div>
-        </div>
-        <div style="display:flex;gap:12px;font-size:11px;color:var(--mu);flex-shrink:0">
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#915BD8;border-radius:3px"></div>Real</div>
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:20px;height:2px;background:#F6FF72;border-radius:2px;margin:5px 0"></div>P90</div>
-          <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#FF575760;border-radius:2px"></div>Falla</div>
-        </div>
+<div id="lb"><img id="lb-img" src="" alt=""/></div>
+
+<!-- ══ GEN PANEL — outside #lb, inside #app flow ══ -->
+<div id="gen-panel" style="display:none;max-width:1380px;margin:0 auto;padding:0 16px 90px">
+  <div id="gen-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
+    <div class="kpi"><div class="kpi-ico">☀️</div><div class="kpi-val" id="gkv-hoy">—</div><div class="kpi-lbl">Generación Ayer</div><div class="kpi-sub" id="gks-hoy">kWh generados ayer</div></div>
+    <div class="kpi kgr"><div class="kpi-ico">📊</div><div class="kpi-val" id="gkv-pct">—</div><div class="kpi-lbl">% vs P90 Mes</div><div class="kpi-sub" id="gks-pct">—</div></div>
+    <div class="kpi kye"><div class="kpi-ico">📅</div><div class="kpi-val" id="gkv-mes">—</div><div class="kpi-lbl">Generación del Mes</div><div class="kpi-sub" id="gks-mes">kWh en el período</div></div>
+    <div class="kpi" style="border-color:#915BD840"><div class="kpi-ico">🎯</div><div class="kpi-val" id="gkv-sim">—</div><div class="kpi-lbl">P90 Mensual</div><div class="kpi-sub" id="gks-sim">kWh P90 mensual esperado</div></div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+    <select class="fi fsel" id="gen-proj" style="min-width:200px"><option value="">Selecciona proyecto…</option></select>
+    <select class="fi fsel" id="gen-period" style="width:160px">
+      <option value="month">Este mes</option>
+      <option value="yesterday">Ayer</option>
+      <option value="week">Última semana</option>
+      <option value="custom">Personalizado</option>
+    </select>
+    <input type="date" class="fi fdate" id="gen-from" style="display:none"/>
+    <input type="date" class="fi fdate" id="gen-to" style="display:none"/>
+    <button class="btn btn-pu" id="gen-load" style="padding:7px 18px;font-size:13px">Consultar ↻</button>
+  </div>
+  <div class="chart-card" id="gen-chart-card" style="margin-bottom:16px;display:none">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div>
+        <div class="chart-title">Generación Diaria vs Simulación P90</div>
+        <div style="font-size:11px;color:var(--fa);margin-top:2px">kWh por día · barras = real · línea = P90 esperado</div>
       </div>
-      <div style="position:relative;height:280px"><canvas id="genC"></canvas></div>
+      <div style="display:flex;gap:12px;font-size:11px;color:var(--mu);flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#915BD8;border-radius:3px"></div>Real</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:20px;height:2px;background:#F6FF72;border-radius:2px;margin:5px 0"></div>P90</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:#FF575760;border-radius:2px"></div>Falla</div>
+      </div>
     </div>
-    <div id="gen-faults-box" style="display:none">
-      <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período</div>
-      <div id="gen-faults-list"></div>
-    </div>
-    <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
-      <div style="font-size:32px;margin-bottom:12px">☀️</div>
-      <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
-    </div>
+    <div style="position:relative;height:280px"><canvas id="genC"></canvas></div>
+  </div>
+  <div id="gen-faults-box" style="display:none">
+    <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período</div>
+    <div id="gen-faults-list"></div>
+  </div>
+  <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
+    <div style="font-size:32px;margin-bottom:12px">☀️</div>
+    <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
   </div>
 </div>
+
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
@@ -1718,7 +1720,7 @@ function loadGeneracion(){
 function renderGenChart(r,subProj,range){
   var data=r.data||[];
   // Hide chart card, show empty state
-  var chartCard=document.querySelector("#gen-panel .chart-card");
+  var chartCard=document.getElementById("gen-chart-card");
   if(!data.length){
     if(chartCard)chartCard.style.display="none";
     var emptyEl=document.getElementById("gen-empty");
@@ -1915,16 +1917,14 @@ document.addEventListener("DOMContentLoaded",function(){
       if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }
     } else { openSetup(true); }
   });
-  document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";});
-  document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";renderCharts();});
+  document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";});
+  document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";renderCharts();});
   var _tg=document.getElementById("tab-gen");
   if(_tg)_tg.addEventListener("click",function(){
     curTab="gen";
     document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
     this.className="tab on";
-    document.getElementById("board-panel").style.display="none";
-    document.getElementById("frow").style.display="none";
-    document.getElementById("charts").style.display="none";
+    document.getElementById("app").style.display="none";
     document.getElementById("gen-panel").style.display="block";
     loadGenProjects();
   });
