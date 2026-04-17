@@ -129,7 +129,7 @@ input[type=datetime-local]{color-scheme:dark}::placeholder{color:var(--fa)}
 #lb{display:none;position:fixed;inset:0;background:#000000ee;z-index:1000;align-items:center;justify-content:center;cursor:zoom-out}
 #lb.open{display:flex}
 #lb img{max-width:92vw;max-height:92vh;border-radius:11px}
-#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:800}
+#loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500}
 .licon{width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,var(--pu),var(--ye));display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;animation:pu 2s infinite}
 .ltitle{font-size:22px;font-weight:800;margin-bottom:4px}.ltitle span{color:var(--ye)}
 .lsub{font-size:13px;color:var(--mu)}
@@ -792,14 +792,16 @@ function loginEmailGo(){
   err.textContent="";
   pendingEmail=email;
   if(isMonitorEmail(email)){
-    // Monitor: pedir nombre
+    // Monitor Unergy: pedir nombre directamente, sin llamada al servidor
     var li=document.getElementById("li-name");if(li)li.value="";
+    // Limpiar sesión anterior si existe
+    try{localStorage.removeItem("unergy_session");}catch(e){}
     showLoginStep("name");
     setTimeout(function(){var el=document.getElementById("li-name");if(el)el.focus();},80);
   } else {
-    // Cliente: enviar código
+    // Cliente: enviar código por servidor
     showLoginStep("loading");
-    apiGet({action:"sendCode",email:email},15000).then(function(r){
+    apiGet({action:"sendCode",email:email},20000).then(function(r){
       if(r&&r.ok){
         var em=document.getElementById("ls-code-em");if(em)em.textContent=email;
         var ci=document.getElementById("li-code");if(ci)ci.value="";
@@ -809,12 +811,15 @@ function loginEmailGo(){
       } else {
         showLoginStep("email");
         var err2=document.getElementById("li-email-err");
-        if(err2)err2.textContent="⚠ "+(r&&r.error?"No se pudo enviar el código. Verifica que tu correo esté registrado.":"Error al enviar código");
+        if(err2)err2.textContent="⚠ Correo no registrado como cliente. Contacta al administrador.";
       }
-    }).catch(function(){
+    }).catch(function(e){
       showLoginStep("email");
       var err3=document.getElementById("li-email-err");
-      if(err3)err3.textContent="⚠ Sin conexión. Intenta de nuevo.";
+      var isTimeout=(e&&e.message==="timeout");
+      if(err3)err3.textContent=isTimeout
+        ?"⚠ El servidor tardó demasiado. Verifica tu conexión e intenta de nuevo."
+        :"⚠ Sin conexión con el servidor. Intenta de nuevo.";
     });
   }
 }
@@ -1754,7 +1759,6 @@ function loadGenProjects(){
       console.log("clientProjects:",clientProjects);
       console.log("genProjects after filter:",projs.map(function(p){return p.nombre_clientes;}));
     } else {
-    } else {
       projs=allProjs;
     }
     genProjects=projs;
@@ -2560,9 +2564,12 @@ document.addEventListener("DOMContentLoaded",function(){
     document.getElementById("login-ov").className="";
     loadFaults();
   } else {
-    hideLoader();
+    // Ocultar loader inmediatamente y mostrar login
+    document.getElementById("loader").style.display="none";
     showLoginStep("email");
     document.getElementById("login-ov").className="open";
+    var btnGo=document.getElementById("li-email-go");
+    if(btnGo)btnGo.disabled=false;
     setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
   }
   setInterval(function(){if(userRole!=="none")loadFaults();},60000);
