@@ -1742,17 +1742,18 @@ function loadGenProjects(){
     var projs;
     if(userRole==="cliente"&&clientProjects.length>0){
       projs=allProjs.filter(function(p){
-        var nc=(p.nombre_clientes||"").trim();
-        var nb=(p.nombre_bitacora||"").trim();
-        var nd=(p.nombre_display||"").trim();
+        var nc=(p.nombre_clientes||"").trim().toLowerCase();
+        var nb=(p.nombre_bitacora||"").trim().toLowerCase();
+        var nd=(p.nombre_display||"").trim().toLowerCase();
+        var sp=(p.sub_project||"").trim().toLowerCase();
         return clientProjects.some(function(cp){
-          cp=cp.trim();
-          return cp===nc||cp===nb||cp===nd;
+          cp=cp.trim().toLowerCase();
+          return cp===nc||cp===nb||cp===nd||cp===sp;
         });
       });
-      // Debug: log what matched
       console.log("clientProjects:",clientProjects);
       console.log("genProjects after filter:",projs.map(function(p){return p.nombre_clientes;}));
+    } else {
     } else {
       projs=allProjs;
     }
@@ -2120,12 +2121,14 @@ function loadPortfolio() {
     });
     if (found) {
       // Client access check: if client, they must have this project in their list
+      // Client access check: if client, they must have this project in their list
       if (userRole === "cliente" && clientProjects.length > 0) {
         var has = clientProjects.some(function(cp){
-          cp = cp.trim();
-          return cp === (found.nombre_clientes||"").trim() ||
-                 cp === (found.nombre_bitacora||"").trim() ||
-                 cp === (found.nombre_display||"").trim();
+          cp = cp.trim().toLowerCase();
+          return cp === (found.nombre_clientes||"").trim().toLowerCase() ||
+                 cp === (found.nombre_bitacora||"").trim().toLowerCase() ||
+                 cp === (found.nombre_display||"").trim().toLowerCase() ||
+                 cp === (found.sub_project||"").trim().toLowerCase();
         });
         if (!has) return;
       }
