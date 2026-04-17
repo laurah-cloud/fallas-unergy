@@ -303,7 +303,7 @@ body.light #kpis-client .kpi{background:var(--s1)}
 <div id="topbar">
   <div class="logo"><div class="logo-icon">☀️</div><div><div class="logo-brand">Unergy <span style="color:var(--mu);font-weight:600;font-size:12px">· Fallas</span></div><div class="sync-row"><span class="sdot" id="sdot"></span><span id="stxt">Cargando…</span></div></div></div>
   <div class="tabs"><button class="tab on" id="tab-board">⊞ Tablero</button><button class="tab" id="tab-charts">📊 Gráficos</button>
-    <button class="tab" id="tab-gen">☀️ Generación</button></div>
+    <button class="tab" id="tab-gen">☀️ Generación</button><button class="tab" id="tab-port">🗂 Portafolio</button></div>
   <div class="acts">
     <button class="cbadge hmob" id="cbtn"><span style="width:7px;height:7px;border-radius:50%;background:var(--gr);display:block"></span><span id="clbl">…</span></button>
     <span class="client-badge" id="client-badge-lbl" style="display:none">👁 Cliente</span>
@@ -387,6 +387,99 @@ body.light #kpis-client .kpi{background:var(--s1)}
   <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
     <div style="font-size:32px;margin-bottom:12px">☀️</div>
     <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
+  </div>
+</div>
+
+<!-- ══ PORTFOLIO PANEL ══ -->
+<div id="port-panel" style="display:none;max-width:1380px;margin:0 auto;padding:0 16px 90px">
+
+  <!-- Header & filters -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <div>
+      <div style="font-size:22px;font-weight:800;color:var(--cr);letter-spacing:-.3px">Portafolio <span style="color:var(--pu)" id="port-name-title"></span></div>
+      <div style="font-size:12px;color:var(--fa);margin-top:3px" id="port-period-lbl">Selecciona portafolio y período</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select class="fi" id="port-sel" style="min-width:200px;font-size:13px"><option value="">Selecciona portafolio…</option></select>
+      <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
+        <button class="port-period-btn on" data-p="week" style="padding:7px 13px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">Semana</button>
+        <button class="port-period-btn" data-p="yesterday" style="padding:7px 13px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Ayer</button>
+        <button class="port-period-btn" data-p="month" style="padding:7px 13px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Mes</button>
+        <button class="port-period-btn" data-p="custom" style="padding:7px 13px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Personalizado</button>
+      </div>
+      <input type="date" class="fi fdate" id="port-from" style="display:none"/>
+      <input type="date" class="fi fdate" id="port-to" style="display:none"/>
+      <button class="btn btn-pu" id="port-load" style="padding:7px 18px;font-size:13px">Consultar ↻</button>
+    </div>
+  </div>
+
+  <!-- KPIs portafolio -->
+  <div id="port-kpis" style="display:none;gap:12px;margin-bottom:20px">
+    <div class="kpi kgr">
+      <div class="kpi-ico">⚡</div>
+      <div class="kpi-val" id="pkv-total" style="font-size:26px">—</div>
+      <div class="kpi-lbl">Generación Total</div>
+      <div class="kpi-sub" id="pks-total">kWh en el período</div>
+    </div>
+    <div class="kpi" style="border-color:#915BD840">
+      <div class="kpi-ico">🏭</div>
+      <div class="kpi-val" id="pkv-projs" style="font-size:26px">—</div>
+      <div class="kpi-lbl">Proyectos Activos</div>
+      <div class="kpi-sub">con datos en el período</div>
+    </div>
+    <div class="kpi kye">
+      <div class="kpi-ico">📈</div>
+      <div class="kpi-val" id="pkv-avg" style="font-size:26px">—</div>
+      <div class="kpi-lbl">Promedio Diario</div>
+      <div class="kpi-sub">kWh/día portafolio total</div>
+    </div>
+  </div>
+
+  <!-- Toggle chart view -->
+  <div id="port-chart-section" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+      <div>
+        <div class="chart-title" id="port-chart-title">Generación por día — Portafolio</div>
+        <div style="font-size:11px;color:var(--fa);margin-top:2px" id="port-chart-sub">kWh acumulado del portafolio</div>
+      </div>
+      <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
+        <button id="port-view-stacked" class="port-view-btn on" style="padding:6px 13px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer">Apilado</button>
+        <button id="port-view-separate" class="port-view-btn" style="padding:6px 13px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer">Separado</button>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div id="port-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+
+    <div class="chart-card" style="margin-bottom:20px">
+      <div style="position:relative;height:300px"><canvas id="portC"></canvas></div>
+    </div>
+
+    <!-- Ranking table -->
+    <div class="chart-card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div class="chart-title">Ranking de Proyectos</div>
+          <div style="font-size:11px;color:var(--fa);margin-top:2px">Generación por proyecto · período seleccionado</div>
+        </div>
+        <div style="font-size:11px;color:var(--fa)" id="port-rank-period"></div>
+      </div>
+      <div id="port-rank-table" style="padding:8px 0"></div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div id="port-empty" style="text-align:center;padding:60px 20px;color:var(--fa);font-size:13px">
+    <div style="font-size:40px;margin-bottom:14px">🗂</div>
+    <div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Selecciona un portafolio</div>
+    <div>Elige el portafolio y el período, luego haz clic en <b style="color:var(--pu)">Consultar</b></div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="port-loading" style="display:none;text-align:center;padding:60px 20px">
+    <div class="spin" style="margin:0 auto 16px"></div>
+    <div style="font-size:13px;color:var(--mu)" id="port-loading-msg">Consultando generación del portafolio…</div>
+    <div style="font-size:11px;color:var(--fa);margin-top:6px" id="port-loading-sub"></div>
   </div>
 </div>
 
@@ -1956,6 +2049,359 @@ function renderGenChart(r,subProj,range){
 }
 
 
+/* ══ PORTAFOLIO ══ */
+var portChart = null;
+var portData = {};         // { sub_project: { data:[], totalKwh:0 } }
+var portProjects = [];     // [ { sub_project, nombre_display, nombre_clientes } ]
+var portPortfolios = {};   // { "Nombre Portafolio": ["nombre_clientes", ...] }
+var portViewMode = "stacked";
+var portPeriodMode = "week";
+var portCurrentPortfolio = "";
+var portColorPalette = [
+  "#915BD8","#F6FF72","#4ADE80","#60A5FA","#F97316","#FF5757","#7EC8E3",
+  "#C47AFF","#FB923C","#34D399","#FBBF24","#A78BFA","#F472B6","#38BDF8",
+  "#86EFAC","#FCA5A5","#D946EF","#22D3EE","#A3E635","#E879F9"
+];
+
+function loadPortfolios() {
+  // Load portfolio names + projects from the backend via a new action
+  apiGet({action:"getPortfolios"}, 10000).then(function(r){
+    if (!r || !r.ok) { console.warn("getPortfolios error:", r&&r.error); return; }
+    portPortfolios = r.portfolios || {};
+    var sel = document.getElementById("port-sel");
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Selecciona portafolio…</option>';
+    Object.keys(portPortfolios).forEach(function(name){
+      sel.innerHTML += '<option value="' + esc(name) + '">' + esc(name) + '</option>';
+    });
+  }).catch(function(e){ console.error("loadPortfolios:", e); });
+}
+
+function getPortDateRange() {
+  var now = new Date();
+  var pad = function(n){ return String(n).padStart(2,"0"); };
+  var fmt = function(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); };
+  if (portPeriodMode === "yesterday") {
+    var y = new Date(now); y.setDate(y.getDate()-1);
+    return {from:fmt(y), to:fmt(y)};
+  }
+  if (portPeriodMode === "week") {
+    var w = new Date(now); w.setDate(w.getDate()-7);
+    return {from:fmt(w), to:fmt(now)};
+  }
+  if (portPeriodMode === "custom") {
+    var f = document.getElementById("port-from").value;
+    var t = document.getElementById("port-to").value;
+    return {
+      from: f || fmt(new Date(now.getFullYear(), now.getMonth(), 1)),
+      to:   t || fmt(now)
+    };
+  }
+  // month
+  return {from:fmt(new Date(now.getFullYear(), now.getMonth(), 1)), to:fmt(now)};
+}
+
+function loadPortfolio() {
+  var portName = document.getElementById("port-sel").value;
+  if (!portName) { toast("⚠ Selecciona un portafolio"); return; }
+
+  var projNames = portPortfolios[portName]; // array of nombre_clientes
+  if (!projNames || !projNames.length) { toast("⚠ Sin proyectos en este portafolio"); return; }
+
+  // Filter by client access if needed
+  var allSysProjs = genProjects.length > 0 ? genProjects : [];
+  var projsToLoad = [];
+  projNames.forEach(function(nc){
+    nc = nc.trim();
+    var found = allSysProjs.find(function(p){
+      return (p.nombre_clientes||"").trim() === nc ||
+             (p.nombre_display||"").trim() === nc ||
+             (p.nombre_bitacora||"").trim() === nc;
+    });
+    if (found) {
+      // Client access check: if client, they must have this project in their list
+      if (userRole === "cliente" && clientProjects.length > 0) {
+        var has = clientProjects.some(function(cp){
+          cp = cp.trim();
+          return cp === (found.nombre_clientes||"").trim() ||
+                 cp === (found.nombre_bitacora||"").trim() ||
+                 cp === (found.nombre_display||"").trim();
+        });
+        if (!has) return;
+      }
+      projsToLoad.push(found);
+    }
+  });
+
+  if (!projsToLoad.length) {
+    toast("⚠ No tienes acceso a proyectos de este portafolio"); return;
+  }
+
+  portCurrentPortfolio = portName;
+  var range = getPortDateRange();
+
+  // UI: show loading, hide others
+  document.getElementById("port-empty").style.display = "none";
+  document.getElementById("port-chart-section").style.display = "none";
+  document.getElementById("port-kpis").style.display = "none";
+  document.getElementById("port-loading").style.display = "block";
+  document.getElementById("port-loading-msg").textContent = "Consultando " + projsToLoad.length + " proyectos…";
+  document.getElementById("port-loading-sub").textContent = "";
+
+  var btn = document.getElementById("port-load");
+  if (btn) { btn.textContent = "⏳ Cargando…"; btn.disabled = true; }
+
+  portData = {};
+  var done = 0;
+  var total = projsToLoad.length;
+
+  projsToLoad.forEach(function(proj, idx){
+    setTimeout(function(){
+      apiGet({
+        action:"getGeneration",
+        sub_project: proj.sub_project,
+        date_from: range.from,
+        date_to: range.to
+      }, 35000).then(function(r){
+        done++;
+        document.getElementById("port-loading-sub").textContent = done + " / " + total + " proyectos cargados";
+        if (r && r.ok && r.data && r.data.length > 0) {
+          portData[proj.sub_project] = {
+            data: r.data,
+            nombre: proj.nombre_clientes || proj.nombre_display,
+            totalKwh: r.data.reduce(function(acc, d){ return acc + d.kwh; }, 0)
+          };
+        }
+        if (done === total) {
+          if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; }
+          document.getElementById("port-loading").style.display = "none";
+          renderPortfolio(range);
+        }
+      }).catch(function(){
+        done++;
+        if (done === total) {
+          if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; }
+          document.getElementById("port-loading").style.display = "none";
+          renderPortfolio(range);
+        }
+      });
+    }, idx * 200); // stagger requests
+  });
+}
+
+function renderPortfolio(range) {
+  var keys = Object.keys(portData);
+  if (!keys.length) {
+    document.getElementById("port-empty").style.display = "block";
+    document.getElementById("port-empty").innerHTML = '<div style="font-size:40px;margin-bottom:14px">📭</div>' +
+      '<div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Sin datos en el período</div>' +
+      '<div>No se encontró generación para los proyectos de este portafolio en el rango seleccionado.</div>';
+    return;
+  }
+
+  // Update header
+  var titleEl = document.getElementById("port-name-title");
+  if (titleEl) titleEl.textContent = portCurrentPortfolio;
+
+  var periodLabels = { week:"Última semana", yesterday:"Ayer", month:"Mes en curso", custom:"Período personalizado" };
+  var periodLbl = document.getElementById("port-period-lbl");
+  if (periodLbl) periodLbl.textContent = (periodLabels[portPeriodMode]||"") + " · " + range.from + " → " + range.to;
+
+  // Gather all unique days
+  var daySet = {};
+  keys.forEach(function(sp){
+    portData[sp].data.forEach(function(d){ daySet[d.date] = true; });
+  });
+  var allDays = Object.keys(daySet).sort();
+
+  // Build per-project per-day maps
+  var projDayMap = {};
+  keys.forEach(function(sp){
+    projDayMap[sp] = {};
+    portData[sp].data.forEach(function(d){
+      if (!projDayMap[sp][d.date]) projDayMap[sp][d.date] = 0;
+      projDayMap[sp][d.date] += d.kwh;
+    });
+  });
+
+  // KPIs
+  var grandTotal = keys.reduce(function(a,sp){ return a + portData[sp].totalKwh; }, 0);
+  var avgDaily = allDays.length > 0 ? grandTotal / allDays.length : 0;
+
+  function sv(id,v){ var e=document.getElementById(id); if(e)e.textContent=v; }
+  sv("pkv-total", Math.round(grandTotal).toLocaleString("es-CO"));
+  sv("pks-total", "kWh en " + allDays.length + " día" + (allDays.length!==1?"s":""));
+  sv("pkv-projs", keys.length);
+  sv("pkv-avg", Math.round(avgDaily).toLocaleString("es-CO"));
+
+  var kpisEl = document.getElementById("port-kpis");
+  if (kpisEl) { kpisEl.style.display = "grid"; kpisEl.style.gridTemplateColumns = "repeat(3,1fr)"; }
+
+  // Sort projects by total desc (for consistent color assignment)
+  var sortedKeys = keys.slice().sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
+
+  // Build legend
+  var legEl = document.getElementById("port-legend");
+  if (legEl) {
+    legEl.innerHTML = sortedKeys.map(function(sp, i){
+      var col = portColorPalette[i % portColorPalette.length];
+      var nombre = portData[sp].nombre;
+      return '<div style="display:flex;align-items:center;gap:5px;background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:4px 10px">' +
+        '<div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div>' +
+        '<span style="font-size:11px;color:var(--mu)">'+esc(nombre)+'</span></div>';
+    }).join("");
+  }
+
+  // Build ranking table
+  var rankEl = document.getElementById("port-rank-table");
+  var rankPeriodEl = document.getElementById("port-rank-period");
+  if (rankPeriodEl) rankPeriodEl.textContent = range.from + " → " + range.to;
+
+  if (rankEl) {
+    var maxKwh = portData[sortedKeys[0]] ? portData[sortedKeys[0]].totalKwh : 1;
+    var html = '';
+    sortedKeys.forEach(function(sp, i){
+      var col = portColorPalette[i % portColorPalette.length];
+      var nombre = portData[sp].nombre;
+      var kwh = portData[sp].totalKwh;
+      var pct = maxKwh > 0 ? (kwh / maxKwh * 100) : 0;
+      var portPct = grandTotal > 0 ? (kwh / grandTotal * 100).toFixed(1) : "0.0";
+      html += '<div style="padding:12px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:14px">';
+      // Rank badge
+      html += '<div style="width:28px;height:28px;border-radius:50%;background:' +
+        (i===0?"linear-gradient(135deg,#F6FF72,#e6ee62)":i===1?"linear-gradient(135deg,#A89EC0,#8a82a8)":i===2?"linear-gradient(135deg,#F97316,#d96010)":"var(--s2)") +
+        ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:' +
+        (i<3?"#1A0F2E":"var(--mu)") + ';flex-shrink:0">' + (i+1) + '</div>';
+      // Color dot + name
+      html += '<div style="min-width:140px;flex-shrink:0">';
+      html += '<div style="display:flex;align-items:center;gap:7px">';
+      html += '<div style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0"></div>';
+      html += '<span style="font-size:13px;font-weight:700;color:var(--cr)">'+esc(nombre)+'</span>';
+      html += '</div>';
+      html += '<div style="font-size:10px;color:var(--fa);margin-top:3px">'+portPct+'% del portafolio</div>';
+      html += '</div>';
+      // Bar
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="background:var(--br);border-radius:4px;height:8px;overflow:hidden">';
+      html += '<div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:4px;transition:width .6s ease"></div>';
+      html += '</div>';
+      html += '</div>';
+      // Value
+      html += '<div style="min-width:100px;text-align:right;flex-shrink:0">';
+      html += '<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;color:'+col+'">'+Math.round(kwh).toLocaleString("es-CO")+'</div>';
+      html += '<div style="font-size:10px;color:var(--fa)">kWh</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+    rankEl.innerHTML = html;
+  }
+
+  // Render chart
+  renderPortChart(allDays, sortedKeys, projDayMap);
+
+  document.getElementById("port-chart-section").style.display = "block";
+}
+
+function renderPortChart(allDays, sortedKeys, projDayMap) {
+  var cv = document.getElementById("portC");
+  if (!cv) return;
+  if (portChart) { portChart.destroy(); portChart = null; }
+
+  if (portViewMode === "stacked") {
+    // Stacked bar chart
+    var datasets = sortedKeys.map(function(sp, i){
+      var col = portColorPalette[i % portColorPalette.length];
+      var nombre = portData[sp].nombre;
+      return {
+        type: "bar",
+        label: nombre,
+        data: allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),
+        backgroundColor: col + "CC",
+        borderColor: col,
+        borderWidth: 1,
+        borderRadius: i === sortedKeys.length-1 ? 3 : 0,
+        stack: "port"
+      };
+    }).reverse(); // reverse so top of legend = top of bar
+
+    portChart = new Chart(cv.getContext("2d"), {
+      data: { labels: allDays, datasets: datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode:"index", intersect:false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#1E1529",
+            borderColor: "#4A3560",
+            borderWidth: 1,
+            padding: 12,
+            titleColor: "#FDFAF7",
+            bodyColor: "#A89EC0",
+            callbacks: {
+              footer: function(items) {
+                var total = items.reduce(function(a,i){ return a + (i.raw||0); }, 0);
+                return ["", "Total: " + Math.round(total).toLocaleString("es-CO") + " kWh"];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { stacked:true, ticks:{color:"#A89EC0",font:{size:10},maxRotation:45}, grid:{display:false}, border:{color:"transparent"} },
+          y: { stacked:true, ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}}, grid:{color:"#4A356030"}, border:{color:"transparent"} }
+        }
+      }
+    });
+  } else {
+    // Separate lines per project
+    var datasetsLine = sortedKeys.map(function(sp, i){
+      var col = portColorPalette[i % portColorPalette.length];
+      var nombre = portData[sp].nombre;
+      return {
+        type: "line",
+        label: nombre,
+        data: allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),
+        borderColor: col,
+        backgroundColor: col + "22",
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: col,
+        fill: false,
+        tension: 0.3
+      };
+    });
+
+    portChart = new Chart(cv.getContext("2d"), {
+      data: { labels: allDays, datasets: datasetsLine },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode:"index", intersect:false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#1E1529",
+            borderColor: "#4A3560",
+            borderWidth: 1,
+            padding: 12,
+            titleColor: "#FDFAF7",
+            bodyColor: "#A89EC0"
+          }
+        },
+        scales: {
+          x: { ticks:{color:"#A89EC0",font:{size:10},maxRotation:45}, grid:{display:false}, border:{color:"transparent"} },
+          y: { ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}}, grid:{color:"#4A356030"}, border:{color:"transparent"} }
+        }
+      }
+    });
+  }
+
+  // Update chart title
+  var titleEl = document.getElementById("port-chart-title");
+  var subEl = document.getElementById("port-chart-sub");
+  if (titleEl) titleEl.textContent = portViewMode==="stacked" ? "Generación Apilada por Proyecto" : "Generación por Proyecto (separado)";
+  if (subEl) subEl.textContent = "kWh diarios · " + portCurrentPortfolio;
+}
+
 /* ══ INIT ══ */
 document.addEventListener("DOMContentLoaded",function(){
   // Ocultar loader máximo en 15s
@@ -1989,8 +2435,8 @@ document.addEventListener("DOMContentLoaded",function(){
       if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }
     } else { openSetup(true); }
   });
-  document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";});
-  document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";renderCharts();});
+  document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";document.getElementById("port-panel").style.display="none";});
+  document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";document.getElementById("port-panel").style.display="none";renderCharts();});
   var _tg=document.getElementById("tab-gen");
   if(_tg)_tg.addEventListener("click",function(){
     curTab="gen";
@@ -1998,8 +2444,81 @@ document.addEventListener("DOMContentLoaded",function(){
     this.className="tab on";
     document.getElementById("app").style.display="none";
     document.getElementById("gen-panel").style.display="block";
+    document.getElementById("port-panel").style.display="none";
     loadGenProjects();
   });
+
+  // ── Portafolio tab ──
+  var _tp = document.getElementById("tab-port");
+  if (_tp) _tp.addEventListener("click", function(){
+    curTab = "port";
+    document.querySelectorAll(".tab").forEach(function(t){ t.className="tab"; });
+    this.className = "tab on";
+    document.getElementById("app").style.display = "none";
+    document.getElementById("gen-panel").style.display = "none";
+    document.getElementById("port-panel").style.display = "block";
+    // Load projects list if not already loaded
+    if (!genProjects.length) loadGenProjects();
+    loadPortfolios();
+  });
+
+  // Portfolio period buttons
+  document.querySelectorAll(".port-period-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      portPeriodMode = this.dataset.p;
+      document.querySelectorAll(".port-period-btn").forEach(function(b){
+        b.style.background = "transparent";
+        b.style.color = "var(--mu)";
+      });
+      this.style.background = "var(--pu)";
+      this.style.color = "var(--cr)";
+      var customVisible = portPeriodMode === "custom";
+      var pf = document.getElementById("port-from");
+      var pt = document.getElementById("port-to");
+      if (pf) pf.style.display = customVisible ? "" : "none";
+      if (pt) pt.style.display = customVisible ? "" : "none";
+    });
+  });
+
+  // Portfolio chart view toggle
+  var pvs = document.getElementById("port-view-stacked");
+  var pvp = document.getElementById("port-view-separate");
+  if (pvs) pvs.addEventListener("click", function(){
+    portViewMode = "stacked";
+    this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
+    if (pvp) { pvp.style.background = "transparent"; pvp.style.color = "var(--mu)"; }
+    if (Object.keys(portData).length) {
+      var range = getPortDateRange();
+      var daySet={};
+      Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet[d.date]=true; }); });
+      var allDays = Object.keys(daySet).sort();
+      var sortedKeys = Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
+      var projDayMap={};
+      sortedKeys.forEach(function(sp){ projDayMap[sp]={};
+        portData[sp].data.forEach(function(d){ if(!projDayMap[sp][d.date])projDayMap[sp][d.date]=0; projDayMap[sp][d.date]+=d.kwh; });
+      });
+      renderPortChart(allDays, sortedKeys, projDayMap);
+    }
+  });
+  if (pvp) pvp.addEventListener("click", function(){
+    portViewMode = "separate";
+    this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
+    if (pvs) { pvs.style.background = "transparent"; pvs.style.color = "var(--mu)"; }
+    if (Object.keys(portData).length) {
+      var daySet2={};
+      Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet2[d.date]=true; }); });
+      var allDays2 = Object.keys(daySet2).sort();
+      var sortedKeys2 = Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
+      var projDayMap2={};
+      sortedKeys2.forEach(function(sp){ projDayMap2[sp]={};
+        portData[sp].data.forEach(function(d){ if(!projDayMap2[sp][d.date])projDayMap2[sp][d.date]=0; projDayMap2[sp][d.date]+=d.kwh; });
+      });
+      renderPortChart(allDays2, sortedKeys2, projDayMap2);
+    }
+  });
+
+  var _pl = document.getElementById("port-load");
+  if (_pl) _pl.addEventListener("click", loadPortfolio);
   var _gl=document.getElementById("gen-load");if(_gl)_gl.addEventListener("click",loadGeneracion);
   var _gp=document.getElementById("gen-period");if(_gp)_gp.addEventListener("change",function(){
     var custom=this.value==="custom";
