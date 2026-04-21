@@ -239,6 +239,46 @@ body.light #kpis-client .kpi{background:var(--s1)}
 @keyframes fiu{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @media(max-width:900px){#board{grid-template-columns:1fr 1fr}#charts{grid-template-columns:1fr}}
 @media(max-width:580px){#board{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}#frow{flex-direction:column}.fsel{width:100%}#topbar{padding:0 12px}.hmob{display:none!important}}
+/* ── Informe — ocultar a clientes ── */
+body.client-mode #tab-inf{display:none!important}
+/* ── Informe — estilos del reporte ── */
+.rpt-page{background:#fff;color:#1A0F2E;font-family:'Sora',sans-serif;font-size:12px;border-radius:12px;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,.25);margin-bottom:24px}
+.rpt-header{background:#1A0F2E;padding:18px 28px}
+.rpt-meta-grid{display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;border:1px solid #2D1F45;border-radius:8px;overflow:hidden}
+.rpt-meta-item{background:#221533;padding:10px 14px;border-right:1px solid #2D1F45}
+.rpt-meta-item:last-child{border-right:none}
+.rpt-meta-lbl{font-size:9px;font-weight:700;color:#6B5F80;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.rpt-meta-val{font-size:13px;font-weight:700;color:#fff}
+.rpt-section{padding:16px 28px;border-bottom:1px solid #EDE8F5}
+.rpt-section:last-of-type{border-bottom:none}
+.rpt-section-title{font-size:13px;font-weight:800;color:#1A0F2E;margin-bottom:13px;padding-left:10px;border-left:3px solid #915BD8}
+.rpt-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rpt-kpi{background:#F7F4FD;border:1px solid #EDE8F5;border-radius:10px;padding:13px 15px}
+.rpt-kpi-ico{font-size:17px;margin-bottom:4px}
+.rpt-kpi-lbl{font-size:9px;font-weight:700;color:#A89EC0;letter-spacing:.7px;text-transform:uppercase;margin-bottom:3px}
+.rpt-kpi-val{font-size:20px;font-weight:800;color:#1A0F2E;font-family:'JetBrains Mono',monospace;line-height:1}
+.rpt-table{width:100%;border-collapse:collapse;font-size:11px}
+.rpt-table th{background:#1A0F2E;color:#F6FF72;font-size:9px;font-weight:700;letter-spacing:.8px;padding:8px 10px;text-align:left}
+.rpt-table td{padding:7px 10px;border-bottom:1px solid #F0EBF8;vertical-align:top;line-height:1.5}
+.rpt-table tbody tr:nth-child(even) td{background:#F9F7FD}
+.rpt-total-row td{background:#EDE8F5!important;font-weight:700;border-top:2px solid #915BD8}
+.rpt-chart-card{background:#F9F7FD;border:1px solid #EDE8F5;border-radius:10px;padding:14px}
+.rpt-obs-title{font-size:9px;font-weight:700;color:#A89EC0;letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px}
+.rpt-obs-text{font-size:12px;color:#3D2D5C;line-height:1.8;background:#F7F4FD;border-radius:8px;padding:13px 15px;border-left:3px solid #4ADE80}
+.rpt-status-box{background:#F7F4FD;border:1px solid #EDE8F5;border-radius:10px;padding:15px;font-size:12px;color:#3D2D5C}
+.rpt-status-row{font-size:11px;color:#6B5F80;margin-top:5px}
+.rpt-footer{background:#F7F4FD;border-top:1px solid #EDE8F5;padding:10px 28px;font-size:10px;color:#A89EC0;display:flex;justify-content:space-between}
+.rpt-page-sep{height:0;margin:0;padding:0}
+/* ── Print ── */
+@media print{
+  #topbar,#inf-panel>div:first-child,.btn,#fab,#toast,#loader,#login-ov{display:none!important}
+  body{background:#fff!important}
+  .rpt-page{box-shadow:none;border-radius:0;margin-bottom:0;page-break-after:always}
+  .rpt-page:last-child{page-break-after:auto}
+  .rpt-page-sep{page-break-after:always;display:block}
+  #inf-content{display:block!important}
+  #inf-panel{padding:0!important}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -298,7 +338,7 @@ body.light #kpis-client .kpi{background:var(--s1)}
 <div id="topbar">
   <div class="logo"><div class="logo-icon">☀️</div><div><div class="logo-brand">Unergy <span style="color:var(--mu);font-weight:600;font-size:12px">· Fallas</span></div><div class="sync-row"><span class="sdot" id="sdot"></span><span id="stxt">Cargando…</span></div></div></div>
   <div class="tabs"><button class="tab on" id="tab-board">⊞ Tablero</button><button class="tab" id="tab-charts">📊 Gráficos</button>
-    <button class="tab" id="tab-gen">☀️ Generación</button><button class="tab" id="tab-port">🗂 Portafolio</button></div>
+    <button class="tab" id="tab-gen">☀️ Generación</button><button class="tab" id="tab-port">🗂 Portafolio</button><button class="tab hmob" id="tab-inf">📄 Informe</button></div>
   <div class="acts">
     <button class="cbadge hmob" id="cbtn"><span style="width:7px;height:7px;border-radius:50%;background:var(--gr);display:block"></span><span id="clbl">…</span></button>
     <span class="client-badge" id="client-badge-lbl" style="display:none">👁 Cliente</span>
@@ -487,6 +527,44 @@ body.light #kpis-client .kpi{background:var(--s1)}
     <div style="font-size:11px;color:var(--fa);margin-top:6px" id="port-loading-sub"></div>
   </div>
 </div>
+<!-- ══ INFORME PANEL ══ -->
+<div id="inf-panel" style="display:none;max-width:1100px;margin:0 auto;padding:0 16px 90px">
+  <!-- Controles -->
+  <div style="background:var(--s1);border:1px solid var(--br);border-radius:13px;padding:18px 20px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+      <div>
+        <div style="font-size:17px;font-weight:800;color:var(--cr)">📄 Informe Operacional Mensual</div>
+        <div style="font-size:11px;color:var(--fa);margin-top:3px">Genera el informe en el formato Unergy · Solo equipo monitor</div>
+      </div>
+      <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
+        <button class="inf-mode-btn" data-m="proyecto" style="padding:7px 16px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">Por Proyecto</button>
+        <button class="inf-mode-btn" data-m="portafolio" style="padding:7px 16px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Por Portafolio</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+      <select class="fi fsel" id="inf-proj" style="min-width:200px;font-size:13px"><option value="">Selecciona proyecto…</option></select>
+      <select class="fi fsel" id="inf-port" style="min-width:200px;font-size:13px;display:none"><option value="">Selecciona portafolio…</option></select>
+      <input type="month" class="fi" id="inf-month" style="width:155px;font-size:13px;color-scheme:dark"/>
+      <button class="btn btn-pu" id="inf-gen" style="padding:7px 18px;font-size:13px">Generar Informe ↻</button>
+      <button class="btn btn-ye" id="inf-print" style="padding:7px 14px;font-size:13px;display:none">🖨 Imprimir / PDF</button>
+    </div>
+  </div>
+  <!-- Empty state -->
+  <div id="inf-empty" style="text-align:center;padding:60px 20px;color:var(--fa);font-size:13px">
+    <div style="font-size:40px;margin-bottom:14px">📄</div>
+    <div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Listo para generar</div>
+    <div>Selecciona el tipo, proyecto o portafolio, y el mes</div>
+  </div>
+  <!-- Loading -->
+  <div id="inf-loading" style="display:none;text-align:center;padding:60px 20px">
+    <div class="spin" style="margin:0 auto 16px"></div>
+    <div style="font-size:13px;color:var(--mu)" id="inf-loading-msg">Generando informe…</div>
+    <div style="font-size:11px;color:var(--fa);margin-top:6px" id="inf-loading-sub"></div>
+  </div>
+  <!-- Report output -->
+  <div id="inf-content" style="display:none"></div>
+</div>
+
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
@@ -1714,6 +1792,15 @@ function loadGenProjects(){
     projs.forEach(function(p){
       sel.innerHTML+='<option value="'+esc(p.sub_project)+'">'+esc(p.nombre_clientes||p.nombre_display)+'</option>';
     });
+    // ── Poblar selector de informe ──
+    var infSel=document.getElementById("inf-proj");
+    if(infSel){
+      infSel.innerHTML='<option value="">Selecciona proyecto…</option>';
+      projs.forEach(function(p){infSel.innerHTML+='<option value="'+esc(p.sub_project)+'">'+esc(p.nombre_clientes||p.nombre_display)+'</option>';});
+    }
+    // ── Mes por defecto en informe ──
+    var infM=document.getElementById("inf-month");
+    if(infM&&!infM.value){var now2=new Date();infM.value=now2.getFullYear()+"-"+String(now2.getMonth()+1).padStart(2,"0");}
   }).catch(function(e){console.error("loadGenProjects error:",e);});
 }
 function getGenDateRange(){
@@ -1772,14 +1859,16 @@ function renderGenChart(r,subProj,range){
   faults.forEach(function(f){
     if(userRole==="cliente"&&clientProjects.length>0&&clientProjects.indexOf(f.proj)<0)return;
     var projMatch=false;
-    if(subProj){var projCfg=genProjects.find(function(p){return p.sub_project===subProj;});if(projCfg&&(f.proj===projCfg.nombre_bitacora||f.proj===projCfg.nombre_display))projMatch=true;}
+    if(subProj){var projCfg=genProjects.find(function(p){return p.sub_project===subProj;});if(projCfg&&(f.proj===projCfg.nombre_bitacora||f.proj===projCfg.nombre_display||f.proj===projCfg.nombre_clientes||f.proj===projCfg.sub_project))projMatch=true;}
     else{projMatch=true;}
     if(!projMatch)return;
     var fd2=String(f.date||"").trim();var iso="";
+
     var m1=fd2.match(/^(\d{4})-(\d{2})-(\d{2})/);var m2=fd2.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
     if(m1)iso=fd2.slice(0,10);else if(m2)iso=m2[3]+"-"+m2[2]+"-"+m2[1].padStart(2,"0");
     if(iso&&iso>=range.from&&iso<=range.to){if(!faultDays[iso])faultDays[iso]=[];faultDays[iso].push(f);}
   });
+
   var barColors=days.map(function(d){return faultDays[d]?'rgba(255,87,87,0.75)':'rgba(145,91,216,0.75)';});
   var barBorders=days.map(function(d){return faultDays[d]?'#FF5757':'#915BD8';});
   var totalKwh=kwhPerDay.reduce(function(a,b){return a+b;},0);
@@ -1896,6 +1985,9 @@ function loadPortfolios() {
     var sel = document.getElementById("port-sel");if (!sel) return;
     sel.innerHTML = '<option value="">Selecciona portafolio…</option>';
     Object.keys(portPortfolios).forEach(function(name){sel.innerHTML += '<option value="' + esc(name) + '">' + esc(name) + '</option>';});
+    // ── Poblar también el selector de informe ──
+    var infPort=document.getElementById("inf-port");
+    if(infPort){infPort.innerHTML='<option value="">Selecciona portafolio…</option>';Object.keys(portPortfolios).forEach(function(name){infPort.innerHTML+='<option value="'+esc(name)+'">'+esc(name)+'</option>';});}
   }).catch(function(e){ console.error("loadPortfolios:", e); });
 }
 function getPortDateRange() {
@@ -2124,6 +2216,359 @@ document.addEventListener("DOMContentLoaded",function(){
     var btnGo=document.getElementById("li-email-go");if(btnGo)btnGo.disabled=false;
     setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
   }
+/* ══════════════════════════════════════════════════
+   INFORME OPERACIONAL MENSUAL
+══════════════════════════════════════════════════ */
+var infMode="proyecto";
+var infChartInstances=[];
+var rptChartQueue={};
+var MESES_LARG=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
+function getMonthRange(ym){
+  var p=ym.split("-"),y=parseInt(p[0]),m=parseInt(p[1]);
+  var last=new Date(y,m,0).getDate();
+  var pad=function(n){return String(n).padStart(2,"0");};
+  return{from:y+"-"+pad(m)+"-01",to:y+"-"+pad(m)+"-"+pad(last),year:y,month:m,monthName:MESES_LARG[m-1],lastDay:last};
+}
+
+function getMonthFaultsForProj(subProj,year,month){
+  var pad=function(n){return String(n).padStart(2,"0");};
+  var f0=year+"-"+pad(month)+"-01",f1=year+"-"+pad(month)+"-"+pad(new Date(year,month,0).getDate());
+  var cfg=genProjects.find(function(p){return p.sub_project===subProj;});
+  return faults.filter(function(f){
+    if(!cfg)return false;
+    var match=f.proj===cfg.nombre_bitacora||f.proj===cfg.nombre_display||f.proj===cfg.nombre_clientes||f.proj===cfg.sub_project;
+    if(!match)return false;
+    var ds=String(f.date||"").trim(),iso="";
+    var m1=ds.match(/^(\d{4})-(\d{2})-(\d{2})/),m2=ds.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
+    if(m1)iso=ds.slice(0,10);else if(m2)iso=m2[3]+"-"+m2[2]+"-"+m2[1].padStart(2,"0");
+    return iso>=f0&&iso<=f1;
+  });
+}
+
+function buildWeeks(data,range,p90d){
+  var dm={};data.forEach(function(d){if(!dm[d.date])dm[d.date]=0;dm[d.date]+=d.kwh;});
+  var pad=function(n){return String(n).padStart(2,"0");};
+  var pre=range.year+"-"+pad(range.month)+"-";
+  var mn=MESES_LARG[range.month-1].slice(0,3).toLowerCase();
+  var w4end=range.lastDay;
+  return [{s:1,e:7},{s:8,e:14},{s:15,e:21},{s:22,e:w4end}].map(function(w,i){
+    var tot=0;for(var d=w.s;d<=w.e;d++)tot+=(dm[pre+pad(d)]||0);
+    var days=w.e-w.s+1,p90w=p90d?p90d*days:null;
+    var pct=p90w>0?((tot-p90w)/p90w*100):null;
+    return{lbl:"Semana "+(i+1),period:(i<3?(w.s+"-"+w.e):(w.s+"-"+w4end))+" "+mn,gen:tot,p90:p90w,pct:pct,ok:pct===null?null:pct>=-5};
+  });
+}
+
+function autoCause(code){
+  var pre=String(code||"").charAt(0);
+  return({"1":"Falla en sistema de medición o comunicación de datos","2":"Falla eléctrica en componente del sistema","3":"Evento adverso externo no atribuible a la infraestructura del proyecto","4":"Desgaste o degradación de componente del sistema","5":"Falla en infraestructura civil o estructural","6":"Evento de seguridad laboral (HSE)","7":"Falla en sistema de almacenamiento (BESS)","8":"Incumplimiento administrativo o regulatorio","9":"Ausencia de suministro eléctrico externo"}[pre])||"Causa identificada en campo";
+}
+
+function autoAction(f){
+  var parts=[];
+  if(f.res&&f.res.trim()&&f.res.length>3&&!/^\d/.test(f.res)&&!f.res.includes("/"))parts.push(f.res.trim());
+  if(f.flw&&f.flw.trim()&&f.flw!=="—")parts.push(f.flw.trim());
+  if(parts.length)return parts.join(". ");
+  return{activa:"Monitoreo continuo activo. Equipo técnico en seguimiento.",revision:"Caso bajo revisión técnica activa. Pendiente definición de plan de acción.",programada:"Intervención programada. Coordinando visita técnica en sitio.",terminada:"Falla resuelta. Sin intervención adicional requerida."}[f.st]||"Seguimiento activo.";
+}
+
+function autoObs(pname,total,avg,p90m,mf,range){
+  var pct=p90m>0?((total-p90m)/p90m*100):null;
+  var comp=pct!==null?(pct>=0?"superando en +"+(pct.toFixed(1))+"% el umbral P90":"por debajo en "+Math.abs(pct).toFixed(1)+"% del umbral P90"):"";
+  var txt="El proyecto "+pname+" registró una generación total de "+Math.round(total).toLocaleString("es-CO")+" kWh durante "+range.monthName+" de "+range.year+", con un promedio diario de "+Math.round(avg).toLocaleString("es-CO")+" kWh/día"+(comp?", "+comp:".")+".";
+  if(mf.length){
+    var actv=mf.filter(function(f){return f.st!=="terminada";});
+    txt+=" Se registraron "+mf.length+" evento(s) operativo(s) durante el período.";
+    txt+=actv.length?" Al cierre del mes, "+actv.length+" evento(s) se mantienen con seguimiento activo.":" Todos los eventos fueron atendidos y resueltos durante el período.";
+  }else{txt+=" No se registraron eventos operativos durante el período, lo que refleja la estabilidad operacional del activo.";}
+  if(pct!==null&&pct>=0)txt+=" A pesar de las contingencias registradas, el proyecto cerró el mes en condición operativa y por encima del umbral de referencia.";
+  return txt;
+}
+
+function rmeta(lbl,val){return '<div class="rpt-meta-item"><div class="rpt-meta-lbl">'+lbl+'</div><div class="rpt-meta-val">'+esc(val)+'</div></div>';}
+function rkpi(ico,lbl,val,col){return '<div class="rpt-kpi"><div class="rpt-kpi-ico">'+ico+'</div><div class="rpt-kpi-lbl">'+lbl+'</div><div class="rpt-kpi-val"'+(col?' style="color:'+col+'"':'')+'>'+val+'</div></div>';}
+function nextMes(m){return MESES_LARG[m===12?0:m];}
+
+function buildProjectPage(cfg,genRes,mf,range){
+  var data=genRes.data||[],sim=genRes.simulation;
+  var dm={};data.forEach(function(d){if(!dm[d.date])dm[d.date]=0;dm[d.date]+=d.kwh;});
+  var days=Object.keys(dm).sort(),kpd=days.map(function(d){return Math.round(dm[d]*100)/100;});
+  var total=kpd.reduce(function(a,b){return a+b;},0);
+  var avg=days.length?total/days.length:0;
+  var p90m=sim?sim.p90_monthly:null,p50m=sim?sim.p50_monthly:null,p90d=sim?sim.p90_daily:null;
+  var p99m=p90m?Math.round(p90m*0.9):null;
+  var pct=p90m>0?((total-p90m)/p90m*100):null;
+  var pctStr=pct!==null?(pct>=0?"+":"")+pct.toFixed(1)+"% vs P90":"—";
+  var pctCol=pct===null?"#A89EC0":pct>=0?"#4ADE80":"#FF5757";
+  var weeks=buildWeeks(data,range,p90d);
+  var pname=cfg.nombre_clientes||cfg.nombre_display;
+  var muni=cfg.municipio||"—";
+  var resp=cData.name||cData.email||"Operaciones UNERGY";
+  var obs=autoObs(pname,total,avg,p90m,mf,range);
+  var activos=mf.filter(function(f){return f.st!=="terminada";});
+
+  // Chart data stored globally (avoids JSON-in-attribute escaping issues)
+  var cid1="rptc1_"+cfg.sub_project.replace(/[^a-z0-9]/gi,"_");
+  var cid2="rptc2_"+cfg.sub_project.replace(/[^a-z0-9]/gi,"_");
+  rptChartQueue[cid1]={type:"daily",d:{labels:days,kwh:kpd,p90d:p90d,avg:Math.round(avg)}};
+  rptChartQueue[cid2]={type:"comp",d:{real:Math.round(total),p50:p50m,p90:p90m,p99:p99m}};
+
+  // Events rows
+  var evHtml="";
+  if(mf.length){mf.forEach(function(f){
+    var fdd=fd(f.code),s=ST[f.st]||ST.activa;
+    var desc=(f.desc&&f.desc.trim()?f.desc.trim():(fdd?fdd.label:f.code)).slice(0,220);
+    evHtml+='<tr><td style="white-space:nowrap;font-weight:700;color:#915BD8">'+esc(fmtD(f.date))+'</td>'
+      +'<td style="text-align:center;white-space:nowrap">'+(f.time?padT(f.time):"—")+'</td>'
+      +'<td>'+esc(desc)+'</td>'
+      +'<td>'+esc(autoCause(f.code))+'</td>'
+      +'<td>'+esc(autoAction(f).slice(0,220))+'</td></tr>';
+  });}else{evHtml='<tr><td colspan="5" style="text-align:center;color:#A89EC0;padding:18px">Sin eventos operativos registrados en el período</td></tr>';}
+
+  var stCol=pct===null?"#A89EC0":pct>=0?"#4ADE80":pct>=-10?"#F6FF72":"#FF5757";
+  var stTxt=pct===null?"—":pct>=0?"OPERATIVO":"ATENCIÓN";
+
+  return '<div class="rpt-page">'
+    +'<div class="rpt-header">'
+    +'<div style="display:flex;align-items:center;gap:13px"><svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
+    +'<div><div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:.8px">INFORME OPERACIONAL MENSUAL · UNERGY ENERGÍA DIGITAL S.A.S ESP</div>'
+    +'<div style="color:#6B5F80;font-size:10px;letter-spacing:.6px;margin-top:2px">Minigranjas Solares | Operación &amp; Mantenimiento</div></div></div>'
+    +'<div class="rpt-meta-grid">'+rmeta("PROYECTO",pname)+rmeta("PERÍODO",range.monthName+" "+range.year)+rmeta("MUNICIPIO",muni)+rmeta("ELABORADO POR",resp)+'</div>'
+    +'</div>'
+    // ── S1 Generación ──
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen de Generación – '+range.monthName+' '+range.year+'</div>'
+    +'<div class="rpt-kpi-row">'+rkpi("⚡","Generación Total",Math.round(total).toLocaleString("es-CO")+" kWh",null)+rkpi("📅","Promedio Diario",Math.round(avg).toLocaleString("es-CO")+" kWh/día",null)+rkpi("🏆","Desv. vs P90",pctStr,pctCol)+'</div>'
+    +'<table class="rpt-table" style="margin-top:12px"><thead><tr><th>SEMANA</th><th>PERÍODO</th><th>GENERACIÓN (kWh)</th><th>P90 ESPERADO (kWh)</th><th>DESV.</th><th>ESTADO</th></tr></thead><tbody>'
+    +weeks.map(function(w){
+      var wp=w.pct!==null?(w.pct>=0?"+":"")+w.pct.toFixed(1)+"%":"—";
+      var wc=w.ok===null?"#A89EC0":w.ok?"#4ADE80":"#F6FF72";
+      return '<tr><td style="font-weight:700">'+esc(w.lbl)+'</td><td>'+esc(w.period)+'</td>'
+        +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(w.gen).toLocaleString("es-CO")+'</td>'
+        +'<td style="text-align:right;font-family:monospace">'+(w.p90?Math.round(w.p90).toLocaleString("es-CO"):"—")+'</td>'
+        +'<td style="text-align:center;font-weight:700;color:'+wc+'">'+wp+'</td>'
+        +'<td style="text-align:center">'+(w.ok===null?"—":w.ok?"✅ Normal":"⚠️ Atención")+'</td></tr>';
+    }).join("")
+    +'<tr class="rpt-total-row"><td>TOTAL</td><td>'+range.lastDay+' días</td>'
+    +'<td style="text-align:right;font-family:monospace">'+Math.round(total).toLocaleString("es-CO")+'</td>'
+    +'<td style="text-align:right;font-family:monospace">'+(p90m?Math.round(p90m).toLocaleString("es-CO"):"—")+'</td>'
+    +'<td style="text-align:center;color:'+pctCol+'">'+pctStr.split(" ")[0]+'</td>'
+    +'<td style="text-align:center;color:'+pctCol+'">'+(pct!==null?(pct>=0?"✅ Sobre P90":"⚠️ Bajo P90"):"—")+'</td></tr>'
+    +'</tbody></table></div>'
+    // ── S2 Gráficos ──
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 2. Análisis Gráfico de Generación</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+    +'<div class="rpt-chart-card"><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Generación Diaria</div><div style="position:relative;height:185px"><canvas id="'+cid1+'"></canvas></div></div>'
+    +'<div class="rpt-chart-card"><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Comparativo vs Simulaciones</div><div style="position:relative;height:185px"><canvas id="'+cid2+'"></canvas></div></div>'
+    +'</div></div>'
+    // ── S3 Eventos ──
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 3. Eventos Operativos y Acciones Correctivas</div>'
+    +'<table class="rpt-table"><thead><tr><th style="width:88px">FECHA</th><th style="width:55px">HORA</th><th>DESCRIPCIÓN DEL EVENTO</th><th>CAUSA RAÍZ</th><th>ACCIÓN CORRECTIVA</th></tr></thead>'
+    +'<tbody>'+evHtml+'</tbody></table></div>'
+    // ── S4 Observaciones ──
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 4. Observaciones y Estado del Proyecto</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 270px;gap:16px">'
+    +'<div><div class="rpt-obs-title">OBSERVACIONES GENERALES</div><div class="rpt-obs-text">'+esc(obs)+'</div></div>'
+    +'<div class="rpt-status-box">'
+    +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">'
+    +'<span style="width:9px;height:9px;border-radius:50%;background:'+stCol+';display:inline-block;flex-shrink:0"></span>'
+    +'<span style="font-size:12px;font-weight:800;color:'+stCol+'">● '+stTxt+'</span>'
+    +'<span style="font-size:10px;color:#888;margin-left:2px">Con seguimiento activo</span></div>'
+    +(pct!==null?'<div class="rpt-status-row"><span style="color:#4ADE80">✅</span> P90: '+(pct>=0?"+":"")+pct.toFixed(1)+'%</div>':'')
+    +'<div class="rpt-status-row">⚡ '+mf.length+' evento(s) este mes</div>'
+    +(activos.length?'<div class="rpt-status-row" style="color:#F97316">En proceso: '+esc(activos.map(function(f){return f.code;}).slice(0,3).join(", "))+'</div>':"")
+    +'<div class="rpt-status-row">Resp: '+esc(resp)+'</div>'
+    +'<div class="rpt-status-row">Prox. reporte: '+nextMes(range.month)+' '+range.year+'</div>'
+    +'</div></div>'
+    +'<div style="margin-top:12px;padding-top:10px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999">'
+    +'<span>Responsable operaciones: Operaciones UNERGY &nbsp;·&nbsp; Contacto: operaciones@unergy.io</span>'
+    +'<span>Próximo reporte: '+nextMes(range.month)+' '+range.year+'</span>'
+    +'</div></div>'
+    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+range.monthName+' '+range.year+'</span></div>'
+    +'</div>';
+}
+
+function buildConsolidatedPage(portName,projsData,range){
+  var resp=cData.name||cData.email||"Operaciones UNERGY";
+  var totalPort=0,overP90=0,totalEv=0;
+  var rows="";
+  projsData.forEach(function(pd){
+    var data=pd.genRes.data||[],sim=pd.genRes.simulation;
+    var tot=data.reduce(function(a,d){return a+d.kwh;},0);
+    var dset={};data.forEach(function(d){dset[d.date]=1;});
+    var nd=Object.keys(dset).length;
+    var avg=nd?tot/nd:0;
+    var p90=sim?sim.p90_monthly:null;
+    var pct=p90>0?((tot-p90)/p90*100):null;
+    var pc=pct===null?"#A89EC0":pct>=0?"#4ADE80":"#FF5757";
+    var ps=pct!==null?(pct>=0?"+":"")+pct.toFixed(1)+"%":"—";
+    if(pct!==null&&pct>=0)overP90++;
+    totalPort+=tot;totalEv+=pd.mf.length;
+    var pn=pd.cfg.nombre_clientes||pd.cfg.nombre_display;
+    rows+='<tr><td style="font-weight:700">'+esc(pn)+'</td>'
+      +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(tot).toLocaleString("es-CO")+'</td>'
+      +'<td style="text-align:right;font-family:monospace">'+Math.round(avg).toLocaleString("es-CO")+'</td>'
+      +'<td style="text-align:center;font-weight:700;color:'+pc+'">'+ps+'</td>'
+      +'<td style="text-align:center">'+pd.mf.length+'</td>'
+      +'<td style="text-align:center;color:'+pc+'">'+esc(pct!==null?(pct>=0?"✅ Normal":"⚠️ Atención"):"—")+'</td></tr>';
+  });
+
+  // Chart data
+  var cport="rptc_port";
+  rptChartQueue[cport]={type:"port",d:{
+    labels:projsData.map(function(pd){return pd.cfg.nombre_clientes||pd.cfg.nombre_display;}),
+    vals:projsData.map(function(pd){return Math.round(pd.genRes.data.reduce(function(a,d){return a+d.kwh;},0));}),
+    p90s:projsData.map(function(pd){return pd.genRes.simulation?Math.round(pd.genRes.simulation.p90_monthly):null;})
+  }};
+
+  return '<div class="rpt-page">'
+    +'<div class="rpt-header">'
+    +'<div style="display:flex;align-items:center;gap:13px"><svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
+    +'<div><div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:.8px">INFORME OPERACIONAL MENSUAL · PORTAFOLIO</div>'
+    +'<div style="color:#6B5F80;font-size:10px;letter-spacing:.6px;margin-top:2px">Unergy Energía Digital S.A.S ESP | Operación &amp; Mantenimiento</div></div></div>'
+    +'<div class="rpt-meta-grid">'+rmeta("PORTAFOLIO",portName)+rmeta("PERÍODO",range.monthName+" "+range.year)+rmeta("PROYECTOS",projsData.length+" proyectos")+rmeta("ELABORADO POR",resp)+'</div>'
+    +'</div>'
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen Consolidado del Portafolio – '+range.monthName+' '+range.year+'</div>'
+    +'<div class="rpt-kpi-row">'
+    +rkpi("⚡","Generación Total Portafolio",Math.round(totalPort).toLocaleString("es-CO")+" kWh",null)
+    +rkpi("🏭","Proyectos sobre P90",overP90+" / "+projsData.length,overP90===projsData.length?"#4ADE80":"#F6FF72")
+    +rkpi("⚠️","Total Eventos del Período",totalEv+" evento(s)",totalEv>0?"#F6FF72":"#4ADE80")
+    +'</div>'
+    +'<table class="rpt-table" style="margin-top:12px"><thead><tr><th>PROYECTO</th><th>GENERACIÓN (kWh)</th><th>PROM. DIARIO (kWh)</th><th>DESV. P90</th><th>EVENTOS</th><th>ESTADO</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'<tfoot><tr class="rpt-total-row"><td>TOTAL PORTAFOLIO</td><td style="text-align:right;font-family:monospace" colspan="5">'+Math.round(totalPort).toLocaleString("es-CO")+' kWh</td></tr></tfoot>'
+    +'</table></div>'
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 2. Generación por Proyecto</div>'
+    +'<div class="rpt-chart-card"><div style="position:relative;height:230px"><canvas id="'+cport+'"></canvas></div></div></div>'
+    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+range.monthName+' '+range.year+'</span></div>'
+    +'</div>';
+}
+
+function renderRptCharts(){
+  Object.keys(rptChartQueue).forEach(function(id){
+    var q=rptChartQueue[id],cv=document.getElementById(id);
+    if(!cv)return;
+    var ctx=cv.getContext("2d"),c=null,d=q.d;
+    if(q.type==="daily"){
+      var dsets=[{type:"bar",label:"Real",data:d.kwh,backgroundColor:"rgba(145,91,216,.75)",borderColor:"#915BD8",borderWidth:1,borderRadius:2,order:2}];
+      if(d.p90d)dsets.push({type:"line",label:"P90",data:d.labels.map(function(){return d.p90d;}),borderColor:"#F97316",borderWidth:1.5,pointRadius:0,fill:false,tension:0,borderDash:[5,3],order:1});
+      c=new Chart(ctx,{data:{labels:d.labels,datasets:dsets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,callbacks:{label:function(i){return" "+(i.dataset.type==="line"?"P90":"Real")+": "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#666",font:{size:8},maxRotation:45,maxTicksLimit:12},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#666",font:{size:9},callback:function(v){return v>=1000?Math.round(v/100)/10+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+    }else if(q.type==="comp"){
+      var labs=["Real"],vals=[d.real],cols=["rgba(145,91,216,.75)"],bcols=["#915BD8"];
+      if(d.p50!=null){labs.push("P50");vals.push(d.p50);cols.push("rgba(96,165,250,.7)");bcols.push("#60A5FA");}
+      if(d.p90!=null){labs.push("P90");vals.push(d.p90);cols.push("rgba(246,255,114,.7)");bcols.push("#F6FF72");}
+      if(d.p99!=null){labs.push("P99");vals.push(d.p99);cols.push("rgba(74,222,128,.7)");bcols.push("#4ADE80");}
+      c=new Chart(ctx,{type:"bar",data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderColor:bcols,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#666",font:{size:11}},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#666",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+    }else if(q.type==="port"){
+      c=new Chart(ctx,{type:"bar",data:{labels:d.labels,datasets:[{label:"Real (kWh)",data:d.vals,backgroundColor:"rgba(145,91,216,.75)",borderColor:"#915BD8",borderWidth:1.5,borderRadius:3},{label:"P90 (kWh)",data:d.p90s,backgroundColor:"rgba(246,255,114,.5)",borderColor:"#F6FF72",borderWidth:1.5,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#444",font:{size:10}}},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+i.dataset.label+": "+Math.round(i.raw||0).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#555",font:{size:9},maxRotation:45},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#555",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+    }
+    if(c)infChartInstances.push(c);
+  });
+  rptChartQueue={};
+}
+
+function generateInforme(){
+  var ym=(document.getElementById("inf-month")||{}).value||"";
+  if(!ym){toast("⚠ Selecciona el mes del informe");return;}
+  if(!genProjects.length){toast("⚠ Cargando proyectos, espera…");loadGenProjects();return;}
+  var range=getMonthRange(ym);
+  // Reset UI
+  document.getElementById("inf-empty").style.display="none";
+  document.getElementById("inf-content").style.display="none";
+  document.getElementById("inf-loading").style.display="block";
+  document.getElementById("inf-print").style.display="none";
+  document.getElementById("inf-loading-msg").textContent="Consultando datos de generación…";
+  document.getElementById("inf-loading-sub").textContent="";
+  infChartInstances.forEach(function(c){try{c.destroy();}catch(e){}});
+  infChartInstances=[];rptChartQueue={};
+
+  if(infMode==="proyecto"){
+    var sp=(document.getElementById("inf-proj")||{}).value||"";
+    if(!sp){document.getElementById("inf-loading").style.display="none";document.getElementById("inf-empty").style.display="block";toast("⚠ Selecciona un proyecto");return;}
+    var cfg=genProjects.find(function(p){return p.sub_project===sp;});
+    if(!cfg){toast("⚠ Proyecto no encontrado");return;}
+    apiGet({action:"getGeneration",sub_project:sp,date_from:range.from,date_to:range.to},30000)
+    .then(function(r){
+      document.getElementById("inf-loading").style.display="none";
+      if(!r||!r.ok){toast("⚠ Error al cargar generación");document.getElementById("inf-empty").style.display="block";return;}
+      var mf=getMonthFaultsForProj(sp,range.year,range.month);
+      document.getElementById("inf-content").innerHTML=buildProjectPage(cfg,r,mf,range);
+      document.getElementById("inf-content").style.display="block";
+      document.getElementById("inf-print").style.display="inline-flex";
+      setTimeout(renderRptCharts,120);
+    }).catch(function(){document.getElementById("inf-loading").style.display="none";document.getElementById("inf-empty").style.display="block";toast("⚠ Error al consultar generación");});
+
+  }else{
+    var pname=(document.getElementById("inf-port")||{}).value||"";
+    if(!pname){document.getElementById("inf-loading").style.display="none";document.getElementById("inf-empty").style.display="block";toast("⚠ Selecciona un portafolio");return;}
+    var portList=portPortfolios[pname]||[];
+    if(!portList.length){toast("⚠ Portafolio vacío");return;}
+    // Map names to genProjects configs
+    var cfgs=[];
+    portList.forEach(function(name){
+      var c=genProjects.find(function(p){
+        var nl=name.trim().toLowerCase();
+        return nl===(p.nombre_clientes||"").trim().toLowerCase()||nl===(p.nombre_display||"").trim().toLowerCase()||nl===(p.nombre_bitacora||"").trim().toLowerCase();
+      });
+      if(c)cfgs.push(c);
+    });
+    if(!cfgs.length){toast("⚠ Proyectos del portafolio no encontrados en generación");return;}
+    var results=[],done=0;
+    document.getElementById("inf-loading-msg").textContent="Consultando "+cfgs.length+" proyectos…";
+    cfgs.forEach(function(c,i){
+      setTimeout(function(){
+        document.getElementById("inf-loading-sub").textContent="("+(done+1)+"/"+cfgs.length+") "+(c.nombre_clientes||c.nombre_display);
+        apiGet({action:"getGeneration",sub_project:c.sub_project,date_from:range.from,date_to:range.to},30000)
+        .then(function(r){
+          results.push({cfg:c,genRes:r&&r.ok?r:{ok:true,data:[]},mf:getMonthFaultsForProj(c.sub_project,range.year,range.month)});
+          done++;if(done===cfgs.length)finishPortReport(pname,results,range);
+        }).catch(function(){
+          results.push({cfg:c,genRes:{ok:true,data:[]},mf:[]});
+          done++;if(done===cfgs.length)finishPortReport(pname,results,range);
+        });
+      },i*280);
+    });
+  }
+}
+
+function finishPortReport(pname,results,range){
+  document.getElementById("inf-loading").style.display="none";
+  var pages=[buildConsolidatedPage(pname,results,range)];
+  results.forEach(function(pd){pages.push(buildProjectPage(pd.cfg,pd.genRes,pd.mf,range));});
+  document.getElementById("inf-content").innerHTML=pages.join('<div class="rpt-page-sep"></div>');
+  document.getElementById("inf-content").style.display="block";
+  document.getElementById("inf-print").style.display="inline-flex";
+  setTimeout(renderRptCharts,150);
+}
+
+// ── Listeners del panel informe ──
+document.querySelectorAll(".inf-mode-btn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    infMode=this.dataset.m;
+    document.querySelectorAll(".inf-mode-btn").forEach(function(b){b.style.background="transparent";b.style.color="var(--mu)";});
+    this.style.background="var(--pu)";this.style.color="var(--cr)";
+    var ps=document.getElementById("inf-proj"),pp=document.getElementById("inf-port");
+    if(ps)ps.style.display=infMode==="proyecto"?"":"none";
+    if(pp)pp.style.display=infMode==="portafolio"?"":"none";
+    if(infMode==="portafolio"&&!Object.keys(portPortfolios).length)loadPortfolios();
+  });
+});
+var _ig=document.getElementById("inf-gen");if(_ig)_ig.addEventListener("click",function(){if(userRole==="cliente")return;generateInforme();});
+var _ip=document.getElementById("inf-print");if(_ip)_ip.addEventListener("click",function(){window.print();});
+var _ti=document.getElementById("tab-inf");
+if(_ti)_ti.addEventListener("click",function(){
+  if(userRole==="cliente")return;
+  curTab="inf";
+  document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
+  this.className="tab on";
+  document.getElementById("app").style.display="none";
+  document.getElementById("gen-panel").style.display="none";
+  document.getElementById("port-panel").style.display="none";
+  document.getElementById("inf-panel").style.display="block";
+  if(!genProjects.length)loadGenProjects();
+  if(!Object.keys(portPortfolios).length)loadPortfolios();
+});
+
   setInterval(function(){if(userRole!=="none")loadFaults();},60000);
 });
 </script>
