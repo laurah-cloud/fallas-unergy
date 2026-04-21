@@ -666,12 +666,16 @@ function loadSession(){
     var s=localStorage.getItem("unergy_session");
     if(!s)return false;
     var sess=JSON.parse(s);
-    if(sess.expires&&Date.now()>sess.expires)return false;
+    if(sess.expires&&Date.now()>sess.expires){localStorage.removeItem("unergy_session");return false;}
+    // Seguridad: si el correo NO es @unergy.io/@unergy.co pero tiene rol monitor → sesión inválida, forzar re-login
+    if(sess.email&&!isMonitorEmail(sess.email)&&sess.role==="monitor"){
+      localStorage.removeItem("unergy_session");return false;
+    }
     userRole=sess.role||"monitor";
     clientProjects=sess.projects||[];
     cData={name:sess.name||"",email:sess.email||""};
     return true;
-  }catch(e){return false;}
+  }catch(e){localStorage.removeItem("unergy_session");return false;}
 }
 function saveSession(role,email,name,projects){
   var expires=role==="cliente"?(Date.now()+24*60*60*1000):null;
