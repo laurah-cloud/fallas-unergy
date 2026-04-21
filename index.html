@@ -1524,12 +1524,25 @@ function renderGenCompareSelector() {
   if (!sel || !genProjects.length) return;
   if (section) section.style.display = "block";
 
-  genProjects.forEach(function(p, i) {
+  // Filtrar por proyectos del cliente si aplica
+  var visProjs = (userRole === "cliente" && clientProjects.length > 0)
+    ? genProjects.filter(function(p) {
+        return clientProjects.some(function(cp) {
+          cp = cp.trim().toLowerCase();
+          return cp === (p.nombre_clientes||"").trim().toLowerCase() ||
+                 cp === (p.nombre_bitacora||"").trim().toLowerCase() ||
+                 cp === (p.nombre_display||"").trim().toLowerCase() ||
+                 cp === (p.sub_project||"").trim().toLowerCase();
+        });
+      })
+    : genProjects;
+
+  visProjs.forEach(function(p, i) {
     if (!genCompareColors[p.sub_project])
       genCompareColors[p.sub_project] = portColorPalette[i % portColorPalette.length];
   });
 
-  sel.innerHTML = genProjects.map(function(p) {
+  sel.innerHTML = visProjs.map(function(p) {
     var sp  = p.sub_project;
     var col = genCompareColors[sp];
     var on  = genCompareSelected[sp];
