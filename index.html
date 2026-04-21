@@ -134,7 +134,6 @@ input[type=datetime-local]{color-scheme:dark}::placeholder{color:var(--fa)}
 .ltitle{font-size:22px;font-weight:800;margin-bottom:4px}.ltitle span{color:var(--ye)}
 .lsub{font-size:13px;color:var(--mu)}
 .spin{width:32px;height:32px;border:3px solid var(--br);border-top-color:var(--pu);border-radius:50%;animation:sp .7s linear infinite;margin-top:22px}
-
 /* ── KPI cards ── */
 #kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
 .kpi{background:var(--s1);border:1px solid var(--br);border-radius:13px;padding:15px 17px;transition:box-shadow .2s}
@@ -180,7 +179,6 @@ body.light select option{background:var(--s1);color:var(--cr)}
 @media(max-width:1100px){#kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){#charts{grid-template-columns:1fr}.chart-full{grid-column:span 1}}
 @media(max-width:580px){#kpis{grid-template-columns:1fr 1fr}.kpi-val{font-size:22px}.fdate,.fimp{width:100%}}
-
 /* ── Login overlay ── */
 #login-ov{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#1A0F2E,#2C2039);z-index:1000;align-items:center;justify-content:center;padding:16px}
 #login-ov.open{display:flex}
@@ -207,7 +205,6 @@ body.client-mode #btn-empty-new{display:none!important}
 body.client-mode #btn-export{display:inline-flex!important}
 /* ── Client badge in topbar ── */
 .client-badge{background:#915BD818;border:1px solid #915BD850;border-radius:20px;padding:4px 12px;font-size:11px;color:var(--pu);font-weight:700}
-
 /* ── 5-KPI client panel ── */
 #kpis-client{display:none;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
 body.client-mode #kpis{display:none!important}
@@ -220,7 +217,6 @@ input[type=date].fi::-webkit-calendar-picker-indicator{
 input[type=date].fi::-webkit-calendar-picker-indicator:hover{opacity:1}
 @media(max-width:1100px){#kpis-client{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){#kpis-client{grid-template-columns:1fr 1fr}}
-
 /* ── Client portal light mode ── */
 body.light .tblock{background:var(--s1);color:var(--cr)}
 body.light .drow .dval{color:var(--cr)}
@@ -228,7 +224,6 @@ body.light .slbl{color:var(--mu)}
 body.light #kpis-client .kpi{background:var(--s1)}
 body.light .login-card{background:#fff}
 body.light .login-body{background:#fff}
-
 /* ── Client portal light mode ── */
 body.light .tblock{background:var(--s1)!important;color:var(--cr)!important}
 body.light .dval{color:var(--cr)!important}
@@ -345,7 +340,6 @@ body.light #kpis-client .kpi{background:var(--s1)}
 <button id="fab">+</button>
 <div id="toast"></div>
 <div id="lb"><img id="lb-img" src="" alt=""/></div>
-
 <!-- ══ GEN PANEL — outside #lb, inside #app flow ══ -->
 <div id="gen-panel" style="display:none;max-width:1380px;margin:0 auto;padding:0 16px 90px">
   <div id="gen-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px">
@@ -384,15 +378,33 @@ body.light #kpis-client .kpi{background:var(--s1)}
     <div class="chart-title" style="margin-bottom:10px">⚡ Fallas en el período <span id="gen-faults-count" style="font-size:12px;color:var(--fa);font-weight:400"></span></div>
     <div id="gen-faults-list"></div>
   </div>
+
+  <!-- ── NUEVO: Comparación multi-proyecto ── -->
+  <div id="gen-compare-section" style="display:none;margin-top:20px">
+    <div class="chart-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="chart-title">Comparación entre Proyectos</div>
+          <div style="font-size:11px;color:var(--fa);margin-top:2px">Generación diaria kWh · mismo período · selecciona proyectos</div>
+        </div>
+        <button class="btn btn-pu" id="gen-compare-load" style="padding:6px 16px;font-size:12px">Comparar ↻</button>
+      </div>
+      <div id="gen-compare-sel" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px"></div>
+      <div id="gen-compare-chart-wrap" style="position:relative;height:260px;display:none"><canvas id="genCompareC"></canvas></div>
+      <div id="gen-compare-empty" style="text-align:center;padding:30px;color:var(--fa);font-size:12px">
+        Selecciona proyectos arriba y haz clic en <b style="color:var(--pu)">Comparar ↻</b>
+      </div>
+      <div id="gen-compare-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+    </div>
+  </div>
+
   <div id="gen-empty" style="text-align:center;padding:40px;color:var(--fa);font-size:13px">
     <div style="font-size:32px;margin-bottom:12px">☀️</div>
     <div>Selecciona un proyecto y haz clic en <b style="color:var(--pu)">Consultar</b></div>
   </div>
 </div>
-
 <!-- ══ PORTFOLIO PANEL ══ -->
 <div id="port-panel" style="display:none;max-width:1380px;margin:0 auto;padding:0 16px 90px">
-
   <!-- Header & filters -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
     <div>
@@ -412,7 +424,6 @@ body.light #kpis-client .kpi{background:var(--s1)}
       <button class="btn btn-pu" id="port-load" style="padding:7px 18px;font-size:13px">Consultar ↻</button>
     </div>
   </div>
-
   <!-- KPIs portafolio -->
   <div id="port-kpis" style="display:none;gap:12px;margin-bottom:20px">
     <div class="kpi kgr">
@@ -434,7 +445,6 @@ body.light #kpis-client .kpi{background:var(--s1)}
       <div class="kpi-sub">kWh/día portafolio total</div>
     </div>
   </div>
-
   <!-- Toggle chart view -->
   <div id="port-chart-section" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
@@ -447,14 +457,11 @@ body.light #kpis-client .kpi{background:var(--s1)}
         <button id="port-view-separate" class="port-view-btn" style="padding:6px 13px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer">Separado</button>
       </div>
     </div>
-
     <!-- Legend -->
     <div id="port-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
-
     <div class="chart-card" style="margin-bottom:20px">
       <div style="position:relative;height:300px"><canvas id="portC"></canvas></div>
     </div>
-
     <!-- Ranking table -->
     <div class="chart-card" style="padding:0;overflow:hidden">
       <div style="padding:16px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between">
@@ -467,14 +474,12 @@ body.light #kpis-client .kpi{background:var(--s1)}
       <div id="port-rank-table" style="padding:8px 0"></div>
     </div>
   </div>
-
   <!-- Empty state -->
   <div id="port-empty" style="text-align:center;padding:60px 20px;color:var(--fa);font-size:13px">
     <div style="font-size:40px;margin-bottom:14px">🗂</div>
     <div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Selecciona un portafolio</div>
     <div>Elige el portafolio y el período, luego haz clic en <b style="color:var(--pu)">Consultar</b></div>
   </div>
-
   <!-- Loading state -->
   <div id="port-loading" style="display:none;text-align:center;padding:60px 20px">
     <div class="spin" style="margin:0 auto 16px"></div>
@@ -482,13 +487,10 @@ body.light #kpis-client .kpi{background:var(--s1)}
     <div style="font-size:11px;color:var(--fa);margin-top:6px" id="port-loading-sub"></div>
   </div>
 </div>
-
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
-
 /* ══ CATÁLOGOS ══ */
-// ══ CATÁLOGO COMPLETO (99 fallas hardcodeadas — fuente: fallas_unergy_formato) ══
 var DEFAULT_CATS=[
   {id:"1",lbl:"Fallas de Medición",ico:"📡",col:"#60A5FA",faults:[
     {c:"1.1",l:"Pérdida de comunicación de inversores"},
@@ -536,26 +538,18 @@ var DEFAULT_CATS=[
     {c:"2.25",l:"Totalizador disparado sin causa aparente (falsa operación)"}
   ]},
   {id:"3",lbl:"Fallas por Eventos Adversos",ico:"🌩️",col:"#FF5757",faults:[
-    {c:"3.1",l:"Incendio"},
-    {c:"3.2",l:"Descarga atmosférica (rayo)"},
-    {c:"3.3",l:"Inundación"},
-    {c:"3.4",l:"Sismo / Temblor"},
-    {c:"3.5",l:"Huracán / Vendaval severo"},
-    {c:"3.6",l:"Daño causado por fauna"},
-    {c:"3.7",l:"Granizo"},
-    {c:"3.8",l:"Vandalismo / Robo de equipos"},
+    {c:"3.1",l:"Incendio"},{c:"3.2",l:"Descarga atmosférica (rayo)"},{c:"3.3",l:"Inundación"},
+    {c:"3.4",l:"Sismo / Temblor"},{c:"3.5",l:"Huracán / Vendaval severo"},{c:"3.6",l:"Daño causado por fauna"},
+    {c:"3.7",l:"Granizo"},{c:"3.8",l:"Vandalismo / Robo de equipos"},
     {c:"3.9",l:"Contaminación severa (ceniza, polvo industrial, sal)"},
-    {c:"3.10",l:"Niebla o neblina densa persistente"},
-    {c:"3.11",l:"Helada o nieve (zonas de altitud)"},
+    {c:"3.10",l:"Niebla o neblina densa persistente"},{c:"3.11",l:"Helada o nieve (zonas de altitud)"},
     {c:"3.12",l:"Accidente de vehículo dentro de la planta"},
     {c:"3.13",l:"Incendio forestal o quema agrícola en zonas aledañas"},
     {c:"3.14",l:"Derrame de sustancias peligrosas en la planta"}
   ]},
   {id:"4",lbl:"Fallos por Desgaste / Degradación",ico:"🔧",col:"#F97316",faults:[
-    {c:"4.1",l:"Panel quebrado o con fisura en vidrio"},
-    {c:"4.2",l:"Módulo con microfisuras (crack invisible)"},
-    {c:"4.3",l:"Estructura de soporte en mal estado"},
-    {c:"4.4",l:"Tracker en mal estado (desgaste mecánico)"},
+    {c:"4.1",l:"Panel quebrado o con fisura en vidrio"},{c:"4.2",l:"Módulo con microfisuras (crack invisible)"},
+    {c:"4.3",l:"Estructura de soporte en mal estado"},{c:"4.4",l:"Tracker en mal estado (desgaste mecánico)"},
     {c:"4.5",l:"Módulo con degradación acelerada (por debajo de garantía)"},
     {c:"4.6",l:"Inversor con derating o eficiencia reducida"},
     {c:"4.7",l:"Degradación acelerada por PID (Potential Induced Degradation)"},
@@ -610,8 +604,8 @@ var DEFAULT_CATS=[
   {id:"p",lbl:"Personalizadas",ico:"⭐",col:"#915BD8",faults:[]}
 ];
 var CATS=DEFAULT_CATS.map(function(c){return{id:c.id,lbl:c.lbl,ico:c.ico,col:c.col,faults:c.faults.slice()};});
-var FAULT_DESCS={};   // código → descripción detallada (del Google Sheets)
-var FAULT_AFECTA={};  // código → a quién afecta (del Google Sheets)
+var FAULT_DESCS={};
+var FAULT_AFECTA={};
 var CATALOG_READY=false;
 var IMPACT_STYLES={"1":{l:"Medición",i:"📡",c:"#60A5FA"},"2":{l:"Generación",i:"⚡",c:"#F6FF72"},"3":{l:"Evt.Adverso",i:"🌩️",c:"#FF5757"},"4":{l:"Desgaste",i:"🔧",c:"#F97316"},"5":{l:"Civil",i:"🏗️",c:"#C47AFF"},"6":{l:"HSE",i:"🦺",c:"#4ADE80"},"7":{l:"BESS",i:"🔋",c:"#7EC8E3"},"8":{l:"Admin.",i:"📋",c:"#F4A460"},"9":{l:"Sin Sumin.",i:"🔌",c:"#FF6B6B"}};
 var PRIO_CFG={Alta:{col:"#FF5757",bg:"#FF575715",bdr:"#FF575550"},Media:{col:"#F6FF72",bg:"#F6FF7215",bdr:"#F6FF7250"},Baja:{col:"#4ADE80",bg:"#4ADE8015",bdr:"#4ADE8050"}};
@@ -625,110 +619,53 @@ function rebuildF(){ALL_F=[];CATS.forEach(function(c){c.faults.forEach(function(
 rebuildF();
 var PROJS=["Acanto","Almagran","AMC","Arboleda","Cedillanos","Coopsana Sub Proyecto 1","Coopsana Sub Proyecto 2","Cristo Rey","Cross","Ecoimagen","San Angelo","IBES","IML Empaques","IML Etiquetas","Laureles Aires 123","Laureles Aires Torre 4","Laureles Fuentes Torre 2","Laureles Fuentes Torre 3","Laureles Parques","Los Coches","Maderas","MDM","Nuevo Gimnasio School","Obelisco","Pola del Pub","Polikem","Salud Vegas","San Esteban Torre 1","San Esteban Torre 2","San Esteban Torre 3","San Simón","Savana Plaza","Seridme","Somer Torre 1","Somer Torre 2","Perija","El Son","Molino","La Puya","Villanueva","La Reserva","Cañahuate","La Paz Leyenda","La Paz Verso","San Pedro","La Paz Vallenata","Gandalf","Uruaco","Baraya","La Paz Esmeralda","El Merengue","El Olimpo","Ibirico","La Mesa","Cacica","Valencia 1","Valencia 2","Nestlé","San Diego Sur","Cumbia","Pilonera","Chiriguana N°2","Chiriguana N°4","Copey"];
 var RESOLS=[
-  // ── Diagnóstico ──
-  "Diagnóstico en sitio – sin intervención requerida",
-  "Diagnóstico remoto – monitoreo y seguimiento continuo",
-  // ── Reinicios remotos ──
-  "Reinicio remoto de inversor",
-  "Reinicio remoto de datalogger / módem",
-  "Reinicio remoto del sistema de monitoreo / SCADA",
-  "Reinicio remoto del reconectador / RECO",
-  "Reinicio remoto del PLC / RTU de control",
-  // ── Reparaciones en sitio ──
-  "Reparación completa en sitio",
-  "Reparación de cableado o conector",
-  "Reparación de estructura de soporte",
-  "Reparación de transformador principal",
-  "Reparación de transformador de servicios auxiliares",
-  "Reparación de reconectador / celda MT",
-  "Reparación de tracker (mecánica)",
-  "Reparación de tablero eléctrico AC / DC",
-  "Reparación de totalizador / interruptor principal",
-  "Reparación de sistema de puesta a tierra",
-  "Reparación de sistema de drenaje / civil",
-  "Reparación de cerramiento / malla perimetral",
-  // ── Reemplazos de equipos ──
-  "Reemplazo de módulo fotovoltaico",
-  "Reemplazo de inversor",
-  "Reemplazo de fusible de string",
-  "Reemplazo de conector MC4",
-  "Reemplazo de cableado DC",
-  "Reemplazo de cableado AC",
-  "Reemplazo de DPS (protector de sobretensión)",
-  "Reemplazo de batería de UPS / respaldo",
-  "Reemplazo de ventilador de inversor",
-  "Reemplazo de filtro de aire de inversor",
-  "Reemplazo de condensador de inversor",
-  "Reemplazo de medidor bidireccional",
-  "Reemplazo de módem / router de telemedida",
-  "Reemplazo de sensor meteorológico (piranómetro / anemómetro)",
-  "Reemplazo de PT / CT de medida",
-  "Reemplazo de datalogger local",
-  "Reemplazo de totalizador / interruptor principal",
-  "Reemplazo de relé de protección",
-  "Reemplazo de junction box del módulo",
-  "Reemplazo de bypass diode del módulo",
-  // ── Calibración y ajustes ──
-  "Calibración / ajuste de protecciones eléctricas",
-  "Calibración de sensor de medición o irradiancia",
-  "Ajuste de parámetros del inversor (tensión / frecuencia)",
-  "Ajuste de configuración de comunicaciones (IP / MODBUS)",
-  "Ajuste de curvas de coordinación de relés",
-  "Ajuste de setpoint de potencia activa (curtailment)",
-  "Ajuste y sincronización horaria (NTP)",
-  // ── Actualizaciones de software / firmware ──
-  "Actualización de firmware del inversor",
-  "Actualización de firmware del datalogger",
-  "Actualización de software de monitoreo / SCADA",
-  "Actualización de firmware del reconectador",
-  // ── Limpieza y mantenimiento preventivo ──
-  "Limpieza de módulos fotovoltaicos",
-  "Limpieza de filtros de inversor",
-  "Limpieza de tablero eléctrico",
-  "Ajuste y apriete de conexiones eléctricas",
-  "Aplicación de tratamiento anticorrosivo",
-  "Poda y control de vegetación",
-  "Control de fauna (mallas / repelentes)",
-  "Mantenimiento preventivo programado ejecutado",
-  "Lubricación y mantenimiento mecánico de tracker",
-  // ── Gestión con terceros ──
-  "Intervención del operador de red (OR)",
-  "Espera de restablecimiento de red eléctrica",
-  "Coordinación y soporte técnico con fabricante",
-  "Solicitud de garantía al fabricante",
-  "Gestión ante aseguradora / apertura de siniestro",
-  "Reporte y denuncia ante autoridades (robo / vandalismo)",
-  "Reporte a autoridad ambiental (derrame / emergencia)",
-  "Coordinación con entidades de emergencia (bomberos / defensa civil)",
-  // ── Inspecciones técnicas especializadas ──
-  "Inspección termográfica infrarroja",
-  "Medición de resistencia de aislamiento (megóhmetro)",
-  "Prueba de curva IV (I-V tracer)",
-  "Inspección con electroluminiscencia (EL)",
-  "Inspección estructural / civil",
-  "Análisis de aceite dieléctrico del transformador",
-  "Prueba de capacidad del banco de baterías BESS",
-  // ── Otros ──
-  "Resolución temporal / workaround",
-  "Cambio de procedimiento operativo",
-  "Refuerzo de seguridad física (cerco / cámaras / alarmas)",
-  "Atención de emergencia médica / HSE",
+  "Diagnóstico en sitio – sin intervención requerida","Diagnóstico remoto – monitoreo y seguimiento continuo",
+  "Reinicio remoto de inversor","Reinicio remoto de datalogger / módem","Reinicio remoto del sistema de monitoreo / SCADA",
+  "Reinicio remoto del reconectador / RECO","Reinicio remoto del PLC / RTU de control",
+  "Reparación completa en sitio","Reparación de cableado o conector","Reparación de estructura de soporte",
+  "Reparación de transformador principal","Reparación de transformador de servicios auxiliares",
+  "Reparación de reconectador / celda MT","Reparación de tracker (mecánica)","Reparación de tablero eléctrico AC / DC",
+  "Reparación de totalizador / interruptor principal","Reparación de sistema de puesta a tierra",
+  "Reparación de sistema de drenaje / civil","Reparación de cerramiento / malla perimetral",
+  "Reemplazo de módulo fotovoltaico","Reemplazo de inversor","Reemplazo de fusible de string",
+  "Reemplazo de conector MC4","Reemplazo de cableado DC","Reemplazo de cableado AC",
+  "Reemplazo de DPS (protector de sobretensión)","Reemplazo de batería de UPS / respaldo",
+  "Reemplazo de ventilador de inversor","Reemplazo de filtro de aire de inversor",
+  "Reemplazo de condensador de inversor","Reemplazo de medidor bidireccional",
+  "Reemplazo de módem / router de telemedida","Reemplazo de sensor meteorológico (piranómetro / anemómetro)",
+  "Reemplazo de PT / CT de medida","Reemplazo de datalogger local","Reemplazo de totalizador / interruptor principal",
+  "Reemplazo de relé de protección","Reemplazo de junction box del módulo","Reemplazo de bypass diode del módulo",
+  "Calibración / ajuste de protecciones eléctricas","Calibración de sensor de medición o irradiancia",
+  "Ajuste de parámetros del inversor (tensión / frecuencia)","Ajuste de configuración de comunicaciones (IP / MODBUS)",
+  "Ajuste de curvas de coordinación de relés","Ajuste de setpoint de potencia activa (curtailment)",
+  "Ajuste y sincronización horaria (NTP)","Actualización de firmware del inversor",
+  "Actualización de firmware del datalogger","Actualización de software de monitoreo / SCADA",
+  "Actualización de firmware del reconectador","Limpieza de módulos fotovoltaicos",
+  "Limpieza de filtros de inversor","Limpieza de tablero eléctrico","Ajuste y apriete de conexiones eléctricas",
+  "Aplicación de tratamiento anticorrosivo","Poda y control de vegetación","Control de fauna (mallas / repelentes)",
+  "Mantenimiento preventivo programado ejecutado","Lubricación y mantenimiento mecánico de tracker",
+  "Intervención del operador de red (OR)","Espera de restablecimiento de red eléctrica",
+  "Coordinación y soporte técnico con fabricante","Solicitud de garantía al fabricante",
+  "Gestión ante aseguradora / apertura de siniestro","Reporte y denuncia ante autoridades (robo / vandalismo)",
+  "Reporte a autoridad ambiental (derrame / emergencia)","Coordinación con entidades de emergencia (bomberos / defensa civil)",
+  "Inspección termográfica infrarroja","Medición de resistencia de aislamiento (megóhmetro)",
+  "Prueba de curva IV (I-V tracer)","Inspección con electroluminiscencia (EL)","Inspección estructural / civil",
+  "Análisis de aceite dieléctrico del transformador","Prueba de capacidad del banco de baterías BESS",
+  "Resolución temporal / workaround","Cambio de procedimiento operativo",
+  "Refuerzo de seguridad física (cerco / cámaras / alarmas)","Atención de emergencia médica / HSE",
   "Sin intervención requerida – evento externo (red / clima)"
 ];
 var ST={activa:{lbl:"Activa",ico:"●",col:"#FF5757",bg:"#FF575718",bdr:"#FF575750"},revision:{lbl:"En Revisión",ico:"◐",col:"#F6FF72",bg:"#F6FF7218",bdr:"#F6FF7250"},programada:{lbl:"Programada",ico:"◯",col:"#915BD8",bg:"#915BD818",bdr:"#915BD850"},terminada:{lbl:"Terminada",ico:"✓",col:"#4ADE80",bg:"#4ADE8018",bdr:"#4ADE8050"}};
 var faults=[],filterSt="all",curTab="board",photos=[],idN=1,pieInst=null,barInst=null,sdrProj=null,sdrFault=null,cData={name:"",email:""};
-
 /* ══ SESIÓN Y ROLES ══ */
-var userRole="monitor"; // "monitor" | "cliente"
-var clientProjects=[]; // proyectos visibles para el cliente
-var pendingEmail="";   // email en proceso de verificación
-
+var userRole="monitor";
+var clientProjects=[];
+var pendingEmail="";
 function loadSession(){
   try{
     var s=localStorage.getItem("unergy_session");
     if(!s)return false;
     var sess=JSON.parse(s);
-    // Verificar expiración
     if(sess.expires&&Date.now()>sess.expires)return false;
     userRole=sess.role||"monitor";
     clientProjects=sess.projects||[];
@@ -737,7 +674,7 @@ function loadSession(){
   }catch(e){return false;}
 }
 function saveSession(role,email,name,projects){
-  var expires=role==="cliente"?(Date.now()+24*60*60*1000):null; // clientes: 24h
+  var expires=role==="cliente"?(Date.now()+24*60*60*1000):null;
   var sess={role:role,email:email,name:name||"",projects:projects||[],expires:expires};
   try{localStorage.setItem("unergy_session",JSON.stringify(sess));}catch(e){}
   userRole=role;clientProjects=projects||[];
@@ -753,7 +690,6 @@ function isMonitorEmail(email){
 function applyRole(){
   if(userRole==="cliente"){
     document.body.classList.add("client-mode");
-    // Restaurar tema guardado (cliente elige modo claro u oscuro)
     try{var _t=localStorage.getItem("unergy_theme");applyTheme(_t==="light");}catch(e){}
     var th=document.getElementById("btn-theme");if(th)th.style.display="";
     var cb=document.getElementById("clbl");if(cb)cb.textContent=cData.email;
@@ -770,13 +706,11 @@ function applyRole(){
     if(btnE2){btnE2.textContent="⬇ Excel";btnE2.title="Descargar informe Excel";}
   }
 }
-/* ── Legacy compat ── */
 function loadC(){return loadSession();}
 function saveC(n,e){saveSession("monitor",e,n,[]);updC();}
 function getCLbl(){return cData.name?(cData.name+" <"+cData.email+">"):(cData.email||"");}
 function updC(){var el=document.getElementById("clbl");if(el)el.textContent=cData.name||cData.email||"…";}
 function openSetup(opt){showLoginStep("email");document.getElementById("login-ov").className="open";}
-
 /* ══ LOGIN UI ══ */
 function showLoginStep(step){
   ["email","name","code","loading"].forEach(function(s){
@@ -784,7 +718,6 @@ function showLoginStep(step){
   });
 }
 function loginSetLoading(on){showLoginStep(on?"loading":(pendingEmail?"email":"email"));}
-
 function loginEmailGo(){
   var email=(document.getElementById("li-email").value||"").trim().toLowerCase();
   var err=document.getElementById("li-email-err");
@@ -792,14 +725,11 @@ function loginEmailGo(){
   err.textContent="";
   pendingEmail=email;
   if(isMonitorEmail(email)){
-    // Monitor Unergy: pedir nombre directamente, sin llamada al servidor
     var li=document.getElementById("li-name");if(li)li.value="";
-    // Limpiar sesión anterior si existe
     try{localStorage.removeItem("unergy_session");}catch(e){}
     showLoginStep("name");
     setTimeout(function(){var el=document.getElementById("li-name");if(el)el.focus();},80);
   } else {
-    // Cliente: enviar código por servidor
     showLoginStep("loading");
     apiGet({action:"sendCode",email:email},20000).then(function(r){
       if(r&&r.ok){
@@ -823,7 +753,6 @@ function loginEmailGo(){
     });
   }
 }
-
 function loginNameGo(){
   var name=(document.getElementById("li-name").value||"").trim();
   var err=document.getElementById("li-name-err");
@@ -833,7 +762,6 @@ function loginNameGo(){
   document.getElementById("login-ov").className="";
   applyRole();loadFaults();
 }
-
 function loginCodeGo(){
   var code=(document.getElementById("li-code").value||"").trim();
   var err=document.getElementById("li-code-err");
@@ -843,7 +771,6 @@ function loginCodeGo(){
   apiGet({action:"verifyCode",email:pendingEmail,code:code},15000).then(function(r){
     if(r&&r.ok){
       var projs=r.projects||[];
-      console.log("Cliente verificado. Proyectos:",projs);
       saveSession("cliente",pendingEmail,"",projs);
       document.getElementById("login-ov").className="";
       applyRole();
@@ -863,11 +790,8 @@ function loginCodeGo(){
     err.textContent="⚠ Sin conexión. Intenta de nuevo.";
   });
 }
-
 /* ══ HELPERS FECHA ══ */
 function padT(t){if(!t)return "";var p=String(t).trim().split(":");if(p.length<2)return "";return p[0].padStart(2,"0")+":"+p[1].padStart(2,"0");}
-
-// Convierte cualquier formato → YYYY-MM-DDTHH:MM para input
 function toInput(v,optTime){
   var s=String(v||"").trim();if(!s)return "";
   if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s))return s.slice(0,16);
@@ -886,7 +810,6 @@ function toInput(v,optTime){
   }
   return "";
 }
-// Formatea para mostrar
 function fmtDT(v){
   if(!v||!String(v).trim()||v==="—")return "—";
   var s=String(v).trim();
@@ -904,7 +827,6 @@ function fmtD(v){
   var m2=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m2)return m2[3]+"/"+m2[2]+"/"+m2[1];
   return s;
 }
-// Para guardar en Sheets: YYYY-MM-DDTHH:MM → "dd/MM/yyyy HH:mm"
 function toSheets(v){
   if(!v)return "";
   var m=String(v).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -912,11 +834,9 @@ function toSheets(v){
   if(/^\d{1,2}\/\d{2}\/\d{4}/.test(String(v)))return String(v);
   return String(v);
 }
-
 function mkId(){return "F-"+String(idN++).padStart(5,"0");}
 function fd(c){return ALL_F.find(function(x){return x.code===c;})||null;}
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-// Hora actual en Colombia (UTC-5, sin horario de verano)
 function nowColombia(){return new Date().toLocaleString("sv-SE",{timeZone:"America/Bogota"}).replace(" ","T").slice(0,16);}
 function applyTheme(light){
   isLight=light;
@@ -928,12 +848,9 @@ function applyTheme(light){
 function exportCSV(){
   var list=getFiltered();if(!list.length){toast("⚠ Sin datos para exportar");return;}
   var isClient=(userRole==="cliente");
-
-  // ── Columnas según rol ──
   var hdr=isClient
     ?["Proyecto","Falla","Código","Estado","Fecha Identificación","Ocurrencia","Terminación","Descripción","Seguimiento","Solución"]
     :["ID","Proyecto","Código","Tipo de Falla","Categoría","Estado","Prioridad","Días Abierta","Fecha Identificación","Descripción","Seguimiento","Centinela"];
-
   var rows=list.map(function(f){
     var fdd=fd(f.code);
     if(isClient)return[f.proj,fdd?fdd.label:"",f.code,ST[f.st]?ST[f.st].lbl:"",
@@ -943,34 +860,21 @@ function exportCSV(){
     return[f.id,f.proj,f.code,fdd?fdd.label:"",imp.l,ST[f.st]?ST[f.st].lbl:"",
       f.prio||"",d||"",fmtD(f.date),f.desc||"",f.flw||"",f.centinela||""];
   });
-
-  // ── Build workbook with SheetJS ──
   if(typeof XLSX==="undefined"){toast("⚠ Cargando librería Excel, intenta en 2 segundos");return;}
   var wb=XLSX.utils.book_new();
   var ws=XLSX.utils.aoa_to_sheet([hdr].concat(rows));
-
-  // ── Column widths ──
   var wscols=hdr.map(function(h,i){
     var maxLen=h.length;
     rows.forEach(function(r){var v=String(r[i]||"");if(v.length>maxLen)maxLen=v.length;});
     return{wch:Math.min(Math.max(maxLen+2,10),60)};
   });
   ws["!cols"]=wscols;
-
-  // ── Style header row (background + bold) ──
   var range=XLSX.utils.decode_range(ws["!ref"]);
   for(var C=range.s.c;C<=range.e.c;C++){
     var cell=ws[XLSX.utils.encode_cell({r:0,c:C})];
     if(!cell)continue;
-    cell.s={
-      fill:{fgColor:{rgb:"2C2039"},patternType:"solid"},
-      font:{bold:true,color:{rgb:"F6FF72"},name:"Arial",sz:10},
-      alignment:{horizontal:"center",vertical:"center",wrapText:true},
-      border:{bottom:{style:"thin",color:{rgb:"915BD8"}}}
-    };
+    cell.s={fill:{fgColor:{rgb:"2C2039"},patternType:"solid"},font:{bold:true,color:{rgb:"F6FF72"},name:"Arial",sz:10},alignment:{horizontal:"center",vertical:"center",wrapText:true},border:{bottom:{style:"thin",color:{rgb:"915BD8"}}}};
   }
-
-  // ── Status color per row ──
   var stColors={activa:"FFEDED",revision:"FFFDE7",programada:"F3EEF9",terminada:"EDFFF4"};
   rows.forEach(function(row,ri){
     var stVal=row[isClient?3:5]||"";
@@ -985,45 +889,30 @@ function exportCSV(){
       cell.s.font={name:"Arial",sz:9};
     }
   });
-
-  // ── Freeze header row ──
   ws["!freeze"]={xSplit:0,ySplit:1,topLeftCell:"A2"};
-
   var sheetName=isClient?"Mis Fallas":"Fallas Unergy";
   XLSX.utils.book_append_sheet(wb,ws,sheetName);
-
-  // ── Meta sheet for client: project summary ──
   if(isClient&&clientProjects.length>0){
     var sumRows=[["Proyecto","Activas","En Revisión","Programadas","Terminadas","Total"]];
     clientProjects.forEach(function(p){
       var pf=list.filter(function(f){return f.proj===p;});
-      sumRows.push([p,
-        pf.filter(function(f){return f.st==="activa";}).length,
-        pf.filter(function(f){return f.st==="revision";}).length,
-        pf.filter(function(f){return f.st==="programada";}).length,
-        pf.filter(function(f){return f.st==="terminada";}).length,
-        pf.length
-      ]);
+      sumRows.push([p,pf.filter(function(f){return f.st==="activa";}).length,pf.filter(function(f){return f.st==="revision";}).length,pf.filter(function(f){return f.st==="programada";}).length,pf.filter(function(f){return f.st==="terminada";}).length,pf.length]);
     });
     var ws2=XLSX.utils.aoa_to_sheet(sumRows);
     ws2["!cols"]=[{wch:30},{wch:10},{wch:12},{wch:13},{wch:12},{wch:8}];
     XLSX.utils.book_append_sheet(wb,ws2,"Resumen");
   }
-
   var fname="Informe_Fallas_Unergy_"+new Date().toISOString().slice(0,10)+".xlsx";
   XLSX.writeFile(wb,fname);
   toast("✓ Excel generado: "+list.length+" fallas"+(isClient?" · "+clientProjects.length+" proyecto"+(clientProjects.length!==1?"s":""):""));
 }
-
 function setSync(c,t){document.getElementById("sdot").className="sdot "+c;document.getElementById("stxt").textContent=t;}
 function toast(msg,dur){var t=document.getElementById("toast");t.textContent=msg;t.className="show";setTimeout(function(){t.className="";},dur||3500);}
 function openLb(url){document.getElementById("lb-img").src=url;document.getElementById("lb").className="open";}
 function hideLoader(){document.getElementById("loader").style.display="none";}
-
 /* ══ API ══ */
 function apiGet(p,timeout){
   return new Promise(function(resolve,reject){
-    // JSONP via script tag — evita CORS completamente
     var cbName="_cb"+Date.now();
     var to=setTimeout(function(){
       delete window[cbName];
@@ -1051,7 +940,6 @@ function apiGet(p,timeout){
   });
 }
 function apiPost(body){
-  // text/plain evita preflight CORS
   return fetch(SCRIPT_URL,{
     method:"POST",
     headers:{"Content-Type":"text/plain;charset=UTF-8"},
@@ -1059,7 +947,6 @@ function apiPost(body){
     redirect:"follow"
   }).then(function(r){return r.json();});
 }
-
 /* ══ CARGAR FALLAS ══ */
 function loadFaults(){
   setSync("spin","Sincronizando…");
@@ -1069,29 +956,21 @@ function loadFaults(){
         var st="activa";for(var k in ST){if(ST[k].lbl===r["Estado"]){st=k;break;}}
         var rid=String(r["ID"]||""),num=parseInt(rid.replace("F-",""));
         if(!isNaN(num)&&num>=idN)idN=num+1;
-        // Limpiar campos que podrían tener datos erróneos de versiones anteriores
         var rawOcc=String(r["Fecha y Hora de Ocurrencia"]||"").trim();
         var rawEnd=String(r["Fecha y Hora de Terminación"]||"").trim();
         var rawRes=String(r["Tipo Resolución"]||"").trim();
         var rawDate=String(r["Fecha de Identificación"]||"").trim();
-        // Si occ/end tienen GMT o 1899, limpiar
-        if(rawOcc.includes("GMT")||rawOcc.includes("1899")){
-          var tm=rawOcc.match(/(\d{2}):(\d{2}):\d{2}/);
-          rawOcc=(tm&&rawDate)?(rawDate+" "+tm[1]+":"+tm[2]):"";
-        }
+        if(rawOcc.includes("GMT")||rawOcc.includes("1899")){var tm=rawOcc.match(/(\d{2}):(\d{2}):\d{2}/);rawOcc=(tm&&rawDate)?(rawDate+" "+tm[1]+":"+tm[2]):"";}
         if(rawEnd.includes("GMT")||rawEnd.includes("1899"))rawEnd="";
-        // res: solo texto válido
         if(/^\d{1,2}\/\d{2}\/\d{4}/.test(rawRes)||rawRes.includes("GMT")||rawRes.length<3)rawRes="";
-        return{
-          id:rid,proj:String(r["Proyecto"]||""),code:String(r["Código de Falla"]||""),
+        return{id:rid,proj:String(r["Proyecto"]||""),code:String(r["Código de Falla"]||""),
           faultLabel:String(r["Descripción Falla"]||""),st:st,
           date:rawDate,time:String(r["Hora de Identificación"]||"").trim(),
           occ:rawOcc,res:rawRes,desc:String(r["Descripción"]||""),
           flw:String(r["Seguimiento"]||""),
           driveUrl:String(r["Fotos (Enlace Drive)"]||""),
           endDT:rawEnd,centinela:String(r["Centinela"]||""),prio:String(r["Prioridad"]||""),
-          photos:[],creat:String(r["Fecha Registro"]||"")
-        };
+          photos:[],creat:String(r["Fecha Registro"]||"")};
       });
     }
     setSync("ok","Sincronizado ✓");hideLoader();renderAll();
@@ -1101,32 +980,16 @@ function loadFaults(){
     toast("⚠ Sin conexión — "+((e&&e.message)||"error"));
   });
 }
-
 /* ══ GUARDAR ══ */
 function serverSave(f,cb){
   setSync("spin","Guardando…");
   var fdd=fd(f.code)||{};
   var cleanRes=(f.res&&f.res.trim()&&f.res.length>3&&!/^\d/.test(f.res)&&!f.res.includes("/")&&!f.res.includes("GMT"))?f.res:"";
-  var payload={
-    id:f.id,project:f.proj,faultCode:f.code,
-    faultLabel:fdd.label||f.faultLabel||f.code,
-    category:fdd.catLbl||"",
-    statusLbl:ST[f.st]?ST[f.st].lbl:f.st,status:f.st,
-    identDate:fmtD(f.date),   // "dd/MM/yyyy"
-    identTime:padT(f.time),   // "HH:mm"
-    occTime:toSheets(f.occ),  // "dd/MM/yyyy HH:mm"
-    resType:cleanRes,
-    desc:f.desc||"",followUp:f.flw||"",
-    driveUrl:f.driveUrl||"",
-    endTime:toSheets(f.endDT),
-    centinela:f.centinela||"",prioridad:f.prio||"",
-    notify:f.notify===true
-  };
+  var payload={id:f.id,project:f.proj,faultCode:f.code,faultLabel:fdd.label||f.faultLabel||f.code,category:fdd.catLbl||"",statusLbl:ST[f.st]?ST[f.st].lbl:f.st,status:f.st,identDate:fmtD(f.date),identTime:padT(f.time),occTime:toSheets(f.occ),resType:cleanRes,desc:f.desc||"",followUp:f.flw||"",driveUrl:f.driveUrl||"",endTime:toSheets(f.endDT),centinela:f.centinela||"",prioridad:f.prio||"",notify:f.notify===true};
   apiPost({action:"saveFault",data:payload}).then(function(r){
     setSync(r&&r.ok?"ok":"err",r&&r.ok?"Guardado ✓":"Error: "+(r&&r.error||"?"));
     if(cb)cb(r&&r.ok);
   }).catch(function(){
-    // Fallback GET
     apiGet({action:"saveFault",data:JSON.stringify(payload)}).then(function(r){
       setSync(r&&r.ok?"ok":"err",r&&r.ok?"Guardado ✓":"Error");
       if(cb)cb(r&&r.ok);
@@ -1134,11 +997,8 @@ function serverSave(f,cb){
   });
 }
 function serverDel(id){
-  apiGet({action:"delFault",id:id}).then(function(r){
-    setSync(r&&r.ok?"ok":"err",r&&r.ok?"Eliminado ✓":"Error");
-  }).catch(function(){setSync("err","Error");});
+  apiGet({action:"delFault",id:id}).then(function(r){setSync(r&&r.ok?"ok":"err",r&&r.ok?"Eliminado ✓":"Error");}).catch(function(){setSync("err","Error");});
 }
-
 /* ══ FOTOS ══ */
 function compress(url,maxPx,q,cb){
   var img=new Image();
@@ -1152,20 +1012,15 @@ function compress(url,maxPx,q,cb){
   img.onerror=function(){cb(url);};
   img.src=url;
 }
-function setPB(msg,pct){
-  var w=document.getElementById("pbwrap"),m=document.getElementById("pbmsg"),f=document.getElementById("pbfill");
-  if(w)w.style.display="block";if(m)m.textContent=msg;if(f)f.style.width=(pct||0)+"%";
-}
+function setPB(msg,pct){var w=document.getElementById("pbwrap"),m=document.getElementById("pbmsg"),f=document.getElementById("pbfill");if(w)w.style.display="block";if(m)m.textContent=msg;if(f)f.style.width=(pct||0)+"%";}
 function hidePB(){var w=document.getElementById("pbwrap");if(w)w.style.display="none";}
-
 function uploadPhoto(proj,code,label,dateStr,faultId,photo,onP,cb){
   onP("Comprimiendo…",10);
   compress(photo.url,900,0.78,function(c){
     var b64=c.split(",")[1]||"";
     var mime=c.split(",")[0].replace("data:","").replace(";base64","");
     onP("Subiendo a Drive…",40);
-    apiPost({action:"savePhoto",faultId:faultId,project:proj,faultCode:code,faultLabel:label,
-      dateStr:dateStr,photoName:photo.name||"foto.jpg",mimeType:mime,b64:b64})
+    apiPost({action:"savePhoto",faultId:faultId,project:proj,faultCode:code,faultLabel:label,dateStr:dateStr,photoName:photo.name||"foto.jpg",mimeType:mime,b64:b64})
     .then(function(r){
       if(r&&r.ok&&r.folderUrl){onP("✅ Guardada",100);cb(null,r.folderUrl);}
       else{onP("⚠ "+(r&&r.error||"Error"),100);cb(r&&r.error||"Error",null);}
@@ -1179,20 +1034,14 @@ function uploadPhotos(proj,code,label,dateStr,faultId,photosArr,cb){
     if(i>=photosArr.length){hidePB();toast("📁 "+photosArr.length+" foto(s) en Drive ✓",4000);cb(url);return;}
     var n=photosArr.length;
     setPB("Foto "+(i+1)+"/"+n+"…",Math.round(i/n*100));
-    uploadPhoto(proj,code,label,dateStr,faultId,photosArr[i],
-      function(msg,pct){setPB("Foto "+(i+1)+"/"+n+": "+msg,pct);},
-      function(err,u){if(u)url=u;if(err)toast("⚠ Foto "+(i+1)+": "+err,4000);i++;next();}
-    );
+    uploadPhoto(proj,code,label,dateStr,faultId,photosArr[i],function(msg,pct){setPB("Foto "+(i+1)+"/"+n+": "+msg,pct);},function(err,u){if(u)url=u;if(err)toast("⚠ Foto "+(i+1)+": "+err,4000);i++;next();});
   }
   next();
 }
-
 /* ══ RENDER ══ */
 function renderAll(){renderPills();renderBoard();renderSelects();if(curTab==="charts")renderCharts();}
 function renderPills(){
-  var base=(userRole==="cliente"&&clientProjects.length>0)
-    ?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;})
-    :faults;
+  var base=(userRole==="cliente"&&clientProjects.length>0)?faults.filter(function(f){return clientProjects.indexOf(f.proj)>=0;}):faults;
   var cnt={all:base.length,activa:0,revision:0,programada:0,terminada:0};
   base.forEach(function(f){if(cnt[f.st]!==undefined)cnt[f.st]++;});
   ["all","activa","revision","programada","terminada"].forEach(function(k){
@@ -1200,7 +1049,6 @@ function renderPills(){
     var p=document.getElementById("pill-"+k);if(p)p.className="pill"+(filterSt===k?" on":"");
   });
 }
-
 function getFiltered(){
   var q=(document.getElementById("fsearch").value||"").toLowerCase();
   var fp=document.getElementById("fproject").value||"";
@@ -1210,7 +1058,6 @@ function getFiltered(){
   var dto=document.getElementById("fdate-to")?document.getElementById("fdate-to").value||"":" ";
   fim=fim.trim();dfrom=dfrom.trim();dto=dto.trim();
   return faults.filter(function(f){
-    // Filtro por proyectos del cliente
     if(userRole==="cliente"&&clientProjects.length>0&&clientProjects.indexOf(f.proj)<0)return false;
     if(filterSt!=="all"&&f.st!==filterSt)return false;
     if(fp&&f.proj!==fp)return false;
@@ -1248,8 +1095,7 @@ function renderBoard(){
       var _days=getDaysOpen(f);
       var _dbadge=_days>0?'<span class="days-open" style="color:'+dayCol(_days)+';background:'+dayCol(_days)+'18;border-color:'+dayCol(_days)+'40">⏱ '+_days+'d</span>':"";
       var ct=fdd?'<span class="cat-tag" style="color:'+fdd.catCol+';background:'+fdd.catCol+'18;border-color:'+fdd.catCol+'40">'+fdd.catIco+' Cat.'+fdd.catId+'</span>':"";
-      var driveLink=f.driveUrl&&f.driveUrl.startsWith("http")?
-        '<a href="'+esc(f.driveUrl)+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--bl);text-decoration:none;display:inline-flex;align-items:center;gap:2px;font-weight:700">📁 Drive</a>':'';
+      var driveLink=f.driveUrl&&f.driveUrl.startsWith("http")?'<a href="'+esc(f.driveUrl)+'" target="_blank" onclick="event.stopPropagation()" style="color:var(--bl);text-decoration:none;display:inline-flex;align-items:center;gap:2px;font-weight:700">📁 Drive</a>':'';
       html+='<div class="card" style="border-left-color:'+s.col+'" data-id="'+esc(f.id)+'">'+
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span class="card-id" style="color:'+s.col+'">'+esc(f.id)+'</span>'+ct+'</div>'+
         '<div class="card-lbl">'+esc(lbl)+'</div><div class="card-proj">'+esc(f.proj)+'</div>'+
@@ -1265,7 +1111,7 @@ function renderBoard(){
   });
   document.getElementById("board").innerHTML=html;
   document.querySelectorAll(".card").forEach(function(el){el.addEventListener("click",function(){openDetail(this.dataset.id);});});
-  renderKPIs(); // actualizar KPIs con el mismo filtro activo
+  renderKPIs();
 }
 function renderSelects(){
   var visProjs=(userRole==="cliente"&&clientProjects.length>0)?clientProjects:PROJS;
@@ -1273,7 +1119,6 @@ function renderSelects(){
   visProjs.forEach(function(p){o+='<option value="'+esc(p)+'">'+esc(p)+'</option>';});
   ["fproject","chart-proj"].forEach(function(id){var e=document.getElementById(id);if(e){var v=e.value;e.innerHTML=o;e.value=v;}});
 }
-
 /* ══ KPIs ══ */
 function renderKPIs(){
   if(userRole==="cliente"){renderClientKPIs();return;}
@@ -1301,7 +1146,6 @@ function renderKPIs(){
   var kT=document.getElementById("kpi-t");
   if(kT)kT.style.borderColor=isFiltered?"var(--pu)":"var(--br)";
 }
-
 function renderClientKPIs(){
   var list=getFiltered();
   var act=0,crit=0,rev=0,prog=0,term=0;
@@ -1317,14 +1161,11 @@ function renderClientKPIs(){
   sv("ckv-rev",rev);sv("cks-rev",rev+" falla"+(rev!==1?"s":""));
   sv("ckv-prog",prog);
   sv("ckv-term",term);sv("cks-term",term+" resuelta"+(term!==1?"s":""));
-  // Sync pills counts to client scope
   function sp(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
   sp("cnt-all",list.length);sp("cnt-activa",act);sp("cnt-revision",rev);
   sp("cnt-programada",prog);sp("cnt-terminada",term);
 }
-
 function buildCatsFromSheets(data){
-  // El Sheets solo aporta DESCRIPCIONES y AFECTA — el catálogo base está hardcodeado
   FAULT_DESCS={};FAULT_AFECTA={};
   var sheetsCount=0;
   try{
@@ -1337,54 +1178,35 @@ function buildCatsFromSheets(data){
       if(afecta)FAULT_AFECTA[code]=afecta;
     });
   }catch(e){console.warn("Error al procesar catálogo de Sheets:",e);}
-  // Refrescar filtro (catálogo ya estaba en CATS desde DEFAULT_CATS)
   rebuildF();
   updateFcatFilter();
   CATALOG_READY=true;
-  if(sheetsCount>0)
-    toast("✓ Descripciones actualizadas desde Sheets ("+sheetsCount+")",3000);
+  if(sheetsCount>0)toast("✓ Descripciones actualizadas desde Sheets ("+sheetsCount+")",3000);
 }
 function updateFcatFilter(){
   var sel=document.getElementById("fcat");if(!sel)return;
   var cur=sel.value;
   var html='<option value="">Todas las categorías</option>';
-  CATS.forEach(function(c){
-    if(c.id!=="p"||c.faults.length)
-      html+='<option value="'+esc(c.id)+'">'+esc(c.ico+" "+c.lbl)+'</option>';
-  });
-  sel.innerHTML=html;
-  sel.value=cur;
+  CATS.forEach(function(c){if(c.id!=="p"||c.faults.length)html+='<option value="'+esc(c.id)+'">'+esc(c.ico+" "+c.lbl)+'</option>';});
+  sel.innerHTML=html;sel.value=cur;
 }
 function loadCatalog(){
-  // Usamos JSONP (script tag) igual que apiGet — sin problemas de CORS
   var SID="1Nk2psPViyHm_iu-65sRJS7PCa2Vsbt3Z",GID="174222320";
   var cbName="_cat"+Date.now();
   var lsub=document.getElementById("lsub");
   if(lsub)lsub.textContent="Cargando descripciones del catálogo…";
   var to=setTimeout(function(){
-    delete window[cbName];
-    var s=document.getElementById(cbName);
-    if(s&&s.parentNode)s.parentNode.removeChild(s);
-    console.warn("Catálogo: timeout");
-    rebuildF();updateFcatFilter();
+    delete window[cbName];var s=document.getElementById(cbName);if(s&&s.parentNode)s.parentNode.removeChild(s);
+    console.warn("Catálogo: timeout");rebuildF();updateFcatFilter();
     toast("⚠ Catálogo no disponible — fallas personalizadas activas",5000);
   },12000);
   window[cbName]=function(data){
-    clearTimeout(to);
-    delete window[cbName];
-    var s=document.getElementById(cbName);
-    if(s&&s.parentNode)s.parentNode.removeChild(s);
+    clearTimeout(to);delete window[cbName];var s=document.getElementById(cbName);if(s&&s.parentNode)s.parentNode.removeChild(s);
     buildCatsFromSheets(data);
   };
   var url="https://docs.google.com/spreadsheets/d/"+SID+"/gviz/tq?tqx=out:json;responseHandler:"+cbName+"&gid="+GID+"&headers=1";
-  var s=document.createElement("script");
-  s.id=cbName;s.src=url;
-  s.onerror=function(){
-    clearTimeout(to);delete window[cbName];
-    if(s.parentNode)s.parentNode.removeChild(s);
-    rebuildF();updateFcatFilter();
-    toast("⚠ Catálogo no disponible — fallas personalizadas activas",5000);
-  };
+  var s=document.createElement("script");s.id=cbName;s.src=url;
+  s.onerror=function(){clearTimeout(to);delete window[cbName];if(s.parentNode)s.parentNode.removeChild(s);rebuildF();updateFcatFilter();toast("⚠ Catálogo no disponible — fallas personalizadas activas",5000);};
   document.head.appendChild(s);
 }
 function renderCharts(){renderPie();renderBar();renderImpactChart();}
@@ -1419,11 +1241,9 @@ function renderBar(){
   if(barInst)barInst.destroy();
   barInst=new Chart(document.getElementById("barC").getContext("2d"),{type:"bar",data:{labels:s.map(function(x){return x.n;}),datasets:[{data:s.map(function(x){return x.v;}),backgroundColor:"#915BD8BB",borderColor:"#915BD8",borderWidth:1,borderRadius:4}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:"#6B5F80",font:{size:10}},grid:{color:"#4A356030"},border:{color:"transparent"}},y:{ticks:{color:"#A89EC0",font:{size:10}},grid:{display:false},border:{color:"transparent"}}}}});
 }
-
 /* ══ MODAL ══ */
 function openModal(t,h){document.getElementById("mtitle").textContent=t;document.getElementById("mbd").innerHTML=h;document.getElementById("overlay").className="open";}
 function closeModal(){document.getElementById("overlay").className="";photos=[];sdrProj=null;sdrFault=null;}
-
 /* ══ DROPDOWN ══ */
 function makeSdr(wid,ph,flat,grouped,onSel,allowAdd,onAdd){
   var wrap=document.getElementById(wid);if(!wrap)return null;
@@ -1449,25 +1269,19 @@ function makeSdr(wid,ph,flat,grouped,onSel,allowAdd,onAdd){
     setValue:function(v,l){sv=v;sl=l||v;inp.dataset.val=v;inp.value=grouped&&v&&l?(v+" · "+l):(l||v);}
   };
 }
-
 /* ══ FORMULARIO ══ */
 function openNewFault(){photos=[];showForm(null);}
 function openEditFault(id){var f=faults.find(function(x){return x.id===id;});if(!f)return;photos=(f.photos||[]).slice();showForm(f);}
-
 function showForm(f){
   var isEdit=!!f,nowDT=nowColombia();
   var identDT=isEdit?toInput(f.date,f.time):"";if(!identDT)identDT=nowDT;
   var occVal="";
-  if(f&&f.occ&&f.occ.trim()&&f.occ!=="—"){
-    occVal=toInput(f.occ,"");
-    if(!occVal&&/^\d{1,2}:\d{2}$/.test(f.occ.trim()))occVal=toInput(f.date,"").slice(0,10)+"T"+padT(f.occ.trim());
-  }
+  if(f&&f.occ&&f.occ.trim()&&f.occ!=="—"){occVal=toInput(f.occ,"");if(!occVal&&/^\d{1,2}:\d{2}$/.test(f.occ.trim()))occVal=toInput(f.date,"").slice(0,10)+"T"+padT(f.occ.trim());}
   var endVal=(f&&f.endDT&&f.endDT.trim()&&f.endDT!=="—")?toInput(f.endDT,""):"";
   var isTerm=f&&f.st==="terminada";
   var stOpts=Object.keys(ST).map(function(k){return'<option value="'+k+'"'+(f&&f.st===k?" selected":"")+">"+ST[k].ico+" "+ST[k].lbl+"</option>";}).join("");
   var resOpts='<option value="">— Seleccionar —</option>'+RESOLS.map(function(r){return"<option"+(f&&f.res===r?" selected":"")+">"+r+"</option>";}).join("");
   var centInfo='<div style="background:#1a1025;border:1px solid var(--br);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:8px;font-size:12px"><span>👤</span><span style="color:var(--pu);font-weight:700">'+esc(cData.name)+'</span><span style="color:var(--fa)">'+esc(cData.email)+'</span><button id="chg-c" style="margin-left:auto;background:transparent;border:none;color:var(--fa);font-size:11px;cursor:pointer;font-family:inherit">Cambiar</button></div>';
-
   var html=
     '<div class="fgrid"><div class="field"><label>Proyecto <span class="req">*</span></label><div id="w-proj"></div></div>'+
     '<div class="field"><label>Código / Tipo de Falla <span class="req">*</span></label><div id="w-fault"></div></div></div>'+
@@ -1506,10 +1320,8 @@ function showForm(f){
       '<button class="btn btn-gh" id="form-cancel">Cancelar</button>'+
       '<button class="btn btn-pu" id="form-save">'+(isEdit?"✔ Actualizar":"✚ Registrar Falla")+'</button>'+
     '</div>';
-
   openModal((isEdit?"✏️ Editar":"✚ Nueva")+" Falla",html);
   renderPhotoGrid();
-
   sdrProj=makeSdr("w-proj","Escribe o elige proyecto…",PROJS.map(function(p){return{val:p,lbl:p};}),null,null,true,function(q){
     var n=prompt("Nuevo proyecto:",q||"");if(!n||!n.trim())return;n=n.trim();
     if(PROJS.indexOf(n)<0){PROJS.push(n);PROJS.sort();renderSelects();}
@@ -1518,12 +1330,10 @@ function showForm(f){
   sdrFault=makeSdr("w-fault","Escribe código o nombre…",null,
     CATS.map(function(c){return{grp:c.lbl,ico:c.ico,items:c.faults.map(function(x){return{val:x.c,lbl:x.l};})};})
     ,function(v){updateHint(v);},true,function(){openAddFaultM();});
-
   if(f){setTimeout(function(){
     if(sdrProj&&f.proj)sdrProj.setValue(f.proj,f.proj);
     if(sdrFault&&f.code){var d=fd(f.code);if(d)sdrFault.setValue(f.code,d.label);updateHint(f.code);}
   },60);}
-
   document.getElementById("fst").addEventListener("change",function(){
     var t=this.value==="terminada";
     document.getElementById("fres-row").style.display=t?"":"none";
@@ -1537,11 +1347,9 @@ function showForm(f){
   document.getElementById("form-save").addEventListener("click",function(){submitForm(isEdit&&f?f.id:null,isEdit&&f?f.creat:null,isEdit&&f?f.driveUrl:null);});
   if(isEdit&&document.getElementById("form-del"))document.getElementById("form-del").addEventListener("click",function(){confirmDel(f.id);});
   var chg=document.getElementById("chg-c");if(chg)chg.addEventListener("click",function(){closeModal();openSetup(true);});
-  // Quitar marca de auto-llenado cuando el usuario edita la descripción
   var descEl3=document.getElementById("fdesc");
   if(descEl3)descEl3.addEventListener("input",function(){delete this.dataset.autofilled;});
 }
-
 function updateHint(code){
   var h=document.getElementById("fhint");if(!h)return;
   var d=fd(code);
@@ -1552,10 +1360,7 @@ function updateHint(code){
     var descEl=document.getElementById("fdesc");
     if(descEl&&FAULT_DESCS[code]){
       var wasAuto=descEl.dataset.autofilled==="1";
-      if(!descEl.value.trim()||wasAuto){
-        descEl.value=FAULT_DESCS[code];
-        descEl.dataset.autofilled="1";
-      }
+      if(!descEl.value.trim()||wasAuto){descEl.value=FAULT_DESCS[code];descEl.dataset.autofilled="1";}
     }
   } else h.style.display="none";
 }
@@ -1568,7 +1373,6 @@ function renderPhotoGrid(){
   g.querySelectorAll(".pthumb img").forEach(function(img){img.addEventListener("click",function(){openLb(this.dataset.url);});});
   var pa=document.getElementById("padd");if(pa)pa.addEventListener("click",function(){document.getElementById("finput").click();});
 }
-
 function submitForm(existingId,existingCreat,existingDrive){
   var proj=sdrProj?sdrProj.getValue():"";
   var code=sdrFault?sdrFault.getValue():"";
@@ -1581,25 +1385,20 @@ function submitForm(existingId,existingCreat,existingDrive){
   var flw=document.getElementById("fflw").value;
   var prioEl=document.getElementById("fprio");var prio=prioEl?prioEl.value:"";
   var notifyEl=document.getElementById("fnotify");var notify=notifyEl?notifyEl.checked:false;
-
   if(!proj||!code||!desc){toast("⚠ Completa: Proyecto, Falla y Descripción");return;}
   if(st==="terminada"&&!res){toast("⚠ Selecciona el tipo de resolución");return;}
   if(st==="terminada"&&!endDT)endDT=nowColombia();
-
   var exF=existingId?faults.find(function(x){return x.id===existingId;}):null;
   if(!occ&&exF&&exF.occ&&exF.occ.trim()&&exF.occ!=="—")occ=exF.occ;
   if(!endDT&&exF&&exF.endDT&&exF.endDT.trim()&&exF.endDT!=="—"&&st!=="terminada")endDT=exF.endDT;
-
   var faultId=existingId||mkId();
   var fdd=fd(code)||{};
   var dateStr=dtVal.slice(0,10).replace(/-/g,"");
-
   var fault={id:faultId,proj:proj,code:code,faultLabel:fdd.label||code,st:st,
     date:dtVal.slice(0,10),time:dtVal.slice(11,16),occ:occ,endDT:endDT,res:res,
     desc:desc,flw:flw,prio:prio,centinela:getCLbl(),photos:photos.slice(),
     driveUrl:existingDrive||"",creat:existingCreat||nowColombia(),notify:notify};
-
-  var photosCopy=photos.slice(); // ← capture BEFORE closeModal clears photos
+  var photosCopy=photos.slice();
   var idx=faults.findIndex(function(x){return x.id===faultId;});
   if(idx>=0)faults[idx]=fault;else faults.unshift(fault);
   closeModal();renderAll();
@@ -1612,17 +1411,11 @@ function submitForm(existingId,existingCreat,existingDrive){
           var i2=faults.findIndex(function(x){return x.id===faultId;});
           if(i2>=0)faults[i2].driveUrl=folderUrl;
           serverSave(fault,function(){renderBoard();toast("✅ Falla guardada con fotos en Drive",4000);});
-        } else {
-          toast("⚠ Falla guardada — fotos no pudieron subirse",5000);
-        }
+        } else {toast("⚠ Falla guardada — fotos no pudieron subirse",5000);}
       });
     });
-  } else {
-    serverSave(fault,null);
-    toast(existingId?"✓ Falla actualizada":"✓ Falla registrada");
-  }
+  } else {serverSave(fault,null);toast(existingId?"✓ Falla actualizada":"✓ Falla registrada");}
 }
-
 /* ══ DETALLE ══ */
 function openDetail(id){
   var f=faults.find(function(x){return x.id===id;});if(!f)return;
@@ -1632,7 +1425,6 @@ function openDetail(id){
   var endOk=f.endDT&&f.endDT.trim()&&f.endDT!=="—"&&(f.endDT.includes("/")||f.endDT.includes("-")||f.endDT.includes("T"));
   var driveOk=f.driveUrl&&f.driveUrl.startsWith("http");
   var html;
-
   if(isClient){
     var faultName=fdd?(f.code+" · "+fdd.label):(f.code||"Falla registrada");
     html=
@@ -1647,27 +1439,16 @@ function openDetail(id){
       +'<div class="drow"><span class="dlbl">📁 Proyecto</span><span class="dval">'+esc(f.proj)+'</span></div>'
       +'<div class="drow"><span class="dlbl">📅 Identificación</span><span class="dval">'+fmtD(f.date)+(f.time&&f.time.trim()?" — "+padT(f.time):"")+'</span></div>'
       +'<div class="drow"><span class="dlbl">⏱ Ocurrencia</span><span class="dval">'+(f.occ&&f.occ.trim()&&f.occ!=="—"?fmtDT(f.occ):"—")+'</span></div>'
-      +(endOk
-        ?'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:#4ADE80;font-weight:700">'+fmtDT(f.endDT)+'</span></div>'
+      +(endOk?'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:#4ADE80;font-weight:700">'+fmtDT(f.endDT)+'</span></div>'
         :'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:var(--fa)">Pendiente</span></div>');
-    if(driveOk)
-      html+='<div style="margin:14px 0">'
-        +'<a href="'+esc(f.driveUrl)+'" target="_blank" style="display:flex;align-items:center;gap:12px;background:var(--s1);border:1.5px solid #4285F440;border-radius:10px;padding:13px 16px;text-decoration:none;cursor:pointer">'
-        +'<svg width="20" height="18" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>'
-        +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--cr)">Abrir fotos en Google Drive</div>'
-        +'<div style="font-size:11px;color:var(--mu);margin-top:3px">'+esc(f.proj)+' · Haz clic para abrir</div></div>'
-        +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--mu);flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
-        +'</a></div>';
-    else
-      html+='<div class="drow"><span class="dlbl">📷 Fotos</span><span class="dval" style="color:var(--fa)">Sin fotos registradas</span></div>';
+    if(driveOk)html+='<div style="margin:14px 0"><a href="'+esc(f.driveUrl)+'" target="_blank" style="display:flex;align-items:center;gap:12px;background:var(--s1);border:1.5px solid #4285F440;border-radius:10px;padding:13px 16px;text-decoration:none;cursor:pointer"><svg width="20" height="18" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--cr)">Abrir fotos en Google Drive</div><div style="font-size:11px;color:var(--mu);margin-top:3px">'+esc(f.proj)+' · Haz clic para abrir</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--mu);flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a></div>';
+    else html+='<div class="drow"><span class="dlbl">📷 Fotos</span><span class="dval" style="color:var(--fa)">Sin fotos registradas</span></div>';
     if(f.desc&&f.desc.trim())html+='<div class="slbl">📋 Descripción</div><div class="tblock">'+esc(f.desc)+'</div>';
     if(f.flw&&f.flw.trim()&&f.flw!=="—")html+='<div class="slbl">📝 Seguimiento</div><div class="tblock">'+esc(f.flw)+'</div>';
     if(resOk)html+='<div class="slbl">🔧 Solución aplicada</div><div class="tblock">'+esc(f.res)+'</div>';
     html+='<div class="mactions"></div>';
-    openModal("Detalle de Falla",html);
-    return;
+    openModal("Detalle de Falla",html);return;
   }
-
   html=
     '<div style="background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:9px;padding:11px 15px;margin-bottom:16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap">'+
     '<span style="font-family:\'JetBrains Mono\',monospace;font-size:13px;color:'+s.col+';font-weight:800">'+esc(f.id)+'</span>'+
@@ -1689,12 +1470,7 @@ function openDetail(id){
     '<div class="drow"><span class="dlbl">⏱ Ocurrencia</span><span class="dval">'+fmtDT(f.occ)+'</span></div>'+
     (endOk?'<div class="drow"><span class="dlbl">✅ Terminación</span><span class="dval" style="color:#4ADE80;font-weight:700">'+fmtDT(f.endDT)+'</span></div>':'')+
     (f.centinela&&f.centinela.trim()?'<div class="drow"><span class="dlbl">👤 Centinela</span><span class="dval" style="color:var(--pu)">'+esc(f.centinela)+'</span></div>':'');
-  if(driveOk)html+=
-    '<a href="'+esc(f.driveUrl)+'" target="_blank" class="drive-btn">'+
-    '<span class="icon">📁</span>'+
-    '<div><div style="font-size:13px">Abrir carpeta en Google Drive</div>'+
-    '<div style="font-size:10px;opacity:.6;margin-top:2px">Proyecto: '+esc(f.proj)+'</div></div>'+
-    '<span style="margin-left:auto;font-size:16px">↗</span></a>';
+  if(driveOk)html+='<a href="'+esc(f.driveUrl)+'" target="_blank" class="drive-btn"><span class="icon">📁</span><div><div style="font-size:13px">Abrir carpeta en Google Drive</div><div style="font-size:10px;opacity:.6;margin-top:2px">Proyecto: '+esc(f.proj)+'</div></div><span style="margin-left:auto;font-size:16px">↗</span></a>';
   if(f.desc&&f.desc.trim())html+='<div class="slbl">📋 Descripción</div><div class="tblock">'+esc(f.desc)+'</div>';
   if(f.flw&&f.flw.trim()&&f.flw!=="—")html+='<div class="slbl">📝 Seguimiento</div><div class="tblock">'+esc(f.flw)+'</div>';
   if(f.photos&&f.photos.length){
@@ -1708,13 +1484,11 @@ function openDetail(id){
   var _dedit=document.getElementById("det-edit");if(_dedit)_dedit.addEventListener("click",function(){closeModal();openEditFault(id);});
   var dp=document.getElementById("dp");if(dp)dp.querySelectorAll("img").forEach(function(img){img.addEventListener("click",function(){openLb(this.dataset.url);});});
 }
-
 function confirmDel(id){
   if(!confirm("¿Eliminar esta falla? No se puede deshacer."))return;
   faults=faults.filter(function(f){return f.id!==id;});
   serverDel(id);closeModal();renderAll();toast("🗑 Falla eliminada");
 }
-
 /* ══ MODALES ADICIONALES ══ */
 function openProjModal(){
   var chips=PROJS.map(function(p){return'<span style="font-size:11px;background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:3px 10px;color:var(--mu)">'+esc(p)+'</span>';}).join("");
@@ -1734,11 +1508,165 @@ function openSetup(optional){
   document.getElementById("setup-ov").className="open";
   if(optional){document.getElementById("su-name").value=cData.name||"";document.getElementById("su-email").value=cData.email||"";}
 }
-
 /* ══ GENERACIÓN ══ */
-var genChart=null;
-var genData=null;
-var genProjects=[];
+var genChart = null;
+var genData  = null;
+var genProjects = [];
+
+/* ══ COMPARACIÓN MULTI-PROYECTO ══ */
+var genCompareChart    = null;
+var genCompareSelected = {};   // { sub_project: true/false }
+var genCompareColors   = {};   // { sub_project: color }
+
+function renderGenCompareSelector() {
+  var sel     = document.getElementById("gen-compare-sel");
+  var section = document.getElementById("gen-compare-section");
+  if (!sel || !genProjects.length) return;
+  if (section) section.style.display = "block";
+
+  genProjects.forEach(function(p, i) {
+    if (!genCompareColors[p.sub_project])
+      genCompareColors[p.sub_project] = portColorPalette[i % portColorPalette.length];
+  });
+
+  sel.innerHTML = genProjects.map(function(p) {
+    var sp  = p.sub_project;
+    var col = genCompareColors[sp];
+    var on  = genCompareSelected[sp];
+    return '<button class="gen-cmp-pill" data-sp="' + esc(sp) + '" style="' +
+      'display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;cursor:pointer;' +
+      'border:1.5px solid ' + (on ? col : 'var(--br)') + ';' +
+      'background:' + (on ? col + '22' : 'var(--s1)') + ';' +
+      'color:' + (on ? col : 'var(--mu)') + ';' +
+      'font-size:11px;font-weight:700;font-family:\'Sora\',sans-serif;transition:all .2s">' +
+      '<div style="width:7px;height:7px;border-radius:50%;background:' + col + ';flex-shrink:0"></div>' +
+      esc(p.nombre_clientes || p.nombre_display) +
+      '</button>';
+  }).join("");
+
+  sel.querySelectorAll(".gen-cmp-pill").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      genCompareSelected[this.dataset.sp] = !genCompareSelected[this.dataset.sp];
+      renderGenCompareSelector();
+    });
+  });
+}
+
+function loadGenCompare() {
+  var selected = Object.keys(genCompareSelected).filter(function(sp){ return genCompareSelected[sp]; });
+  if (!selected.length) { toast("⚠ Selecciona al menos un proyecto para comparar"); return; }
+
+  var range = getGenDateRange();
+  var btn   = document.getElementById("gen-compare-load");
+  if (btn) { btn.textContent = "⏳ Cargando…"; btn.disabled = true; }
+
+  var results = {}, done = 0, total = selected.length;
+
+  selected.forEach(function(sp, idx) {
+    setTimeout(function() {
+      apiGet({ action:"getGeneration", sub_project:sp, date_from:range.from, date_to:range.to }, 30000)
+      .then(function(r) {
+        done++;
+        if (r && r.ok && r.data && r.data.length) results[sp] = r.data;
+        if (done === total) {
+          if (btn) { btn.textContent = "Comparar ↻"; btn.disabled = false; }
+          renderGenCompareChart(results);
+        }
+      }).catch(function() {
+        done++;
+        if (done === total) {
+          if (btn) { btn.textContent = "Comparar ↻"; btn.disabled = false; }
+          renderGenCompareChart(results);
+        }
+      });
+    }, idx * 200);
+  });
+}
+
+function renderGenCompareChart(results) {
+  var keys    = Object.keys(results);
+  var wrap    = document.getElementById("gen-compare-chart-wrap");
+  var emptyEl = document.getElementById("gen-compare-empty");
+
+  if (!keys.length) {
+    if (wrap)    wrap.style.display    = "none";
+    if (emptyEl) { emptyEl.style.display = "block";
+      emptyEl.innerHTML = '<div style="font-size:28px;margin-bottom:8px">📭</div>Sin datos para los proyectos seleccionados en este período.'; }
+    return;
+  }
+  if (wrap)    wrap.style.display    = "block";
+  if (emptyEl) emptyEl.style.display = "none";
+
+  var daySet = {};
+  keys.forEach(function(sp){ results[sp].forEach(function(d){ daySet[d.date] = true; }); });
+  var allDays = Object.keys(daySet).sort();
+
+  var dayMaps = {};
+  keys.forEach(function(sp) {
+    dayMaps[sp] = {};
+    results[sp].forEach(function(d) {
+      dayMaps[sp][d.date] = (dayMaps[sp][d.date] || 0) + d.kwh;
+    });
+  });
+
+  var cv = document.getElementById("genCompareC");
+  if (!cv) return;
+  if (genCompareChart) { genCompareChart.destroy(); genCompareChart = null; }
+
+  var datasets = keys.map(function(sp) {
+    var col  = genCompareColors[sp] || "#915BD8";
+    var proj = genProjects.find(function(p){ return p.sub_project === sp; });
+    var nombre = proj ? (proj.nombre_clientes || proj.nombre_display) : sp;
+    return {
+      label: nombre,
+      data: allDays.map(function(d){ return Math.round((dayMaps[sp][d] || 0) * 100) / 100; }),
+      borderColor: col, backgroundColor: col + "22",
+      borderWidth: 2, pointRadius: 3, pointBackgroundColor: col,
+      fill: false, tension: 0.3
+    };
+  });
+
+  genCompareChart = new Chart(cv.getContext("2d"), {
+    type: "line",
+    data: { labels: allDays, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:"index", intersect:false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor:"#1E1529", borderColor:"#4A3560", borderWidth:1,
+          padding:12, titleColor:"#FDFAF7", bodyColor:"#A89EC0",
+          callbacks: {
+            label: function(item) {
+              return "  " + item.dataset.label + ": " +
+                     Math.round(item.raw).toLocaleString("es-CO") + " kWh";
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks:{color:"#A89EC0",font:{size:10},maxRotation:45}, grid:{display:false}, border:{color:"transparent"} },
+        y: { ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}}, grid:{color:"#4A356030"}, border:{color:"transparent"} }
+      }
+    }
+  });
+
+  var legEl = document.getElementById("gen-compare-legend");
+  if (legEl) {
+    legEl.innerHTML = keys.map(function(sp) {
+      var col    = genCompareColors[sp];
+      var proj   = genProjects.find(function(p){ return p.sub_project === sp; });
+      var nombre = proj ? (proj.nombre_clientes || proj.nombre_display) : sp;
+      var total  = Object.values(dayMaps[sp]).reduce(function(a,b){return a+b;}, 0);
+      return '<div style="display:flex;align-items:center;gap:6px;background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:4px 10px">' +
+        '<div style="width:8px;height:8px;border-radius:50%;background:'+col+'"></div>' +
+        '<span style="font-size:11px;color:var(--mu)">'+esc(nombre)+'</span>' +
+        '<span style="font-size:11px;font-weight:700;color:'+col+';font-family:\'JetBrains Mono\',monospace">'+Math.round(total).toLocaleString("es-CO")+' kWh</span>' +
+        '</div>';
+    }).join("");
+  }
+}
 
 function loadGenProjects(){
   apiGet({action:"getProjects"},10000).then(function(r){
@@ -1756,12 +1684,12 @@ function loadGenProjects(){
           return cp===nc||cp===nb||cp===nd||cp===sp;
         });
       });
-      console.log("clientProjects:",clientProjects);
-      console.log("genProjects after filter:",projs.map(function(p){return p.nombre_clientes;}));
     } else {
       projs=allProjs;
     }
     genProjects=projs;
+    // ── NUEVO: inicializar selector de comparación ──
+    renderGenCompareSelector();
     var sel=document.getElementById("gen-proj");if(!sel)return;
     sel.innerHTML='<option value="">Selecciona proyecto…</option>';
     projs.forEach(function(p){
@@ -1769,39 +1697,23 @@ function loadGenProjects(){
     });
   }).catch(function(e){console.error("loadGenProjects error:",e);});
 }
-
 function getGenDateRange(){
   var period=document.getElementById("gen-period").value;
   var now=new Date();
   var pad=function(n){return String(n).padStart(2,"0");};
   var fmt=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
-  if(period==="yesterday"){
-    var y=new Date(now);y.setDate(y.getDate()-1);
-    return{from:fmt(y),to:fmt(y)};
-  }
-  if(period==="week"){
-    var w=new Date(now);w.setDate(w.getDate()-7);
-    return{from:fmt(w),to:fmt(now)};
-  }
-  if(period==="custom"){
-    return{
-      from:document.getElementById("gen-from").value||fmt(new Date(now.getFullYear(),now.getMonth(),1)),
-      to:document.getElementById("gen-to").value||fmt(now)
-    };
-  }
-  // month (default)
+  if(period==="yesterday"){var y=new Date(now);y.setDate(y.getDate()-1);return{from:fmt(y),to:fmt(y)};}
+  if(period==="week"){var w=new Date(now);w.setDate(w.getDate()-7);return{from:fmt(w),to:fmt(now)};}
+  if(period==="custom"){return{from:document.getElementById("gen-from").value||fmt(new Date(now.getFullYear(),now.getMonth(),1)),to:document.getElementById("gen-to").value||fmt(now)};}
   return{from:fmt(new Date(now.getFullYear(),now.getMonth(),1)),to:fmt(now)};
 }
-
 function loadGeneracion(){
   var proj=document.getElementById("gen-proj").value;
   if(!proj){toast("⚠ Selecciona un proyecto");return;}
   var range=getGenDateRange();
   document.getElementById("gen-empty").style.display="none";
   document.getElementById("gen-faults-box").style.display="none";
-  // Show spinner in chart area
   var btn=document.getElementById("gen-load");if(btn){btn.textContent="⏳ Cargando…";btn.disabled=true;}
-
   apiGet({action:"getGeneration",sub_project:proj,date_from:range.from,date_to:range.to},30000)
   .then(function(r){
     if(btn){btn.textContent="Consultar ↻";btn.disabled=false;}
@@ -1814,10 +1726,8 @@ function loadGeneracion(){
     toast("⚠ Error al cargar generación");
   });
 }
-
 function renderGenChart(r,subProj,range){
   var data=r.data||[];
-  // Hide chart card, show empty state
   var chartCard=document.getElementById("gen-chart-card");
   if(!data.length){
     if(chartCard)chartCard.style.display="none";
@@ -1832,102 +1742,51 @@ function renderGenChart(r,subProj,range){
   }
   if(chartCard)chartCard.style.display="block";
   document.getElementById("gen-empty").style.display="none";
-
-  // Agrupar por día
   var dayMap={};
-  data.forEach(function(d){
-    if(!dayMap[d.date])dayMap[d.date]=0;
-    dayMap[d.date]+=d.kwh;
-  });
+  data.forEach(function(d){if(!dayMap[d.date])dayMap[d.date]=0;dayMap[d.date]+=d.kwh;});
   var days=Object.keys(dayMap).sort();
   var kwhPerDay=days.map(function(d){return Math.round(dayMap[d]*100)/100;});
-
-  // P90 diario desde simulación
   var sim=r.simulation;
   var p90daily=sim?sim.p90_daily:null;
   var p90Line=days.map(function(){return p90daily;});
-
-  // Fallas en el período
   var faultDays={};
   faults.forEach(function(f){
     if(userRole==="cliente"&&clientProjects.length>0&&clientProjects.indexOf(f.proj)<0)return;
     var projMatch=false;
-    if(subProj){
-      // Match sub_project → nombre_bitacora
-      var projCfg=genProjects.find(function(p){return p.sub_project===subProj;});
-      if(projCfg&&(f.proj===projCfg.nombre_bitacora||f.proj===projCfg.nombre_display))projMatch=true;
-    } else {projMatch=true;}
+    if(subProj){var projCfg=genProjects.find(function(p){return p.sub_project===subProj;});if(projCfg&&(f.proj===projCfg.nombre_bitacora||f.proj===projCfg.nombre_display))projMatch=true;}
+    else{projMatch=true;}
     if(!projMatch)return;
-    var fd2=String(f.date||"").trim();
-    var iso="";
-    var m1=fd2.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    var m2=fd2.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
+    var fd2=String(f.date||"").trim();var iso="";
+    var m1=fd2.match(/^(\d{4})-(\d{2})-(\d{2})/);var m2=fd2.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
     if(m1)iso=fd2.slice(0,10);else if(m2)iso=m2[3]+"-"+m2[2]+"-"+m2[1].padStart(2,"0");
-    if(iso&&iso>=range.from&&iso<=range.to){
-      if(!faultDays[iso])faultDays[iso]=[];
-      faultDays[iso].push(f);
-    }
+    if(iso&&iso>=range.from&&iso<=range.to){if(!faultDays[iso])faultDays[iso]=[];faultDays[iso].push(f);}
   });
-
-  // Bar colors: red if fault day, purple otherwise
-  var barColors=days.map(function(d){
-    return faultDays[d]?'rgba(255,87,87,0.75)':'rgba(145,91,216,0.75)';
-  });
-  var barBorders=days.map(function(d){
-    return faultDays[d]?'#FF5757':'#915BD8';
-  });
-
-  // KPIs
+  var barColors=days.map(function(d){return faultDays[d]?'rgba(255,87,87,0.75)':'rgba(145,91,216,0.75)';});
+  var barBorders=days.map(function(d){return faultDays[d]?'#FF5757':'#915BD8';});
   var totalKwh=kwhPerDay.reduce(function(a,b){return a+b;},0);
   var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   var ymd=yesterday.getFullYear()+"-"+String(yesterday.getMonth()+1).padStart(2,"0")+"-"+String(yesterday.getDate()).padStart(2,"0");
   var kwhYest=dayMap[ymd]||0;
   function sv(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
-  sv("gkv-hoy",Math.round(kwhYest).toLocaleString("es-CO"));
-  sv("gks-hoy","kWh generados ayer");
-  sv("gkv-mes",Math.round(totalKwh).toLocaleString("es-CO"));
-  sv("gks-mes","kWh en el período");
+  sv("gkv-hoy",Math.round(kwhYest).toLocaleString("es-CO"));sv("gks-hoy","kWh generados ayer");
+  sv("gkv-mes",Math.round(totalKwh).toLocaleString("es-CO"));sv("gks-mes","kWh en el período");
   if(sim){
-    sv("gkv-sim",Math.round(sim.p90_monthly).toLocaleString("es-CO"));
-    sv("gks-sim","kWh P90 mensual esperado");
-    // ── % vs P90 esperado al día de hoy ──────────────────────────
-    // Lógica: P90_diario = P90_mensual / días_del_mes
-    // P90_esperado_acumulado = P90_diario × días_transcurridos_del_período
-    // % = generación_real / P90_esperado_acumulado × 100
-    var daysInPeriod=days.length;  // días con datos en el período
+    sv("gkv-sim",Math.round(sim.p90_monthly).toLocaleString("es-CO"));sv("gks-sim","kWh P90 mensual esperado");
+    var daysInPeriod=days.length;
     var p90Expected=sim.p90_daily?Math.round(sim.p90_daily*daysInPeriod):0;
     var pct=p90Expected>0?Math.round((totalKwh/p90Expected)*100):0;
     var pctCol=pct>=100?"#4ADE80":pct>=90?"#F6FF72":"#FF5757";
     var pctLabel=pct>=100?"✅ Va a cumplir":pct>=90?"⚠️ En riesgo":"❌ Por debajo";
     var kvEl=document.getElementById("gkv-pct");
     if(kvEl){kvEl.textContent=pct+"%";kvEl.style.color=pctCol;}
-    // Update KPI label
-    var klEl=document.querySelector("#gen-kpis .kpi.kgr .kpi-lbl");
-    if(klEl)klEl.textContent="% vs P90 Esperado";
+    var klEl=document.querySelector("#gen-kpis .kpi.kgr .kpi-lbl");if(klEl)klEl.textContent="% vs P90 Esperado";
     sv("gks-pct",pctLabel+" · "+Math.round(p90Expected).toLocaleString("es-CO")+" kWh esperados");
   }
-
-  // ── Render Chart.js ──────────────────────────────────────
   var cv=document.getElementById("genC");
   if(!cv)return;
   if(genChart){genChart.destroy();genChart=null;}
-
-  var datasets=[{
-    type:"bar",label:"Generación real (kWh)",
-    data:kwhPerDay,
-    backgroundColor:barColors,borderColor:barBorders,
-    borderWidth:1,borderRadius:3,order:2
-  }];
-  if(p90daily){
-    datasets.push({
-      type:"line",label:"P90 diario esperado",
-      data:p90Line,
-      borderColor:"#F6FF72",borderWidth:2,
-      pointRadius:0,fill:false,tension:0,
-      borderDash:[6,3],order:1
-    });
-  }
-
+  var datasets=[{type:"bar",label:"Generación real (kWh)",data:kwhPerDay,backgroundColor:barColors,borderColor:barBorders,borderWidth:1,borderRadius:3,order:2}];
+  if(p90daily){datasets.push({type:"line",label:"P90 diario esperado",data:p90Line,borderColor:"#F6FF72",borderWidth:2,pointRadius:0,fill:false,tension:0,borderDash:[6,3],order:1});}
   genChart=new Chart(cv.getContext("2d"),{
     data:{labels:days,datasets:datasets},
     options:{
@@ -1936,55 +1795,22 @@ function renderGenChart(r,subProj,range){
       plugins:{
         legend:{display:false},
         tooltip:{
-          backgroundColor:"#1E1529",
-          borderColor:"#4A3560",
-          borderWidth:1,
-          padding:12,
-          titleColor:"#FDFAF7",
-          bodyColor:"#A89EC0",
+          backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,padding:12,titleColor:"#FDFAF7",bodyColor:"#A89EC0",
           callbacks:{
-            title:function(items){
-              var d=items[0].label;
-              var fs=faultDays[d];
-              if(fs&&fs.length){
-                return d+" · ⚡ "+fs.length+" falla"+(fs.length>1?"s":"")+" activa"+(fs.length>1?"s":"");
-              }
-              return d;
-            },
-            label:function(item){
-              if(item.dataset.type==="line")return "  P90 esperado: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
-              return "  Generación real: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";
-            },
-            afterBody:function(items){
-              var d=items[0].label;
-              var fs=faultDays[d];
-              if(!fs||!fs.length)return [];
-              var lines=[""];
-              fs.forEach(function(f){
-                var fdd=fd(f.code);
-                var s=ST[f.st]||ST.activa;
-                lines.push("  "+s.ico+" ["+f.code+"] "+(fdd?fdd.label:f.faultLabel||f.code));
-                lines.push("     Estado: "+s.lbl+(f.prio?" · Prioridad: "+f.prio:""));
-              });
-              return lines;
-            }
+            title:function(items){var d=items[0].label;var fs=faultDays[d];if(fs&&fs.length){return d+" · ⚡ "+fs.length+" falla"+(fs.length>1?"s":"")+" activa"+(fs.length>1?"s":"");}return d;},
+            label:function(item){if(item.dataset.type==="line")return "  P90 esperado: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";return "  Generación real: "+Math.round(item.raw).toLocaleString("es-CO")+" kWh";},
+            afterBody:function(items){var d=items[0].label;var fs=faultDays[d];if(!fs||!fs.length)return [];var lines=[""];fs.forEach(function(f){var fdd=fd(f.code);var s=ST[f.st]||ST.activa;lines.push("  "+s.ico+" ["+f.code+"] "+(fdd?fdd.label:f.faultLabel||f.code));lines.push("     Estado: "+s.lbl+(f.prio?" · Prioridad: "+f.prio:""));});return lines;}
           }
         }
       },
       scales:{
-        x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},
-           grid:{display:false},border:{color:"transparent"}},
-        y:{ticks:{color:"#A89EC0",font:{size:10},
-             callback:function(v){return v.toLocaleString("es-CO");}},
-           grid:{color:"#4A356030"},border:{color:"transparent"}}
+        x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},grid:{display:false},border:{color:"transparent"}},
+        y:{ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}},grid:{color:"#4A356030"},border:{color:"transparent"}}
       }
     }
   });
-
-  // ── Faults list below chart ──
   var faultList=Object.keys(faultDays).sort();
-  var box=document.getElementById("gen-faults-box");
-  var list=document.getElementById("gen-faults-list");
+  var box=document.getElementById("gen-faults-box");var list=document.getElementById("gen-faults-list");
   if(faultList.length>0&&box&&list){
     box.style.display="block";
     var cntEl=document.getElementById("gen-faults-count");
@@ -1992,13 +1818,11 @@ function renderGenChart(r,subProj,range){
     var html='<div style="display:flex;flex-direction:column;gap:10px">';
     faultList.forEach(function(day){
       var dayFaults=faultDays[day];
-      // Header del día
       var dayKwh=Math.round(dayMap[day]||0);
       var p90ref=p90daily?Math.round(p90daily):null;
       var pctDay=p90ref&&p90ref>0?Math.round((dayKwh/p90ref)*100):null;
       var pctCol=pctDay!==null?(pctDay>=100?"#4ADE80":pctDay>=80?"#F6FF72":"#FF5757"):"#A89EC0";
       html+='<div style="background:var(--s1);border:1px solid var(--br);border-left:3px solid #FF5757;border-radius:10px;overflow:hidden;">';
-      // Día header
       html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#FF575710;border-bottom:1px solid var(--br)">';
       html+='<div style="display:flex;align-items:center;gap:9px">';
       html+='<div style="background:#FF5757;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;color:#fff">⚡ '+dayFaults.length+' falla'+(dayFaults.length>1?'s':'')+'</div>';
@@ -2006,21 +1830,13 @@ function renderGenChart(r,subProj,range){
       html+='</div>';
       html+='<div style="display:flex;align-items:center;gap:12px">';
       html+='<span style="font-size:11px;color:var(--mu)">Generado: <b style="color:var(--cr)">'+dayKwh.toLocaleString("es-CO")+'</b> kWh</span>';
-      if(pctDay!==null){
-        html+='<span style="font-size:11px;font-weight:800;color:'+pctCol+'">'+pctDay+'% P90</span>';
-      }
-      html+='</div>';
-      html+='</div>';
-      // Fallas del día
+      if(pctDay!==null){html+='<span style="font-size:11px;font-weight:800;color:'+pctCol+'">'+pctDay+'% P90</span>';}
+      html+='</div>';html+='</div>';
       html+='<div style="padding:8px 14px;display:flex;flex-direction:column;gap:7px">';
       dayFaults.forEach(function(f){
-        var fdd=fd(f.code);
-        var s=ST[f.st]||ST.activa;
-        var catStyle=getImpStyle(f.code);
-        html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border-radius:8px;cursor:pointer;border:1px solid var(--br);transition:border-color .2s" onclick="openDetail(\''+esc(f.id)+'\')" onmouseover="this.style.borderColor=\'#915BD8\'" onmouseout="this.style.borderColor=\'\'  ">';
-        // Ícono categoría
+        var fdd=fd(f.code);var s=ST[f.st]||ST.activa;var catStyle=getImpStyle(f.code);
+        html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border-radius:8px;cursor:pointer;border:1px solid var(--br);transition:border-color .2s" onclick="openDetail(\''+esc(f.id)+'\')" onmouseover="this.style.borderColor=\'#915BD8\'" onmouseout="this.style.borderColor=\'\'">';
         html+='<div style="width:34px;height:34px;border-radius:8px;background:'+catStyle.col+'22;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">'+catStyle.ico+'</div>';
-        // Info principal
         html+='<div style="flex:1;min-width:0">';
         html+='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">';
         html+='<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;font-weight:700;color:var(--pu)">'+esc(f.code)+'</span>';
@@ -2030,35 +1846,22 @@ function renderGenChart(r,subProj,range){
         html+='<span style="font-size:10px;color:var(--fa)">'+esc(f.proj)+'</span>';
         if(f.time){html+='<span style="font-size:10px;color:var(--fa)">· '+esc(f.time)+' h</span>';}
         if(f.centinela){html+='<span style="font-size:10px;color:var(--fa)">· 👤 '+esc(f.centinela.split(" ").slice(0,2).join(" "))+'</span>';}
-        html+='</div>';
-        html+='</div>';
-        // Estado + prioridad
+        html+='</div>';html+='</div>';
         html+='<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">';
         html+='<span class="badge" style="color:'+s.col+';background:'+s.bg+';border-color:'+s.bdr+'">'+s.ico+' '+s.lbl+'</span>';
-        if(f.prio){
-          var prioCol=f.prio==="Alta"?"#FF5757":f.prio==="Media"?"#F6FF72":"#A89EC0";
-          html+='<span style="font-size:9px;font-weight:800;color:'+prioCol+'">▲ '+esc(f.prio)+'</span>';
-        }
-        html+='</div>';
-        html+='<div style="font-size:16px;color:var(--fa);flex-shrink:0">›</div>';
-        html+='</div>';
+        if(f.prio){var prioCol=f.prio==="Alta"?"#FF5757":f.prio==="Media"?"#F6FF72":"#A89EC0";html+='<span style="font-size:9px;font-weight:800;color:'+prioCol+'">▲ '+esc(f.prio)+'</span>';}
+        html+='</div>';html+='<div style="font-size:16px;color:var(--fa);flex-shrink:0">›</div>';html+='</div>';
       });
-      html+='</div>';
-      html+='</div>';
+      html+='</div>';html+='</div>';
     });
-    html+='</div>';
-    list.innerHTML=html;
-  } else if(box){
-    box.style.display="none";
-  }
+    html+='</div>';list.innerHTML=html;
+  } else if(box){box.style.display="none";}
 }
-
-
 /* ══ PORTAFOLIO ══ */
 var portChart = null;
-var portData = {};         // { sub_project: { data:[], totalKwh:0 } }
-var portProjects = [];     // [ { sub_project, nombre_display, nombre_clientes } ]
-var portPortfolios = {};   // { "Nombre Portafolio": ["nombre_clientes", ...] }
+var portData = {};
+var portProjects = [];
+var portPortfolios = {};
 var portViewMode = "stacked";
 var portPeriodMode = "week";
 var portCurrentPortfolio = "";
@@ -2067,359 +1870,134 @@ var portColorPalette = [
   "#C47AFF","#FB923C","#34D399","#FBBF24","#A78BFA","#F472B6","#38BDF8",
   "#86EFAC","#FCA5A5","#D946EF","#22D3EE","#A3E635","#E879F9"
 ];
-
 function loadPortfolios() {
-  // Load portfolio names + projects from the backend via a new action
   apiGet({action:"getPortfolios"}, 10000).then(function(r){
     if (!r || !r.ok) { console.warn("getPortfolios error:", r&&r.error); return; }
     portPortfolios = r.portfolios || {};
-    var sel = document.getElementById("port-sel");
-    if (!sel) return;
+    var sel = document.getElementById("port-sel");if (!sel) return;
     sel.innerHTML = '<option value="">Selecciona portafolio…</option>';
-    Object.keys(portPortfolios).forEach(function(name){
-      sel.innerHTML += '<option value="' + esc(name) + '">' + esc(name) + '</option>';
-    });
+    Object.keys(portPortfolios).forEach(function(name){sel.innerHTML += '<option value="' + esc(name) + '">' + esc(name) + '</option>';});
   }).catch(function(e){ console.error("loadPortfolios:", e); });
 }
-
 function getPortDateRange() {
   var now = new Date();
   var pad = function(n){ return String(n).padStart(2,"0"); };
   var fmt = function(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); };
-  if (portPeriodMode === "yesterday") {
-    var y = new Date(now); y.setDate(y.getDate()-1);
-    return {from:fmt(y), to:fmt(y)};
-  }
-  if (portPeriodMode === "week") {
-    var w = new Date(now); w.setDate(w.getDate()-7);
-    return {from:fmt(w), to:fmt(now)};
-  }
-  if (portPeriodMode === "custom") {
-    var f = document.getElementById("port-from").value;
-    var t = document.getElementById("port-to").value;
-    return {
-      from: f || fmt(new Date(now.getFullYear(), now.getMonth(), 1)),
-      to:   t || fmt(now)
-    };
-  }
-  // month
+  if (portPeriodMode === "yesterday") { var y = new Date(now); y.setDate(y.getDate()-1); return {from:fmt(y), to:fmt(y)}; }
+  if (portPeriodMode === "week") { var w = new Date(now); w.setDate(w.getDate()-7); return {from:fmt(w), to:fmt(now)}; }
+  if (portPeriodMode === "custom") { var f = document.getElementById("port-from").value; var t = document.getElementById("port-to").value; return {from: f || fmt(new Date(now.getFullYear(), now.getMonth(), 1)), to: t || fmt(now)}; }
   return {from:fmt(new Date(now.getFullYear(), now.getMonth(), 1)), to:fmt(now)};
 }
-
 function loadPortfolio() {
   var portName = document.getElementById("port-sel").value;
   if (!portName) { toast("⚠ Selecciona un portafolio"); return; }
-
-  var projNames = portPortfolios[portName]; // array of nombre_clientes
+  var projNames = portPortfolios[portName];
   if (!projNames || !projNames.length) { toast("⚠ Sin proyectos en este portafolio"); return; }
-
-  // Filter by client access if needed
   var allSysProjs = genProjects.length > 0 ? genProjects : [];
   var projsToLoad = [];
   projNames.forEach(function(nc){
     nc = nc.trim();
-    var found = allSysProjs.find(function(p){
-      return (p.nombre_clientes||"").trim() === nc ||
-             (p.nombre_display||"").trim() === nc ||
-             (p.nombre_bitacora||"").trim() === nc;
-    });
+    var found = allSysProjs.find(function(p){ return (p.nombre_clientes||"").trim() === nc || (p.nombre_display||"").trim() === nc || (p.nombre_bitacora||"").trim() === nc; });
     if (found) {
-      // Client access check: if client, they must have this project in their list
-      // Client access check: if client, they must have this project in their list
       if (userRole === "cliente" && clientProjects.length > 0) {
-        var has = clientProjects.some(function(cp){
-          cp = cp.trim().toLowerCase();
-          return cp === (found.nombre_clientes||"").trim().toLowerCase() ||
-                 cp === (found.nombre_bitacora||"").trim().toLowerCase() ||
-                 cp === (found.nombre_display||"").trim().toLowerCase() ||
-                 cp === (found.sub_project||"").trim().toLowerCase();
-        });
+        var has = clientProjects.some(function(cp){ cp = cp.trim().toLowerCase(); return cp === (found.nombre_clientes||"").trim().toLowerCase() || cp === (found.nombre_bitacora||"").trim().toLowerCase() || cp === (found.nombre_display||"").trim().toLowerCase() || cp === (found.sub_project||"").trim().toLowerCase(); });
         if (!has) return;
       }
       projsToLoad.push(found);
     }
   });
-
-  if (!projsToLoad.length) {
-    toast("⚠ No tienes acceso a proyectos de este portafolio"); return;
-  }
-
+  if (!projsToLoad.length) { toast("⚠ No tienes acceso a proyectos de este portafolio"); return; }
   portCurrentPortfolio = portName;
   var range = getPortDateRange();
-
-  // UI: show loading, hide others
   document.getElementById("port-empty").style.display = "none";
   document.getElementById("port-chart-section").style.display = "none";
   document.getElementById("port-kpis").style.display = "none";
   document.getElementById("port-loading").style.display = "block";
   document.getElementById("port-loading-msg").textContent = "Consultando " + projsToLoad.length + " proyectos…";
   document.getElementById("port-loading-sub").textContent = "";
-
   var btn = document.getElementById("port-load");
   if (btn) { btn.textContent = "⏳ Cargando…"; btn.disabled = true; }
-
   portData = {};
-  var done = 0;
-  var total = projsToLoad.length;
-
+  var done = 0, total = projsToLoad.length;
   projsToLoad.forEach(function(proj, idx){
     setTimeout(function(){
-      apiGet({
-        action:"getGeneration",
-        sub_project: proj.sub_project,
-        date_from: range.from,
-        date_to: range.to
-      }, 35000).then(function(r){
+      apiGet({action:"getGeneration",sub_project: proj.sub_project,date_from: range.from,date_to: range.to}, 35000).then(function(r){
         done++;
         document.getElementById("port-loading-sub").textContent = done + " / " + total + " proyectos cargados";
-        if (r && r.ok && r.data && r.data.length > 0) {
-          portData[proj.sub_project] = {
-            data: r.data,
-            nombre: proj.nombre_clientes || proj.nombre_display,
-            totalKwh: r.data.reduce(function(acc, d){ return acc + d.kwh; }, 0)
-          };
-        }
-        if (done === total) {
-          if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; }
-          document.getElementById("port-loading").style.display = "none";
-          renderPortfolio(range);
-        }
+        if (r && r.ok && r.data && r.data.length > 0) { portData[proj.sub_project] = {data: r.data, nombre: proj.nombre_clientes || proj.nombre_display, totalKwh: r.data.reduce(function(acc, d){ return acc + d.kwh; }, 0)}; }
+        if (done === total) { if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; } document.getElementById("port-loading").style.display = "none"; renderPortfolio(range); }
       }).catch(function(){
         done++;
-        if (done === total) {
-          if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; }
-          document.getElementById("port-loading").style.display = "none";
-          renderPortfolio(range);
-        }
+        if (done === total) { if (btn) { btn.textContent = "Consultar ↻"; btn.disabled = false; } document.getElementById("port-loading").style.display = "none"; renderPortfolio(range); }
       });
-    }, idx * 200); // stagger requests
+    }, idx * 200);
   });
 }
-
 function renderPortfolio(range) {
   var keys = Object.keys(portData);
   if (!keys.length) {
     document.getElementById("port-empty").style.display = "block";
-    document.getElementById("port-empty").innerHTML = '<div style="font-size:40px;margin-bottom:14px">📭</div>' +
-      '<div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Sin datos en el período</div>' +
-      '<div>No se encontró generación para los proyectos de este portafolio en el rango seleccionado.</div>';
+    document.getElementById("port-empty").innerHTML = '<div style="font-size:40px;margin-bottom:14px">📭</div><div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Sin datos en el período</div><div>No se encontró generación para los proyectos de este portafolio en el rango seleccionado.</div>';
     return;
   }
-
-  // Update header
-  var titleEl = document.getElementById("port-name-title");
-  if (titleEl) titleEl.textContent = portCurrentPortfolio;
-
+  var titleEl = document.getElementById("port-name-title"); if (titleEl) titleEl.textContent = portCurrentPortfolio;
   var periodLabels = { week:"Última semana", yesterday:"Ayer", month:"Mes en curso", custom:"Período personalizado" };
-  var periodLbl = document.getElementById("port-period-lbl");
-  if (periodLbl) periodLbl.textContent = (periodLabels[portPeriodMode]||"") + " · " + range.from + " → " + range.to;
-
-  // Gather all unique days
+  var periodLbl = document.getElementById("port-period-lbl"); if (periodLbl) periodLbl.textContent = (periodLabels[portPeriodMode]||"") + " · " + range.from + " → " + range.to;
   var daySet = {};
-  keys.forEach(function(sp){
-    portData[sp].data.forEach(function(d){ daySet[d.date] = true; });
-  });
+  keys.forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet[d.date] = true; }); });
   var allDays = Object.keys(daySet).sort();
-
-  // Build per-project per-day maps
   var projDayMap = {};
-  keys.forEach(function(sp){
-    projDayMap[sp] = {};
-    portData[sp].data.forEach(function(d){
-      if (!projDayMap[sp][d.date]) projDayMap[sp][d.date] = 0;
-      projDayMap[sp][d.date] += d.kwh;
-    });
-  });
-
-  // KPIs
+  keys.forEach(function(sp){ projDayMap[sp] = {}; portData[sp].data.forEach(function(d){ if (!projDayMap[sp][d.date]) projDayMap[sp][d.date] = 0; projDayMap[sp][d.date] += d.kwh; }); });
   var grandTotal = keys.reduce(function(a,sp){ return a + portData[sp].totalKwh; }, 0);
   var avgDaily = allDays.length > 0 ? grandTotal / allDays.length : 0;
-
   function sv(id,v){ var e=document.getElementById(id); if(e)e.textContent=v; }
-  sv("pkv-total", Math.round(grandTotal).toLocaleString("es-CO"));
-  sv("pks-total", "kWh en " + allDays.length + " día" + (allDays.length!==1?"s":""));
-  sv("pkv-projs", keys.length);
-  sv("pkv-avg", Math.round(avgDaily).toLocaleString("es-CO"));
-
-  var kpisEl = document.getElementById("port-kpis");
-  if (kpisEl) { kpisEl.style.display = "grid"; kpisEl.style.gridTemplateColumns = "repeat(3,1fr)"; }
-
-  // Sort projects by total desc (for consistent color assignment)
+  sv("pkv-total", Math.round(grandTotal).toLocaleString("es-CO")); sv("pks-total", "kWh en " + allDays.length + " día" + (allDays.length!==1?"s":""));
+  sv("pkv-projs", keys.length); sv("pkv-avg", Math.round(avgDaily).toLocaleString("es-CO"));
+  var kpisEl = document.getElementById("port-kpis"); if (kpisEl) { kpisEl.style.display = "grid"; kpisEl.style.gridTemplateColumns = "repeat(3,1fr)"; }
   var sortedKeys = keys.slice().sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
-
-  // Build legend
   var legEl = document.getElementById("port-legend");
-  if (legEl) {
-    legEl.innerHTML = sortedKeys.map(function(sp, i){
-      var col = portColorPalette[i % portColorPalette.length];
-      var nombre = portData[sp].nombre;
-      return '<div style="display:flex;align-items:center;gap:5px;background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:4px 10px">' +
-        '<div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div>' +
-        '<span style="font-size:11px;color:var(--mu)">'+esc(nombre)+'</span></div>';
-    }).join("");
-  }
-
-  // Build ranking table
-  var rankEl = document.getElementById("port-rank-table");
-  var rankPeriodEl = document.getElementById("port-rank-period");
-  if (rankPeriodEl) rankPeriodEl.textContent = range.from + " → " + range.to;
-
+  if (legEl) { legEl.innerHTML = sortedKeys.map(function(sp, i){ var col = portColorPalette[i % portColorPalette.length]; var nombre = portData[sp].nombre; return '<div style="display:flex;align-items:center;gap:5px;background:var(--s1);border:1px solid var(--br);border-radius:20px;padding:4px 10px"><div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div><span style="font-size:11px;color:var(--mu)">'+esc(nombre)+'</span></div>'; }).join(""); }
+  var rankEl = document.getElementById("port-rank-table"); var rankPeriodEl = document.getElementById("port-rank-period"); if (rankPeriodEl) rankPeriodEl.textContent = range.from + " → " + range.to;
   if (rankEl) {
     var maxKwh = portData[sortedKeys[0]] ? portData[sortedKeys[0]].totalKwh : 1;
     var html = '';
     sortedKeys.forEach(function(sp, i){
-      var col = portColorPalette[i % portColorPalette.length];
-      var nombre = portData[sp].nombre;
-      var kwh = portData[sp].totalKwh;
-      var pct = maxKwh > 0 ? (kwh / maxKwh * 100) : 0;
-      var portPct = grandTotal > 0 ? (kwh / grandTotal * 100).toFixed(1) : "0.0";
+      var col = portColorPalette[i % portColorPalette.length]; var nombre = portData[sp].nombre; var kwh = portData[sp].totalKwh;
+      var pct = maxKwh > 0 ? (kwh / maxKwh * 100) : 0; var portPct = grandTotal > 0 ? (kwh / grandTotal * 100).toFixed(1) : "0.0";
       html += '<div style="padding:12px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:14px">';
-      // Rank badge
-      html += '<div style="width:28px;height:28px;border-radius:50%;background:' +
-        (i===0?"linear-gradient(135deg,#F6FF72,#e6ee62)":i===1?"linear-gradient(135deg,#A89EC0,#8a82a8)":i===2?"linear-gradient(135deg,#F97316,#d96010)":"var(--s2)") +
-        ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:' +
-        (i<3?"#1A0F2E":"var(--mu)") + ';flex-shrink:0">' + (i+1) + '</div>';
-      // Color dot + name
-      html += '<div style="min-width:140px;flex-shrink:0">';
-      html += '<div style="display:flex;align-items:center;gap:7px">';
-      html += '<div style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0"></div>';
-      html += '<span style="font-size:13px;font-weight:700;color:var(--cr)">'+esc(nombre)+'</span>';
-      html += '</div>';
-      html += '<div style="font-size:10px;color:var(--fa);margin-top:3px">'+portPct+'% del portafolio</div>';
-      html += '</div>';
-      // Bar
-      html += '<div style="flex:1;min-width:0">';
-      html += '<div style="background:var(--br);border-radius:4px;height:8px;overflow:hidden">';
-      html += '<div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:4px;transition:width .6s ease"></div>';
-      html += '</div>';
-      html += '</div>';
-      // Value
-      html += '<div style="min-width:100px;text-align:right;flex-shrink:0">';
-      html += '<div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;color:'+col+'">'+Math.round(kwh).toLocaleString("es-CO")+'</div>';
-      html += '<div style="font-size:10px;color:var(--fa)">kWh</div>';
-      html += '</div>';
+      html += '<div style="width:28px;height:28px;border-radius:50%;background:'+(i===0?"linear-gradient(135deg,#F6FF72,#e6ee62)":i===1?"linear-gradient(135deg,#A89EC0,#8a82a8)":i===2?"linear-gradient(135deg,#F97316,#d96010)":"var(--s2)")+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:'+(i<3?"#1A0F2E":"var(--mu)")+';flex-shrink:0">'+(i+1)+'</div>';
+      html += '<div style="min-width:140px;flex-shrink:0"><div style="display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:50%;background:'+col+';flex-shrink:0"></div><span style="font-size:13px;font-weight:700;color:var(--cr)">'+esc(nombre)+'</span></div><div style="font-size:10px;color:var(--fa);margin-top:3px">'+portPct+'% del portafolio</div></div>';
+      html += '<div style="flex:1;min-width:0"><div style="background:var(--br);border-radius:4px;height:8px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:'+col+';border-radius:4px;transition:width .6s ease"></div></div></div>';
+      html += '<div style="min-width:100px;text-align:right;flex-shrink:0"><div style="font-family:\'JetBrains Mono\',monospace;font-size:13px;font-weight:700;color:'+col+'">'+Math.round(kwh).toLocaleString("es-CO")+'</div><div style="font-size:10px;color:var(--fa)">kWh</div></div>';
       html += '</div>';
     });
     rankEl.innerHTML = html;
   }
-
-  // Render chart
   renderPortChart(allDays, sortedKeys, projDayMap);
-
   document.getElementById("port-chart-section").style.display = "block";
 }
-
 function renderPortChart(allDays, sortedKeys, projDayMap) {
-  var cv = document.getElementById("portC");
-  if (!cv) return;
+  var cv = document.getElementById("portC"); if (!cv) return;
   if (portChart) { portChart.destroy(); portChart = null; }
-
   if (portViewMode === "stacked") {
-    // Stacked bar chart
-    var datasets = sortedKeys.map(function(sp, i){
-      var col = portColorPalette[i % portColorPalette.length];
-      var nombre = portData[sp].nombre;
-      return {
-        type: "bar",
-        label: nombre,
-        data: allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),
-        backgroundColor: col + "CC",
-        borderColor: col,
-        borderWidth: 1,
-        borderRadius: i === sortedKeys.length-1 ? 3 : 0,
-        stack: "port"
-      };
-    }).reverse(); // reverse so top of legend = top of bar
-
-    portChart = new Chart(cv.getContext("2d"), {
-      data: { labels: allDays, datasets: datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        interaction: { mode:"index", intersect:false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#1E1529",
-            borderColor: "#4A3560",
-            borderWidth: 1,
-            padding: 12,
-            titleColor: "#FDFAF7",
-            bodyColor: "#A89EC0",
-            callbacks: {
-              footer: function(items) {
-                var total = items.reduce(function(a,i){ return a + (i.raw||0); }, 0);
-                return ["", "Total: " + Math.round(total).toLocaleString("es-CO") + " kWh"];
-              }
-            }
-          }
-        },
-        scales: {
-          x: { stacked:true, ticks:{color:"#A89EC0",font:{size:10},maxRotation:45}, grid:{display:false}, border:{color:"transparent"} },
-          y: { stacked:true, ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}}, grid:{color:"#4A356030"}, border:{color:"transparent"} }
-        }
-      }
-    });
+    var datasets = sortedKeys.map(function(sp, i){ var col = portColorPalette[i % portColorPalette.length]; var nombre = portData[sp].nombre; return {type:"bar",label:nombre,data:allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),backgroundColor:col+"CC",borderColor:col,borderWidth:1,borderRadius:i===sortedKeys.length-1?3:0,stack:"port"}; }).reverse();
+    portChart = new Chart(cv.getContext("2d"), {data:{labels:allDays,datasets:datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,padding:12,titleColor:"#FDFAF7",bodyColor:"#A89EC0",callbacks:{footer:function(items){var total=items.reduce(function(a,i){return a+(i.raw||0);},0);return["","Total: "+Math.round(total).toLocaleString("es-CO")+" kWh"];}}}},scales:{x:{stacked:true,ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},grid:{display:false},border:{color:"transparent"}},y:{stacked:true,ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}},grid:{color:"#4A356030"},border:{color:"transparent"}}}}});
   } else {
-    // Separate lines per project
-    var datasetsLine = sortedKeys.map(function(sp, i){
-      var col = portColorPalette[i % portColorPalette.length];
-      var nombre = portData[sp].nombre;
-      return {
-        type: "line",
-        label: nombre,
-        data: allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),
-        borderColor: col,
-        backgroundColor: col + "22",
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: col,
-        fill: false,
-        tension: 0.3
-      };
-    });
-
-    portChart = new Chart(cv.getContext("2d"), {
-      data: { labels: allDays, datasets: datasetsLine },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        interaction: { mode:"index", intersect:false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: "#1E1529",
-            borderColor: "#4A3560",
-            borderWidth: 1,
-            padding: 12,
-            titleColor: "#FDFAF7",
-            bodyColor: "#A89EC0"
-          }
-        },
-        scales: {
-          x: { ticks:{color:"#A89EC0",font:{size:10},maxRotation:45}, grid:{display:false}, border:{color:"transparent"} },
-          y: { ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}}, grid:{color:"#4A356030"}, border:{color:"transparent"} }
-        }
-      }
-    });
+    var datasetsLine = sortedKeys.map(function(sp, i){ var col = portColorPalette[i % portColorPalette.length]; var nombre = portData[sp].nombre; return {type:"line",label:nombre,data:allDays.map(function(d){ return Math.round((projDayMap[sp][d]||0)*100)/100; }),borderColor:col,backgroundColor:col+"22",borderWidth:2,pointRadius:3,pointBackgroundColor:col,fill:false,tension:0.3}; });
+    portChart = new Chart(cv.getContext("2d"), {data:{labels:allDays,datasets:datasetsLine},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,padding:12,titleColor:"#FDFAF7",bodyColor:"#A89EC0"}},scales:{x:{ticks:{color:"#A89EC0",font:{size:10},maxRotation:45},grid:{display:false},border:{color:"transparent"}},y:{ticks:{color:"#A89EC0",font:{size:10},callback:function(v){return v.toLocaleString("es-CO");}},grid:{color:"#4A356030"},border:{color:"transparent"}}}}});
   }
-
-  // Update chart title
-  var titleEl = document.getElementById("port-chart-title");
-  var subEl = document.getElementById("port-chart-sub");
+  var titleEl = document.getElementById("port-chart-title"); var subEl = document.getElementById("port-chart-sub");
   if (titleEl) titleEl.textContent = portViewMode==="stacked" ? "Generación Apilada por Proyecto" : "Generación por Proyecto (separado)";
   if (subEl) subEl.textContent = "kWh diarios · " + portCurrentPortfolio;
 }
-
 /* ══ INIT ══ */
 document.addEventListener("DOMContentLoaded",function(){
-  // Ocultar loader máximo en 15s
   setTimeout(function(){
     if(document.getElementById("loader").style.display!=="none"){
       hideLoader();setSync("err","Sin conexión");renderAll();
       toast("⚠ Sin respuesta. Verifica el script de Apps Script.");
     }
   },15000);
-
-  // ── Login listeners ──
   document.getElementById("li-email-go").addEventListener("click",loginEmailGo);
   document.getElementById("li-email").addEventListener("keydown",function(e){if(e.key==="Enter")loginEmailGo();});
   document.getElementById("li-name-go").addEventListener("click",loginNameGo);
@@ -2436,11 +2014,8 @@ document.addEventListener("DOMContentLoaded",function(){
       else{showLoginStep("code");var e=document.getElementById("li-code-err");if(e)e.textContent="⚠ No se pudo reenviar";}
     }).catch(function(){showLoginStep("code");});
   });
-  // Logout desde cbtn (mantener perfil para monitor, limpiar sesión)
   document.getElementById("cbtn").addEventListener("click",function(){
-    if(userRole==="cliente"){
-      if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }
-    } else { openSetup(true); }
+    if(userRole==="cliente"){if(confirm("¿Cerrar sesión?")){ clearSession(); location.reload(); }} else { openSetup(true); }
   });
   document.getElementById("tab-board").addEventListener("click",function(){curTab="board";this.className="tab on";document.getElementById("tab-charts").className="tab";document.getElementById("board-panel").style.display="block";document.getElementById("frow").style.display="flex";document.getElementById("charts").style.display="none";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";document.getElementById("port-panel").style.display="none";});
   document.getElementById("tab-charts").addEventListener("click",function(){curTab="charts";this.className="tab on";document.getElementById("tab-board").className="tab";document.getElementById("board-panel").style.display="none";document.getElementById("frow").style.display="none";document.getElementById("charts").style.display="grid";document.getElementById("app").style.display="block";document.getElementById("gen-panel").style.display="none";document.getElementById("port-panel").style.display="none";renderCharts();});
@@ -2454,8 +2029,6 @@ document.addEventListener("DOMContentLoaded",function(){
     document.getElementById("port-panel").style.display="none";
     loadGenProjects();
   });
-
-  // ── Portafolio tab ──
   var _tp = document.getElementById("tab-port");
   if (_tp) _tp.addEventListener("click", function(){
     curTab = "port";
@@ -2464,69 +2037,35 @@ document.addEventListener("DOMContentLoaded",function(){
     document.getElementById("app").style.display = "none";
     document.getElementById("gen-panel").style.display = "none";
     document.getElementById("port-panel").style.display = "block";
-    // Load projects list if not already loaded
     if (!genProjects.length) loadGenProjects();
     loadPortfolios();
   });
-
-  // Portfolio period buttons
   document.querySelectorAll(".port-period-btn").forEach(function(btn){
     btn.addEventListener("click", function(){
       portPeriodMode = this.dataset.p;
-      document.querySelectorAll(".port-period-btn").forEach(function(b){
-        b.style.background = "transparent";
-        b.style.color = "var(--mu)";
-      });
-      this.style.background = "var(--pu)";
-      this.style.color = "var(--cr)";
+      document.querySelectorAll(".port-period-btn").forEach(function(b){ b.style.background = "transparent"; b.style.color = "var(--mu)"; });
+      this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
       var customVisible = portPeriodMode === "custom";
-      var pf = document.getElementById("port-from");
-      var pt = document.getElementById("port-to");
+      var pf = document.getElementById("port-from"); var pt = document.getElementById("port-to");
       if (pf) pf.style.display = customVisible ? "" : "none";
       if (pt) pt.style.display = customVisible ? "" : "none";
     });
   });
-
-  // Portfolio chart view toggle
-  var pvs = document.getElementById("port-view-stacked");
-  var pvp = document.getElementById("port-view-separate");
+  var pvs = document.getElementById("port-view-stacked"); var pvp = document.getElementById("port-view-separate");
   if (pvs) pvs.addEventListener("click", function(){
-    portViewMode = "stacked";
-    this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
+    portViewMode = "stacked"; this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
     if (pvp) { pvp.style.background = "transparent"; pvp.style.color = "var(--mu)"; }
-    if (Object.keys(portData).length) {
-      var range = getPortDateRange();
-      var daySet={};
-      Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet[d.date]=true; }); });
-      var allDays = Object.keys(daySet).sort();
-      var sortedKeys = Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
-      var projDayMap={};
-      sortedKeys.forEach(function(sp){ projDayMap[sp]={};
-        portData[sp].data.forEach(function(d){ if(!projDayMap[sp][d.date])projDayMap[sp][d.date]=0; projDayMap[sp][d.date]+=d.kwh; });
-      });
-      renderPortChart(allDays, sortedKeys, projDayMap);
-    }
+    if (Object.keys(portData).length) { var range=getPortDateRange(); var daySet={}; Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet[d.date]=true; }); }); var allDays=Object.keys(daySet).sort(); var sortedKeys=Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh-portData[a].totalKwh; }); var projDayMap={}; sortedKeys.forEach(function(sp){ projDayMap[sp]={}; portData[sp].data.forEach(function(d){ if(!projDayMap[sp][d.date])projDayMap[sp][d.date]=0; projDayMap[sp][d.date]+=d.kwh; }); }); renderPortChart(allDays,sortedKeys,projDayMap); }
   });
   if (pvp) pvp.addEventListener("click", function(){
-    portViewMode = "separate";
-    this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
+    portViewMode = "separate"; this.style.background = "var(--pu)"; this.style.color = "var(--cr)";
     if (pvs) { pvs.style.background = "transparent"; pvs.style.color = "var(--mu)"; }
-    if (Object.keys(portData).length) {
-      var daySet2={};
-      Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet2[d.date]=true; }); });
-      var allDays2 = Object.keys(daySet2).sort();
-      var sortedKeys2 = Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh - portData[a].totalKwh; });
-      var projDayMap2={};
-      sortedKeys2.forEach(function(sp){ projDayMap2[sp]={};
-        portData[sp].data.forEach(function(d){ if(!projDayMap2[sp][d.date])projDayMap2[sp][d.date]=0; projDayMap2[sp][d.date]+=d.kwh; });
-      });
-      renderPortChart(allDays2, sortedKeys2, projDayMap2);
-    }
+    if (Object.keys(portData).length) { var daySet2={}; Object.keys(portData).forEach(function(sp){ portData[sp].data.forEach(function(d){ daySet2[d.date]=true; }); }); var allDays2=Object.keys(daySet2).sort(); var sortedKeys2=Object.keys(portData).sort(function(a,b){ return portData[b].totalKwh-portData[a].totalKwh; }); var projDayMap2={}; sortedKeys2.forEach(function(sp){ projDayMap2[sp]={}; portData[sp].data.forEach(function(d){ if(!projDayMap2[sp][d.date])projDayMap2[sp][d.date]=0; projDayMap2[sp][d.date]+=d.kwh; }); }); renderPortChart(allDays2,sortedKeys2,projDayMap2); }
   });
-
-  var _pl = document.getElementById("port-load");
-  if (_pl) _pl.addEventListener("click", loadPortfolio);
+  var _pl = document.getElementById("port-load"); if (_pl) _pl.addEventListener("click", loadPortfolio);
   var _gl=document.getElementById("gen-load");if(_gl)_gl.addEventListener("click",loadGeneracion);
+  // ── NUEVO: listener comparación ──
+  var _gcl=document.getElementById("gen-compare-load");if(_gcl)_gcl.addEventListener("click",loadGenCompare);
   var _gp=document.getElementById("gen-period");if(_gp)_gp.addEventListener("change",function(){
     var custom=this.value==="custom";
     var gf=document.getElementById("gen-from");if(gf)gf.style.display=custom?"":"none";
@@ -2545,13 +2084,10 @@ document.addEventListener("DOMContentLoaded",function(){
   document.getElementById("btn-empty-new").addEventListener("click",openNewFault);
   document.getElementById("cbtn").addEventListener("click",function(){openSetup(true);});
   document.getElementById("mclose").addEventListener("click",closeModal);
-  // Theme restore
   try{var _t=localStorage.getItem("unergy_theme");if(_t==="light")applyTheme(true);}catch(e){}
-  // New buttons (safe null checks)
   var _btnT=document.getElementById("btn-theme");if(_btnT)_btnT.addEventListener("click",function(){applyTheme(!isLight);});
   var _btnE=document.getElementById("btn-export");if(_btnE)_btnE.addEventListener("click",exportCSV);
-  // New filter listeners
-  function renderBoardAndKPIs(){renderBoard();}  // renderBoard already calls renderKPIs at end
+  function renderBoardAndKPIs(){renderBoard();}
   var _fi=document.getElementById("fimp");if(_fi)_fi.addEventListener("change",renderBoardAndKPIs);
   var _fd1=document.getElementById("fdate-from");if(_fd1)_fd1.addEventListener("change",renderBoardAndKPIs);
   var _fd2=document.getElementById("fdate-to");if(_fd2)_fd2.addEventListener("change",renderBoardAndKPIs);
@@ -2564,12 +2100,10 @@ document.addEventListener("DOMContentLoaded",function(){
     document.getElementById("login-ov").className="";
     loadFaults();
   } else {
-    // Ocultar loader inmediatamente y mostrar login
     document.getElementById("loader").style.display="none";
     showLoginStep("email");
     document.getElementById("login-ov").className="open";
-    var btnGo=document.getElementById("li-email-go");
-    if(btnGo)btnGo.disabled=false;
+    var btnGo=document.getElementById("li-email-go");if(btnGo)btnGo.disabled=false;
     setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
   }
   setInterval(function(){if(userRole!=="none")loadFaults();},60000);
