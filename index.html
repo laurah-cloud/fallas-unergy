@@ -271,13 +271,39 @@ body.client-mode #tab-inf{display:none!important}
 .rpt-page-sep{height:0;margin:0;padding:0}
 /* ── Print ── */
 @media print{
-  #topbar,#inf-panel>div:first-child,.btn,#fab,#toast,#loader,#login-ov{display:none!important}
-  body{background:#fff!important}
-  .rpt-page{box-shadow:none;border-radius:0;margin-bottom:0;page-break-after:always}
-  .rpt-page:last-child{page-break-after:auto}
-  .rpt-page-sep{page-break-after:always;display:block}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  #topbar,#inf-panel>div:first-child,#fab,#toast,#loader,#login-ov,
+  .inf-mode-btn,.btn,#inf-gen,#inf-print,#inf-empty,#inf-loading{display:none!important}
+  body{background:#fff!important;margin:0;padding:0}
+  #inf-panel{padding:0!important;max-width:100%!important}
   #inf-content{display:block!important}
-  #inf-panel{padding:0!important}
+  .rpt-page{box-shadow:none!important;border-radius:0!important;margin-bottom:0!important;
+    page-break-after:always;break-after:page;border:none!important}
+  .rpt-page:last-child{page-break-after:auto;break-after:auto}
+  .rpt-page-sep{page-break-after:always;break-after:page;display:block;height:0}
+  /* Header */
+  .rpt-header{background:#1A0F2E!important;-webkit-print-color-adjust:exact!important}
+  .rpt-meta-item{background:#221533!important}
+  .rpt-meta-lbl{color:#A89EC0!important}
+  .rpt-meta-val{color:#fff!important}
+  /* Tabla encabezado - amarillo → dorado legible */
+  .rpt-table th{background:#1A0F2E!important;color:#E8C840!important}
+  .rpt-total-row td{background:#EDE8F5!important}
+  .rpt-table tbody tr:nth-child(even) td{background:#F9F7FD!important}
+  /* KPI y secciones */
+  .rpt-kpi{background:#F7F4FD!important;border:1px solid #C8B8E8!important}
+  .rpt-obs-text{background:#F0FFF4!important;border-left:3px solid #2E8B57!important}
+  .rpt-status-box{background:#F7F4FD!important}
+  .rpt-chart-card{background:#F9F7FD!important;border:1px solid #DDD!important}
+  .rpt-footer{background:#F7F4FD!important}
+  .rpt-section-title{border-left:3px solid #5B2DAA!important;color:#1A0F2E!important}
+  /* Colores de texto - amarillo→dorado, verde mantener, rojo mantener */
+  [style*="color:#F6FF72"],[style*="color: #F6FF72"]{color:#B8860B!important}
+  [style*="color:#4ADE80"]{color:#2D8A4E!important}
+  /* Ocultar hint de edición */
+  .rpt-edit-hint{display:none!important}
+  /* Observaciones editables - mostrar como texto normal */
+  .rpt-obs-editable{outline:none!important;border:none!important;background:#F0FFF4!important}
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -533,19 +559,31 @@ body.client-mode #tab-inf{display:none!important}
   <div style="background:var(--s1);border:1px solid var(--br);border-radius:13px;padding:18px 20px;margin-bottom:20px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
       <div>
-        <div style="font-size:17px;font-weight:800;color:var(--cr)">📄 Informe Operacional Mensual</div>
-        <div style="font-size:11px;color:var(--fa);margin-top:3px">Genera el informe en el formato Unergy · Solo equipo monitor</div>
+        <div style="font-size:17px;font-weight:800;color:var(--cr)">📄 Informe Operacional</div>
+        <div style="font-size:11px;color:var(--fa);margin-top:3px">Solo equipo monitor · Unergy</div>
       </div>
-      <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
-        <button class="inf-mode-btn" data-m="proyecto" style="padding:7px 16px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">Por Proyecto</button>
-        <button class="inf-mode-btn" data-m="portafolio" style="padding:7px 16px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Por Portafolio</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <!-- Modo proyecto/portafolio -->
+        <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
+          <button class="inf-mode-btn" data-m="proyecto" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">Por Proyecto</button>
+          <button class="inf-mode-btn" data-m="portafolio" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Por Portafolio</button>
+        </div>
+        <!-- Modo período -->
+        <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
+          <button class="inf-period-btn" data-p="mes" style="padding:7px 12px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">Mensual</button>
+          <button class="inf-period-btn" data-p="custom" style="padding:7px 12px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">Personalizado</button>
+        </div>
       </div>
     </div>
     <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
-      <select class="fi fsel" id="inf-proj" style="min-width:200px;font-size:13px"><option value="">Selecciona proyecto…</option></select>
-      <select class="fi fsel" id="inf-port" style="min-width:200px;font-size:13px;display:none"><option value="">Selecciona portafolio…</option></select>
-      <input type="month" class="fi" id="inf-month" style="width:155px;font-size:13px;color-scheme:dark"/>
-      <button class="btn btn-pu" id="inf-gen" style="padding:7px 18px;font-size:13px">Generar Informe ↻</button>
+      <select class="fi fsel" id="inf-proj" style="min-width:190px;font-size:13px"><option value="">Selecciona proyecto…</option></select>
+      <select class="fi fsel" id="inf-port" style="min-width:190px;font-size:13px;display:none"><option value="">Selecciona portafolio…</option></select>
+      <!-- Mensual -->
+      <input type="month" class="fi" id="inf-month" style="width:150px;font-size:13px;color-scheme:dark"/>
+      <!-- Personalizado -->
+      <input type="date" class="fi fdate" id="inf-from" style="display:none;width:145px;font-size:13px;color-scheme:dark"/>
+      <input type="date" class="fi fdate" id="inf-to" style="display:none;width:145px;font-size:13px;color-scheme:dark"/>
+      <button class="btn btn-pu" id="inf-gen" style="padding:7px 18px;font-size:13px">Generar ↻</button>
       <button class="btn btn-ye" id="inf-print" style="padding:7px 14px;font-size:13px;display:none">🖨 Imprimir / PDF</button>
     </div>
   </div>
@@ -553,7 +591,7 @@ body.client-mode #tab-inf{display:none!important}
   <div id="inf-empty" style="text-align:center;padding:60px 20px;color:var(--fa);font-size:13px">
     <div style="font-size:40px;margin-bottom:14px">📄</div>
     <div style="font-size:15px;font-weight:700;color:var(--mu);margin-bottom:8px">Listo para generar</div>
-    <div>Selecciona el tipo, proyecto o portafolio, y el mes</div>
+    <div>Selecciona proyecto o portafolio, el período y haz clic en <b style="color:var(--pu)">Generar</b></div>
   </div>
   <!-- Loading -->
   <div id="inf-loading" style="display:none;text-align:center;padding:60px 20px">
@@ -2217,23 +2255,41 @@ document.addEventListener("DOMContentLoaded",function(){
     setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
   }
 /* ══════════════════════════════════════════════════
-   INFORME OPERACIONAL MENSUAL
+   INFORME OPERACIONAL MENSUAL — v2
 ══════════════════════════════════════════════════ */
 var infMode="proyecto";
+var infPeriodMode="mes";
 var infChartInstances=[];
 var rptChartQueue={};
 var MESES_LARG=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-function getMonthRange(ym){
+/* ── Rango ── */
+function getInfRange(){
+  var pad=function(n){return String(n).padStart(2,"0");};
+  if(infPeriodMode==="custom"){
+    var f=document.getElementById("inf-from").value;
+    var t=document.getElementById("inf-to").value;
+    if(!f||!t){return null;}
+    var fy=parseInt(f.split("-")[0]),fm=parseInt(f.split("-")[1]),fd=parseInt(f.split("-")[2]);
+    var ty=parseInt(t.split("-")[0]),tm=parseInt(t.split("-")[1]),td2=parseInt(t.split("-")[2]);
+    var totalDays=Math.round((new Date(t)-new Date(f))/86400000)+1;
+    return{from:f,to:t,year:fy,month:fm,monthName:MESES_LARG[fm-1]+" "+fy,lastDay:td2,
+      label:fmtD(f.replace(/-/g,function(m,i){return i>4?"/":"-"}).replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1"))+" – "+
+            fmtD(t.replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1")),
+      isCustom:true,totalDays:totalDays,
+      headerPeriod:fmtD(f.replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1"))+" al "+fmtD(t.replace(/(\d{4})-(\d{2})-(\d{2})/,"$3/$2/$1"))};
+  }
+  var ym=(document.getElementById("inf-month")||{}).value||"";
+  if(!ym)return null;
   var p=ym.split("-"),y=parseInt(p[0]),m=parseInt(p[1]);
   var last=new Date(y,m,0).getDate();
-  var pad=function(n){return String(n).padStart(2,"0");};
-  return{from:y+"-"+pad(m)+"-01",to:y+"-"+pad(m)+"-"+pad(last),year:y,month:m,monthName:MESES_LARG[m-1],lastDay:last};
+  return{from:y+"-"+pad(m)+"-01",to:y+"-"+pad(m)+"-"+pad(last),year:y,month:m,
+    monthName:MESES_LARG[m-1],lastDay:last,label:MESES_LARG[m-1]+" "+y,
+    headerPeriod:MESES_LARG[m-1]+" "+y,isCustom:false,totalDays:last};
 }
 
-function getMonthFaultsForProj(subProj,year,month){
-  var pad=function(n){return String(n).padStart(2,"0");};
-  var f0=year+"-"+pad(month)+"-01",f1=year+"-"+pad(month)+"-"+pad(new Date(year,month,0).getDate());
+/* ── Fallas del período para un proyecto ── */
+function getFaultsForRange(subProj,range){
   var cfg=genProjects.find(function(p){return p.sub_project===subProj;});
   return faults.filter(function(f){
     if(!cfg)return false;
@@ -2242,10 +2298,28 @@ function getMonthFaultsForProj(subProj,year,month){
     var ds=String(f.date||"").trim(),iso="";
     var m1=ds.match(/^(\d{4})-(\d{2})-(\d{2})/),m2=ds.match(/^(\d{1,2})\/(\d{2})\/(\d{4})/);
     if(m1)iso=ds.slice(0,10);else if(m2)iso=m2[3]+"-"+m2[2]+"-"+m2[1].padStart(2,"0");
-    return iso>=f0&&iso<=f1;
+    return iso>=range.from&&iso<=range.to;
   });
 }
 
+/* ── Disponibilidad (horas luz 06:00–17:00 con kwh=0) ── */
+function calcAvailability(data,range){
+  var HORA_INI=6,HORA_FIN=17; // 6am a 5pm inclusive = 11 franjas
+  var horasLuz=(HORA_FIN-HORA_INI)*range.totalDays;
+  var horasCero=0;
+  data.forEach(function(d){
+    var t=String(d.time||"");
+    var m=t.match(/(\d{2}):(\d{2})/);
+    if(!m)return;
+    var h=parseInt(m[1]);
+    if(h>=HORA_INI&&h<HORA_FIN&&(d.kwh===0||d.kwh<0.001))horasCero++;
+  });
+  var disponibles=horasLuz-horasCero;
+  var pct=horasLuz>0?Math.round((disponibles/horasLuz)*1000)/10:null;
+  return{pct:pct,disponibles:disponibles,total:horasLuz,cero:horasCero};
+}
+
+/* ── Tabla semanal (solo para mes completo) ── */
 function buildWeeks(data,range,p90d){
   var dm={};data.forEach(function(d){if(!dm[d.date])dm[d.date]=0;dm[d.date]+=d.kwh;});
   var pad=function(n){return String(n).padStart(2,"0");};
@@ -2260,36 +2334,40 @@ function buildWeeks(data,range,p90d){
   });
 }
 
+/* ── Helpers ── */
 function autoCause(code){
   var pre=String(code||"").charAt(0);
-  return({"1":"Falla en sistema de medición o comunicación de datos","2":"Falla eléctrica en componente del sistema","3":"Evento adverso externo no atribuible a la infraestructura del proyecto","4":"Desgaste o degradación de componente del sistema","5":"Falla en infraestructura civil o estructural","6":"Evento de seguridad laboral (HSE)","7":"Falla en sistema de almacenamiento (BESS)","8":"Incumplimiento administrativo o regulatorio","9":"Ausencia de suministro eléctrico externo"}[pre])||"Causa identificada en campo";
+  return({"1":"Falla en sistema de medición o comunicación de datos","2":"Falla eléctrica en componente del sistema fotovoltaico","3":"Evento adverso externo, no atribuible a la infraestructura del proyecto","4":"Desgaste o degradación de componente del sistema","5":"Falla en infraestructura civil o estructural","6":"Evento de seguridad laboral (HSE)","7":"Falla en sistema de almacenamiento (BESS)","8":"Incumplimiento administrativo o regulatorio","9":"Ausencia de suministro eléctrico externo (operador de red)"}[pre])||"Causa identificada en campo — ver descripción del evento";
 }
-
 function autoAction(f){
   var parts=[];
   if(f.res&&f.res.trim()&&f.res.length>3&&!/^\d/.test(f.res)&&!f.res.includes("/"))parts.push(f.res.trim());
   if(f.flw&&f.flw.trim()&&f.flw!=="—")parts.push(f.flw.trim());
   if(parts.length)return parts.join(". ");
-  return{activa:"Monitoreo continuo activo. Equipo técnico en seguimiento.",revision:"Caso bajo revisión técnica activa. Pendiente definición de plan de acción.",programada:"Intervención programada. Coordinando visita técnica en sitio.",terminada:"Falla resuelta. Sin intervención adicional requerida."}[f.st]||"Seguimiento activo.";
+  return{activa:"Monitoreo continuo activo. Equipo técnico en seguimiento de la anomalía.",revision:"Caso bajo revisión técnica. Pendiente definición de plan de acción.",programada:"Intervención programada. Coordinando visita técnica en sitio.",terminada:"Falla resuelta satisfactoriamente. Sin intervención adicional requerida."}[f.st]||"Seguimiento activo por parte del equipo de operaciones.";
 }
-
-function autoObs(pname,total,avg,p90m,mf,range){
+function autoObs(pname,total,avg,p90m,mf,range,avail){
   var pct=p90m>0?((total-p90m)/p90m*100):null;
   var comp=pct!==null?(pct>=0?"superando en +"+(pct.toFixed(1))+"% el umbral P90":"por debajo en "+Math.abs(pct).toFixed(1)+"% del umbral P90"):"";
-  var txt="El proyecto "+pname+" registró una generación total de "+Math.round(total).toLocaleString("es-CO")+" kWh durante "+range.monthName+" de "+range.year+", con un promedio diario de "+Math.round(avg).toLocaleString("es-CO")+" kWh/día"+(comp?", "+comp:".")+".";
+  var txt="El proyecto "+pname+" registró una generación total de "+Math.round(total).toLocaleString("es-CO")+" kWh durante "+range.label+(comp?", "+comp:".")+", con un promedio diario de "+Math.round(avg).toLocaleString("es-CO")+" kWh/día.";
+  if(avail&&avail.pct!==null){
+    var avCol=avail.pct>=95?"alta":avail.pct>=85?"aceptable":"baja";
+    txt+=" La disponibilidad operativa del período fue de "+avail.pct.toFixed(1)+"% ("+avail.cero+" hora(s) con generación cero en franja solar), considerada "+avCol+".";
+  }
   if(mf.length){
     var actv=mf.filter(function(f){return f.st!=="terminada";});
     txt+=" Se registraron "+mf.length+" evento(s) operativo(s) durante el período.";
-    txt+=actv.length?" Al cierre del mes, "+actv.length+" evento(s) se mantienen con seguimiento activo.":" Todos los eventos fueron atendidos y resueltos durante el período.";
+    txt+=actv.length?" Al cierre del período, "+actv.length+" evento(s) continúan con seguimiento activo.":" Todos los eventos fueron atendidos y resueltos durante el período.";
   }else{txt+=" No se registraron eventos operativos durante el período, lo que refleja la estabilidad operacional del activo.";}
-  if(pct!==null&&pct>=0)txt+=" A pesar de las contingencias registradas, el proyecto cerró el mes en condición operativa y por encima del umbral de referencia.";
+  if(pct!==null&&pct>=0)txt+=" El proyecto cerró el período en condición operativa y por encima del umbral de referencia P90, reflejando una gestión oportuna de las contingencias.";
   return txt;
 }
-
 function rmeta(lbl,val){return '<div class="rpt-meta-item"><div class="rpt-meta-lbl">'+lbl+'</div><div class="rpt-meta-val">'+esc(val)+'</div></div>';}
 function rkpi(ico,lbl,val,col){return '<div class="rpt-kpi"><div class="rpt-kpi-ico">'+ico+'</div><div class="rpt-kpi-lbl">'+lbl+'</div><div class="rpt-kpi-val"'+(col?' style="color:'+col+'"':'')+'>'+val+'</div></div>';}
 function nextMes(m){return MESES_LARG[m===12?0:m];}
+var _obsIdx=0;
 
+/* ── Página de proyecto ── */
 function buildProjectPage(cfg,genRes,mf,range){
   var data=genRes.data||[],sim=genRes.simulation;
   var dm={};data.forEach(function(d){if(!dm[d.date])dm[d.date]=0;dm[d.date]+=d.kwh;});
@@ -2301,93 +2379,134 @@ function buildProjectPage(cfg,genRes,mf,range){
   var pct=p90m>0?((total-p90m)/p90m*100):null;
   var pctStr=pct!==null?(pct>=0?"+":"")+pct.toFixed(1)+"% vs P90":"—";
   var pctCol=pct===null?"#A89EC0":pct>=0?"#4ADE80":"#FF5757";
-  var weeks=buildWeeks(data,range,p90d);
+  var pctPrint=pct===null?"#888":pct>=0?"#2D8A4E":"#CC0000";
+  var avail=calcAvailability(data,range);
+  var availStr=avail.pct!==null?avail.pct.toFixed(1)+"%":"—";
+  var availCol=avail.pct===null?"#A89EC0":avail.pct>=95?"#4ADE80":avail.pct>=85?"#F6FF72":"#FF5757";
   var pname=cfg.nombre_clientes||cfg.nombre_display;
   var muni=cfg.municipio||"—";
   var resp=cData.name||cData.email||"Operaciones UNERGY";
-  var obs=autoObs(pname,total,avg,p90m,mf,range);
+  var obs=autoObs(pname,total,avg,p90m,mf,range,avail);
   var activos=mf.filter(function(f){return f.st!=="terminada";});
+  var stCol=pct===null?"#A89EC0":pct>=0?"#4ADE80":pct>=-10?"#F97316":"#FF5757";
+  var stTxt=pct===null?"—":pct>=0?"OPERATIVO":"ATENCIÓN";
 
-  // Chart data stored globally (avoids JSON-in-attribute escaping issues)
-  var cid1="rptc1_"+cfg.sub_project.replace(/[^a-z0-9]/gi,"_");
-  var cid2="rptc2_"+cfg.sub_project.replace(/[^a-z0-9]/gi,"_");
+  // Chart IDs únicos
+  var uid=cfg.sub_project.replace(/[^a-z0-9]/gi,"_")+"_"+Date.now();
+  var cid1="rptc1_"+uid,cid2="rptc2_"+uid;
   rptChartQueue[cid1]={type:"daily",d:{labels:days,kwh:kpd,p90d:p90d,avg:Math.round(avg)}};
   rptChartQueue[cid2]={type:"comp",d:{real:Math.round(total),p50:p50m,p90:p90m,p99:p99m}};
 
-  // Events rows
+  // Tabla semanal vs tabla por días (rango personalizado)
+  var tableHtml="";
+  if(!range.isCustom){
+    var weeks=buildWeeks(data,range,p90d);
+    tableHtml='<table class="rpt-table" style="margin-top:12px"><thead><tr>'
+      +'<th>SEMANA</th><th>PERÍODO</th><th>GENERACIÓN (kWh)</th><th>P90 ESPERADO (kWh)</th><th>DESV.</th><th>ESTADO</th></tr></thead><tbody>'
+      +weeks.map(function(w){
+        var wp=w.pct!==null?(w.pct>=0?"+":"")+w.pct.toFixed(1)+"%":"—";
+        var wc=w.ok===null?"#A89EC0":w.ok?"#4ADE80":"#F6FF72";
+        var wcp=w.ok===null?"#888":w.ok?"#2D8A4E":"#B8860B";
+        return '<tr><td style="font-weight:700">'+esc(w.lbl)+'</td><td>'+esc(w.period)+'</td>'
+          +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(w.gen).toLocaleString("es-CO")+'</td>'
+          +'<td style="text-align:right;font-family:monospace">'+(w.p90?Math.round(w.p90).toLocaleString("es-CO"):"—")+'</td>'
+          +'<td style="text-align:center;font-weight:700;color:'+wc+'">'+wp+'</td>'
+          +'<td style="text-align:center">'+(w.ok===null?"—":w.ok?"✅ Normal":"⚠️ Atención")+'</td></tr>';
+      }).join("")
+      +'<tr class="rpt-total-row"><td>TOTAL</td><td>'+range.lastDay+' días</td>'
+      +'<td style="text-align:right;font-family:monospace">'+Math.round(total).toLocaleString("es-CO")+'</td>'
+      +'<td style="text-align:right;font-family:monospace">'+(p90m?Math.round(p90m).toLocaleString("es-CO"):"—")+'</td>'
+      +'<td style="text-align:center;color:'+pctCol+'">'+pctStr.split(" ")[0]+'</td>'
+      +'<td style="text-align:center;color:'+pctCol+'">'+(pct!==null?(pct>=0?"✅ Sobre P90":"⚠️ Bajo P90"):"—")+'</td></tr>'
+      +'</tbody></table>';
+  }else{
+    tableHtml='<table class="rpt-table" style="margin-top:12px"><thead><tr>'
+      +'<th>PERÍODO</th><th>DÍAS CON DATOS</th><th>GENERACIÓN TOTAL (kWh)</th><th>PROMEDIO DIARIO (kWh)</th><th>DESV. P90</th></tr></thead><tbody>'
+      +'<tr><td>'+esc(range.headerPeriod)+'</td><td style="text-align:center">'+days.length+'</td>'
+      +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(total).toLocaleString("es-CO")+'</td>'
+      +'<td style="text-align:right;font-family:monospace">'+Math.round(avg).toLocaleString("es-CO")+'</td>'
+      +'<td style="text-align:center;font-weight:700;color:'+pctCol+'">'+pctStr+'</td></tr>'
+      +'</tbody></table>';
+  }
+
+  // Eventos
   var evHtml="";
   if(mf.length){mf.forEach(function(f){
     var fdd=fd(f.code),s=ST[f.st]||ST.activa;
     var desc=(f.desc&&f.desc.trim()?f.desc.trim():(fdd?fdd.label:f.code)).slice(0,220);
-    evHtml+='<tr><td style="white-space:nowrap;font-weight:700;color:#915BD8">'+esc(fmtD(f.date))+'</td>'
+    evHtml+='<tr><td style="white-space:nowrap;font-weight:700;color:#6B35C0">'+esc(fmtD(f.date))+'</td>'
       +'<td style="text-align:center;white-space:nowrap">'+(f.time?padT(f.time):"—")+'</td>'
       +'<td>'+esc(desc)+'</td>'
       +'<td>'+esc(autoCause(f.code))+'</td>'
       +'<td>'+esc(autoAction(f).slice(0,220))+'</td></tr>';
   });}else{evHtml='<tr><td colspan="5" style="text-align:center;color:#A89EC0;padding:18px">Sin eventos operativos registrados en el período</td></tr>';}
 
-  var stCol=pct===null?"#A89EC0":pct>=0?"#4ADE80":pct>=-10?"#F6FF72":"#FF5757";
-  var stTxt=pct===null?"—":pct>=0?"OPERATIVO":"ATENCIÓN";
+  // ID único para observaciones editables
+  var obsId="rpt-obs-"+(_obsIdx++);
 
   return '<div class="rpt-page">'
+    // Header
     +'<div class="rpt-header">'
-    +'<div style="display:flex;align-items:center;gap:13px"><svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
+    +'<div style="display:flex;align-items:center;gap:13px">'
+    +'<svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
     +'<div><div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:.8px">INFORME OPERACIONAL MENSUAL · UNERGY ENERGÍA DIGITAL S.A.S ESP</div>'
     +'<div style="color:#6B5F80;font-size:10px;letter-spacing:.6px;margin-top:2px">Minigranjas Solares | Operación &amp; Mantenimiento</div></div></div>'
-    +'<div class="rpt-meta-grid">'+rmeta("PROYECTO",pname)+rmeta("PERÍODO",range.monthName+" "+range.year)+rmeta("MUNICIPIO",muni)+rmeta("ELABORADO POR",resp)+'</div>'
+    +'<div class="rpt-meta-grid">'+rmeta("PROYECTO",pname)+rmeta("PERÍODO",range.headerPeriod)+rmeta("MUNICIPIO",muni)+rmeta("ELABORADO POR",resp)+'</div>'
     +'</div>'
-    // ── S1 Generación ──
-    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen de Generación – '+range.monthName+' '+range.year+'</div>'
-    +'<div class="rpt-kpi-row">'+rkpi("⚡","Generación Total",Math.round(total).toLocaleString("es-CO")+" kWh",null)+rkpi("📅","Promedio Diario",Math.round(avg).toLocaleString("es-CO")+" kWh/día",null)+rkpi("🏆","Desv. vs P90",pctStr,pctCol)+'</div>'
-    +'<table class="rpt-table" style="margin-top:12px"><thead><tr><th>SEMANA</th><th>PERÍODO</th><th>GENERACIÓN (kWh)</th><th>P90 ESPERADO (kWh)</th><th>DESV.</th><th>ESTADO</th></tr></thead><tbody>'
-    +weeks.map(function(w){
-      var wp=w.pct!==null?(w.pct>=0?"+":"")+w.pct.toFixed(1)+"%":"—";
-      var wc=w.ok===null?"#A89EC0":w.ok?"#4ADE80":"#F6FF72";
-      return '<tr><td style="font-weight:700">'+esc(w.lbl)+'</td><td>'+esc(w.period)+'</td>'
-        +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(w.gen).toLocaleString("es-CO")+'</td>'
-        +'<td style="text-align:right;font-family:monospace">'+(w.p90?Math.round(w.p90).toLocaleString("es-CO"):"—")+'</td>'
-        +'<td style="text-align:center;font-weight:700;color:'+wc+'">'+wp+'</td>'
-        +'<td style="text-align:center">'+(w.ok===null?"—":w.ok?"✅ Normal":"⚠️ Atención")+'</td></tr>';
-    }).join("")
-    +'<tr class="rpt-total-row"><td>TOTAL</td><td>'+range.lastDay+' días</td>'
-    +'<td style="text-align:right;font-family:monospace">'+Math.round(total).toLocaleString("es-CO")+'</td>'
-    +'<td style="text-align:right;font-family:monospace">'+(p90m?Math.round(p90m).toLocaleString("es-CO"):"—")+'</td>'
-    +'<td style="text-align:center;color:'+pctCol+'">'+pctStr.split(" ")[0]+'</td>'
-    +'<td style="text-align:center;color:'+pctCol+'">'+(pct!==null?(pct>=0?"✅ Sobre P90":"⚠️ Bajo P90"):"—")+'</td></tr>'
-    +'</tbody></table></div>'
-    // ── S2 Gráficos ──
+    // S1 Generación
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen de Generación – '+esc(range.headerPeriod)+'</div>'
+    +'<div class="rpt-kpi-row">'
+    +rkpi("⚡","Generación Total",Math.round(total).toLocaleString("es-CO")+" kWh",null)
+    +rkpi("📅","Promedio Diario",Math.round(avg).toLocaleString("es-CO")+" kWh/día",null)
+    +rkpi("🏆","Desv. vs P90",pctStr,pctCol)
+    +'</div>'
+    +'<div class="rpt-kpi-row" style="margin-top:10px">'
+    +rkpi("🔆","Disponibilidad Operativa",availStr,availCol)
+    +rkpi("⏱","Horas en cero (franja solar)",avail.cero+" h de "+avail.total+" h",avail.pct!==null&&avail.pct>=95?"#4ADE80":"#F97316")
+    +rkpi("📆","Días con datos",days.length+" / "+range.totalDays+" días",null)
+    +'</div>'
+    +tableHtml+'</div>'
+    // S2 Gráficos
     +'<div class="rpt-section"><div class="rpt-section-title">▌ 2. Análisis Gráfico de Generación</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
     +'<div class="rpt-chart-card"><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Generación Diaria</div><div style="position:relative;height:185px"><canvas id="'+cid1+'"></canvas></div></div>'
     +'<div class="rpt-chart-card"><div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px">Comparativo vs Simulaciones</div><div style="position:relative;height:185px"><canvas id="'+cid2+'"></canvas></div></div>'
     +'</div></div>'
-    // ── S3 Eventos ──
+    // S3 Eventos
     +'<div class="rpt-section"><div class="rpt-section-title">▌ 3. Eventos Operativos y Acciones Correctivas</div>'
-    +'<table class="rpt-table"><thead><tr><th style="width:88px">FECHA</th><th style="width:55px">HORA</th><th>DESCRIPCIÓN DEL EVENTO</th><th>CAUSA RAÍZ</th><th>ACCIÓN CORRECTIVA</th></tr></thead>'
+    +'<table class="rpt-table"><thead><tr><th style="width:88px">FECHA</th><th style="width:52px">HORA</th>'
+    +'<th>DESCRIPCIÓN DEL EVENTO</th><th>CAUSA RAÍZ</th><th>ACCIÓN CORRECTIVA</th></tr></thead>'
     +'<tbody>'+evHtml+'</tbody></table></div>'
-    // ── S4 Observaciones ──
+    // S4 Observaciones + Estado
     +'<div class="rpt-section"><div class="rpt-section-title">▌ 4. Observaciones y Estado del Proyecto</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 270px;gap:16px">'
-    +'<div><div class="rpt-obs-title">OBSERVACIONES GENERALES</div><div class="rpt-obs-text">'+esc(obs)+'</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 260px;gap:16px">'
+    +'<div>'
+    +'<div class="rpt-obs-title">OBSERVACIONES GENERALES '
+    +'<span class="rpt-edit-hint" style="font-size:9px;color:#915BD8;font-weight:700;letter-spacing:0;text-transform:none;margin-left:6px;cursor:pointer">✏️ clic para editar</span>'
+    +'</div>'
+    +'<div id="'+obsId+'" class="rpt-obs-text rpt-obs-editable" contenteditable="true" '
+    +'style="min-height:80px;outline:none;cursor:text;border-left:3px solid #4ADE80;padding:13px 15px;border-radius:8px;background:#F0FFF4;font-size:12px;color:#3D2D5C;line-height:1.8">'
+    +esc(obs)+'</div>'
+    +'</div>'
     +'<div class="rpt-status-box">'
     +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">'
     +'<span style="width:9px;height:9px;border-radius:50%;background:'+stCol+';display:inline-block;flex-shrink:0"></span>'
     +'<span style="font-size:12px;font-weight:800;color:'+stCol+'">● '+stTxt+'</span>'
     +'<span style="font-size:10px;color:#888;margin-left:2px">Con seguimiento activo</span></div>'
-    +(pct!==null?'<div class="rpt-status-row"><span style="color:#4ADE80">✅</span> P90: '+(pct>=0?"+":"")+pct.toFixed(1)+'%</div>':'')
-    +'<div class="rpt-status-row">⚡ '+mf.length+' evento(s) este mes</div>'
+    +(pct!==null?'<div class="rpt-status-row">✅ P90: '+(pct>=0?"+":"")+pct.toFixed(1)+'%</div>':'')
+    +(avail.pct!==null?'<div class="rpt-status-row">🔆 Disponibilidad: '+avail.pct.toFixed(1)+'%</div>':"")
+    +'<div class="rpt-status-row">⚡ '+mf.length+' evento(s) este período</div>'
     +(activos.length?'<div class="rpt-status-row" style="color:#F97316">En proceso: '+esc(activos.map(function(f){return f.code;}).slice(0,3).join(", "))+'</div>':"")
-    +'<div class="rpt-status-row">Resp: '+esc(resp)+'</div>'
+    +'<div class="rpt-status-row" style="margin-top:8px;padding-top:8px;border-top:1px solid #EDE8F5">Resp: '+esc(resp)+'</div>'
+    +'<div class="rpt-status-row">Contacto: operaciones@unergy.io</div>'
     +'<div class="rpt-status-row">Prox. reporte: '+nextMes(range.month)+' '+range.year+'</div>'
     +'</div></div>'
-    +'<div style="margin-top:12px;padding-top:10px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:10px;color:#999">'
-    +'<span>Responsable operaciones: Operaciones UNERGY &nbsp;·&nbsp; Contacto: operaciones@unergy.io</span>'
-    +'<span>Próximo reporte: '+nextMes(range.month)+' '+range.year+'</span>'
-    +'</div></div>'
-    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+range.monthName+' '+range.year+'</span></div>'
+    +'</div>'
+    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+esc(range.headerPeriod)+'</span></div>'
     +'</div>';
 }
 
+/* ── Página consolidada de portafolio ── */
 function buildConsolidatedPage(portName,projsData,range){
   var resp=cData.name||cData.email||"Operaciones UNERGY";
   var totalPort=0,overP90=0,totalEv=0;
@@ -2402,6 +2521,7 @@ function buildConsolidatedPage(portName,projsData,range){
     var pct=p90>0?((tot-p90)/p90*100):null;
     var pc=pct===null?"#A89EC0":pct>=0?"#4ADE80":"#FF5757";
     var ps=pct!==null?(pct>=0?"+":"")+pct.toFixed(1)+"%":"—";
+    var avail=calcAvailability(data,range);
     if(pct!==null&&pct>=0)overP90++;
     totalPort+=tot;totalEv+=pd.mf.length;
     var pn=pd.cfg.nombre_clientes||pd.cfg.nombre_display;
@@ -2409,70 +2529,74 @@ function buildConsolidatedPage(portName,projsData,range){
       +'<td style="text-align:right;font-family:monospace;font-weight:700">'+Math.round(tot).toLocaleString("es-CO")+'</td>'
       +'<td style="text-align:right;font-family:monospace">'+Math.round(avg).toLocaleString("es-CO")+'</td>'
       +'<td style="text-align:center;font-weight:700;color:'+pc+'">'+ps+'</td>'
+      +'<td style="text-align:center;color:'+(avail.pct===null?"#888":avail.pct>=95?"#2D8A4E":avail.pct>=85?"#B8860B":"#CC0000")+'">'+(avail.pct!==null?avail.pct.toFixed(1)+"%":"—")+'</td>'
       +'<td style="text-align:center">'+pd.mf.length+'</td>'
       +'<td style="text-align:center;color:'+pc+'">'+esc(pct!==null?(pct>=0?"✅ Normal":"⚠️ Atención"):"—")+'</td></tr>';
   });
-
-  // Chart data
-  var cport="rptc_port";
+  var cport="rptc_port_"+Date.now();
   rptChartQueue[cport]={type:"port",d:{
     labels:projsData.map(function(pd){return pd.cfg.nombre_clientes||pd.cfg.nombre_display;}),
     vals:projsData.map(function(pd){return Math.round(pd.genRes.data.reduce(function(a,d){return a+d.kwh;},0));}),
     p90s:projsData.map(function(pd){return pd.genRes.simulation?Math.round(pd.genRes.simulation.p90_monthly):null;})
   }};
-
   return '<div class="rpt-page">'
     +'<div class="rpt-header">'
-    +'<div style="display:flex;align-items:center;gap:13px"><svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
+    +'<div style="display:flex;align-items:center;gap:13px">'
+    +'<svg width="38" height="31" viewBox="0 0 44 36" fill="none"><circle cx="22" cy="4" r="3" fill="white"/><path d="M8 10 L8 24 Q8 34 22 34 Q36 34 36 24 L36 10" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/></svg>'
     +'<div><div style="color:#fff;font-size:14px;font-weight:800;letter-spacing:.8px">INFORME OPERACIONAL MENSUAL · PORTAFOLIO</div>'
     +'<div style="color:#6B5F80;font-size:10px;letter-spacing:.6px;margin-top:2px">Unergy Energía Digital S.A.S ESP | Operación &amp; Mantenimiento</div></div></div>'
-    +'<div class="rpt-meta-grid">'+rmeta("PORTAFOLIO",portName)+rmeta("PERÍODO",range.monthName+" "+range.year)+rmeta("PROYECTOS",projsData.length+" proyectos")+rmeta("ELABORADO POR",resp)+'</div>'
+    +'<div class="rpt-meta-grid">'+rmeta("PORTAFOLIO",portName)+rmeta("PERÍODO",range.headerPeriod)+rmeta("PROYECTOS",projsData.length+" proyectos")+rmeta("ELABORADO POR",resp)+'</div>'
     +'</div>'
-    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen Consolidado del Portafolio – '+range.monthName+' '+range.year+'</div>'
+    +'<div class="rpt-section"><div class="rpt-section-title">▌ 1. Resumen Consolidado del Portafolio – '+esc(range.headerPeriod)+'</div>'
     +'<div class="rpt-kpi-row">'
     +rkpi("⚡","Generación Total Portafolio",Math.round(totalPort).toLocaleString("es-CO")+" kWh",null)
     +rkpi("🏭","Proyectos sobre P90",overP90+" / "+projsData.length,overP90===projsData.length?"#4ADE80":"#F6FF72")
-    +rkpi("⚠️","Total Eventos del Período",totalEv+" evento(s)",totalEv>0?"#F6FF72":"#4ADE80")
+    +rkpi("⚠️","Total Eventos del Período",totalEv+" evento(s)",totalEv>0?"#F97316":"#4ADE80")
     +'</div>'
-    +'<table class="rpt-table" style="margin-top:12px"><thead><tr><th>PROYECTO</th><th>GENERACIÓN (kWh)</th><th>PROM. DIARIO (kWh)</th><th>DESV. P90</th><th>EVENTOS</th><th>ESTADO</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody>'
-    +'<tfoot><tr class="rpt-total-row"><td>TOTAL PORTAFOLIO</td><td style="text-align:right;font-family:monospace" colspan="5">'+Math.round(totalPort).toLocaleString("es-CO")+' kWh</td></tr></tfoot>'
+    +'<table class="rpt-table" style="margin-top:12px"><thead><tr>'
+    +'<th>PROYECTO</th><th>GENERACIÓN (kWh)</th><th>PROM. DIARIO</th><th>DESV. P90</th><th>DISPONIB.</th><th>EVENTOS</th><th>ESTADO</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody>'
+    +'<tfoot><tr class="rpt-total-row"><td>TOTAL PORTAFOLIO</td>'
+    +'<td style="text-align:right;font-family:monospace" colspan="6">'+Math.round(totalPort).toLocaleString("es-CO")+' kWh</td></tr></tfoot>'
     +'</table></div>'
     +'<div class="rpt-section"><div class="rpt-section-title">▌ 2. Generación por Proyecto</div>'
     +'<div class="rpt-chart-card"><div style="position:relative;height:230px"><canvas id="'+cport+'"></canvas></div></div></div>'
-    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+range.monthName+' '+range.year+'</span></div>'
+    +'<div class="rpt-footer"><span>UNERGY ENERGÍA DIGITAL S.A.S ESP | Medellín, Colombia | www.unergy.co</span><span>Documento confidencial – '+esc(range.headerPeriod)+'</span></div>'
     +'</div>';
 }
 
+/* ── Renderizar gráficas del informe ── */
 function renderRptCharts(){
   Object.keys(rptChartQueue).forEach(function(id){
     var q=rptChartQueue[id],cv=document.getElementById(id);
     if(!cv)return;
     var ctx=cv.getContext("2d"),c=null,d=q.d;
     if(q.type==="daily"){
-      var dsets=[{type:"bar",label:"Real",data:d.kwh,backgroundColor:"rgba(145,91,216,.75)",borderColor:"#915BD8",borderWidth:1,borderRadius:2,order:2}];
-      if(d.p90d)dsets.push({type:"line",label:"P90",data:d.labels.map(function(){return d.p90d;}),borderColor:"#F97316",borderWidth:1.5,pointRadius:0,fill:false,tension:0,borderDash:[5,3],order:1});
-      c=new Chart(ctx,{data:{labels:d.labels,datasets:dsets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,callbacks:{label:function(i){return" "+(i.dataset.type==="line"?"P90":"Real")+": "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#666",font:{size:8},maxRotation:45,maxTicksLimit:12},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#666",font:{size:9},callback:function(v){return v>=1000?Math.round(v/100)/10+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+      var dsets=[{type:"bar",label:"Real",data:d.kwh,backgroundColor:"rgba(107,53,192,.8)",borderColor:"#6B35C0",borderWidth:1,borderRadius:2,order:2}];
+      if(d.p90d)dsets.push({type:"line",label:"P90",data:d.labels.map(function(){return d.p90d;}),borderColor:"#CC8800",borderWidth:1.5,pointRadius:0,fill:false,tension:0,borderDash:[5,3],order:1});
+      c=new Chart(ctx,{data:{labels:d.labels,datasets:dsets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",borderColor:"#4A3560",borderWidth:1,callbacks:{label:function(i){return" "+(i.dataset.type==="line"?"P90":"Real")+": "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#555",font:{size:8},maxRotation:45,maxTicksLimit:12},grid:{display:false},border:{color:"#ccc"}},y:{ticks:{color:"#555",font:{size:9},callback:function(v){return v>=1000?Math.round(v/100)/10+"k":v;}},grid:{color:"#eee"},border:{color:"transparent"}}}}});
     }else if(q.type==="comp"){
-      var labs=["Real"],vals=[d.real],cols=["rgba(145,91,216,.75)"],bcols=["#915BD8"];
-      if(d.p50!=null){labs.push("P50");vals.push(d.p50);cols.push("rgba(96,165,250,.7)");bcols.push("#60A5FA");}
-      if(d.p90!=null){labs.push("P90");vals.push(d.p90);cols.push("rgba(246,255,114,.7)");bcols.push("#F6FF72");}
-      if(d.p99!=null){labs.push("P99");vals.push(d.p99);cols.push("rgba(74,222,128,.7)");bcols.push("#4ADE80");}
-      c=new Chart(ctx,{type:"bar",data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderColor:bcols,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#666",font:{size:11}},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#666",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+      var labs=["Real"],vals=[d.real],cols=["rgba(107,53,192,.8)"],bcols=["#6B35C0"];
+      if(d.p50!=null){labs.push("P50");vals.push(d.p50);cols.push("rgba(70,130,200,.7)");bcols.push("#4682C8");}
+      if(d.p90!=null){labs.push("P90");vals.push(d.p90);cols.push("rgba(200,150,0,.7)");bcols.push("#C89600");}
+      if(d.p99!=null){labs.push("P99");vals.push(d.p99);cols.push("rgba(50,150,80,.7)");bcols.push("#329650");}
+      c=new Chart(ctx,{type:"bar",data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderColor:bcols,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+Math.round(i.raw).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#555",font:{size:11}},grid:{display:false},border:{color:"#ccc"}},y:{ticks:{color:"#555",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#eee"},border:{color:"transparent"}}}}});
     }else if(q.type==="port"){
-      c=new Chart(ctx,{type:"bar",data:{labels:d.labels,datasets:[{label:"Real (kWh)",data:d.vals,backgroundColor:"rgba(145,91,216,.75)",borderColor:"#915BD8",borderWidth:1.5,borderRadius:3},{label:"P90 (kWh)",data:d.p90s,backgroundColor:"rgba(246,255,114,.5)",borderColor:"#F6FF72",borderWidth:1.5,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#444",font:{size:10}}},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+i.dataset.label+": "+Math.round(i.raw||0).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#555",font:{size:9},maxRotation:45},grid:{display:false},border:{color:"#ddd"}},y:{ticks:{color:"#555",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#f0f0f0"},border:{color:"transparent"}}}}});
+      c=new Chart(ctx,{type:"bar",data:{labels:d.labels,datasets:[{label:"Real (kWh)",data:d.vals,backgroundColor:"rgba(107,53,192,.8)",borderColor:"#6B35C0",borderWidth:1.5,borderRadius:3},{label:"P90 (kWh)",data:d.p90s,backgroundColor:"rgba(200,150,0,.4)",borderColor:"#C89600",borderWidth:1.5,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#444",font:{size:10}}},tooltip:{backgroundColor:"#1E1529",callbacks:{label:function(i){return" "+i.dataset.label+": "+Math.round(i.raw||0).toLocaleString("es-CO")+" kWh";}}}},scales:{x:{ticks:{color:"#555",font:{size:9},maxRotation:45},grid:{display:false},border:{color:"#ccc"}},y:{ticks:{color:"#555",font:{size:9},callback:function(v){return v>=1000?Math.round(v/1000)+"k":v;}},grid:{color:"#eee"},border:{color:"transparent"}}}}});
     }
     if(c)infChartInstances.push(c);
   });
   rptChartQueue={};
 }
 
+/* ── Generar informe ── */
 function generateInforme(){
-  var ym=(document.getElementById("inf-month")||{}).value||"";
-  if(!ym){toast("⚠ Selecciona el mes del informe");return;}
-  if(!genProjects.length){toast("⚠ Cargando proyectos, espera…");loadGenProjects();return;}
-  var range=getMonthRange(ym);
-  // Reset UI
+  if(userRole==="cliente")return;
+  var range=getInfRange();
+  if(!range){toast("⚠ Selecciona "+(infPeriodMode==="mes"?"el mes":"el rango de fechas"));return;}
+  if(!genProjects.length){toast("⚠ Cargando proyectos, espera un momento…");loadGenProjects();return;}
+  // Reset
+  _obsIdx=0;
   document.getElementById("inf-empty").style.display="none";
   document.getElementById("inf-content").style.display="none";
   document.getElementById("inf-loading").style.display="block";
@@ -2491,11 +2615,11 @@ function generateInforme(){
     .then(function(r){
       document.getElementById("inf-loading").style.display="none";
       if(!r||!r.ok){toast("⚠ Error al cargar generación");document.getElementById("inf-empty").style.display="block";return;}
-      var mf=getMonthFaultsForProj(sp,range.year,range.month);
+      var mf=getFaultsForRange(sp,range);
       document.getElementById("inf-content").innerHTML=buildProjectPage(cfg,r,mf,range);
       document.getElementById("inf-content").style.display="block";
       document.getElementById("inf-print").style.display="inline-flex";
-      setTimeout(renderRptCharts,120);
+      setTimeout(renderRptCharts,150);
     }).catch(function(){document.getElementById("inf-loading").style.display="none";document.getElementById("inf-empty").style.display="block";toast("⚠ Error al consultar generación");});
 
   }else{
@@ -2503,7 +2627,6 @@ function generateInforme(){
     if(!pname){document.getElementById("inf-loading").style.display="none";document.getElementById("inf-empty").style.display="block";toast("⚠ Selecciona un portafolio");return;}
     var portList=portPortfolios[pname]||[];
     if(!portList.length){toast("⚠ Portafolio vacío");return;}
-    // Map names to genProjects configs
     var cfgs=[];
     portList.forEach(function(name){
       var c=genProjects.find(function(p){
@@ -2512,7 +2635,7 @@ function generateInforme(){
       });
       if(c)cfgs.push(c);
     });
-    if(!cfgs.length){toast("⚠ Proyectos del portafolio no encontrados en generación");return;}
+    if(!cfgs.length){toast("⚠ Proyectos del portafolio no encontrados");return;}
     var results=[],done=0;
     document.getElementById("inf-loading-msg").textContent="Consultando "+cfgs.length+" proyectos…";
     cfgs.forEach(function(c,i){
@@ -2520,7 +2643,7 @@ function generateInforme(){
         document.getElementById("inf-loading-sub").textContent="("+(done+1)+"/"+cfgs.length+") "+(c.nombre_clientes||c.nombre_display);
         apiGet({action:"getGeneration",sub_project:c.sub_project,date_from:range.from,date_to:range.to},30000)
         .then(function(r){
-          results.push({cfg:c,genRes:r&&r.ok?r:{ok:true,data:[]},mf:getMonthFaultsForProj(c.sub_project,range.year,range.month)});
+          results.push({cfg:c,genRes:r&&r.ok?r:{ok:true,data:[]},mf:getFaultsForRange(c.sub_project,range)});
           done++;if(done===cfgs.length)finishPortReport(pname,results,range);
         }).catch(function(){
           results.push({cfg:c,genRes:{ok:true,data:[]},mf:[]});
@@ -2538,10 +2661,10 @@ function finishPortReport(pname,results,range){
   document.getElementById("inf-content").innerHTML=pages.join('<div class="rpt-page-sep"></div>');
   document.getElementById("inf-content").style.display="block";
   document.getElementById("inf-print").style.display="inline-flex";
-  setTimeout(renderRptCharts,150);
+  setTimeout(renderRptCharts,180);
 }
 
-// ── Listeners del panel informe ──
+/* ── Listeners del panel informe ── */
 document.querySelectorAll(".inf-mode-btn").forEach(function(btn){
   btn.addEventListener("click",function(){
     infMode=this.dataset.m;
@@ -2551,6 +2674,19 @@ document.querySelectorAll(".inf-mode-btn").forEach(function(btn){
     if(ps)ps.style.display=infMode==="proyecto"?"":"none";
     if(pp)pp.style.display=infMode==="portafolio"?"":"none";
     if(infMode==="portafolio"&&!Object.keys(portPortfolios).length)loadPortfolios();
+  });
+});
+document.querySelectorAll(".inf-period-btn").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    infPeriodMode=this.dataset.p;
+    document.querySelectorAll(".inf-period-btn").forEach(function(b){b.style.background="transparent";b.style.color="var(--mu)";});
+    this.style.background="var(--pu)";this.style.color="var(--cr)";
+    var im=document.getElementById("inf-month");
+    var iff=document.getElementById("inf-from");
+    var ift=document.getElementById("inf-to");
+    if(im)im.style.display=infPeriodMode==="mes"?"":"none";
+    if(iff)iff.style.display=infPeriodMode==="custom"?"":"none";
+    if(ift)ift.style.display=infPeriodMode==="custom"?"":"none";
   });
 });
 var _ig=document.getElementById("inf-gen");if(_ig)_ig.addEventListener("click",function(){if(userRole==="cliente")return;generateInforme();});
@@ -2568,6 +2704,11 @@ if(_ti)_ti.addEventListener("click",function(){
   if(!genProjects.length)loadGenProjects();
   if(!Object.keys(portPortfolios).length)loadPortfolios();
 });
+// Mes por defecto
+(function(){
+  var im=document.getElementById("inf-month");
+  if(im&&!im.value){var n=new Date();im.value=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0");}
+})();
 
   setInterval(function(){if(userRole!=="none")loadFaults();},60000);
 });
