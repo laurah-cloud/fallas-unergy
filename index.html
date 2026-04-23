@@ -664,6 +664,25 @@ body.client-mode #tab-inf{display:none!important}
 <div id="overlay"><div class="modal"><div class="modal-hd"><div class="modal-title" id="mtitle">—</div><button class="btn btn-gh btn-sm" id="mclose">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
 <script>
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbyJCkBZuLJxsJrMNnu1vsGUw3SX1Npqws1t3B2BN612GV0Nfn67TkT-Nl77wg11w1ST/exec";
+
+// ── FMO global shim: guarantees onclick="generateFMOInforme()" works ──
+window.generateFMOInforme = function(){
+  console.log("[SHIM] generateFMOInforme called via onclick, _impl=", typeof window._generateFMOImpl);
+  var fn = window._generateFMOImpl;
+  if(typeof fn === "function"){ fn(); return; }
+  // Fallback: run inline
+  var sp=(document.getElementById("fmo-proj")||{}).value||"";
+  var ym=(document.getElementById("fmo-month")||{}).value||"";
+  console.log("[SHIM] sp=",sp,"ym=",ym);
+  if(!sp){var t=document.getElementById("toast");if(t){t.textContent="⚠ Selecciona un proyecto FMO";t.className="show";setTimeout(function(){t.className="";},3000);}return;}
+  if(!ym){var t2=document.getElementById("toast");if(t2){t2.textContent="⚠ Selecciona el mes";t2.className="show";setTimeout(function(){t2.className="";},3000);}return;}
+  alert("FMO: sp="+sp+" ym="+ym+" | _impl no disponible, recarga la página");
+};
+window.switchInfType = function(t,btn){
+  var fn = window._switchInfTypeImpl;
+  if(typeof fn === "function"){ fn(t,btn); }
+};
+
 /* ══ CATÁLOGOS ══ */
 var DEFAULT_CATS=[
   {id:"1",lbl:"Fallas de Medición",ico:"📡",col:"#60A5FA",faults:[
@@ -2951,6 +2970,8 @@ function switchInfType(t, btn){
   if(fp)fp.style.display="none";
   if(lc)lc.style.display="none";
 }
+window._switchInfTypeImpl = switchInfType; // expose to shim
+
 
 
 /* ── FMO: calcular SLA contractual por falla ── */
@@ -3051,6 +3072,8 @@ function generateFMOInforme(){
 
   step1();
 }
+window._generateFMOImpl = generateFMOInforme; // expose to shim
+
 
 
 /* ── FMO: construir página ── */
