@@ -641,7 +641,7 @@ body.client-mode #tab-inf{display:none!important}
     <div id="inf-fmo-controls" style="display:none;gap:9px;align-items:center;flex-wrap:wrap">
       <select class="fi fsel" id="fmo-proj" style="min-width:220px;font-size:13px"><option value="">Selecciona proyecto FMO…</option></select>
       <input type="month" class="fi" id="fmo-month" style="width:150px;font-size:13px;color-scheme:dark"/>
-      <button class="btn btn-pu" id="fmo-gen" style="padding:7px 18px;font-size:13px" onclick="window._fmoGenerar&&window._fmoGenerar()">Generar FMO ↻</button>
+      <button class="btn btn-pu" id="fmo-gen" style="padding:7px 18px;font-size:13px" >Generar FMO ↻</button>
       <button class="btn btn-ye" id="fmo-print" style="padding:7px 14px;font-size:13px;display:none">🖨 Imprimir / PDF</button>
     </div>
   </div>
@@ -2964,84 +2964,82 @@ function calcSLA(f){
 
 /* ── FMO: generar informe ── */
 function generateFMOInforme(){
-  if(userRole==="cliente")return;
-  var sp=(document.getElementById("fmo-proj")||{}).value||"";
-  var ym=(document.getElementById("fmo-month")||{}).value||"";
+  var sp  = (document.getElementById("fmo-proj") ||{}).value||"";
+  var ym  = (document.getElementById("fmo-month")||{}).value||"";
+  console.log("[FMO] generateFMOInforme() sp="+sp+" ym="+ym+" role="+userRole);
+  if(userRole==="cliente"){toast("⚠ Solo equipo monitor");return;}
   if(!sp){toast("⚠ Selecciona un proyecto FMO");return;}
   if(!ym){toast("⚠ Selecciona el mes");return;}
 
   var range=getMonthRange(ym);
+
   // Reset UI
   document.getElementById("inf-empty").style.display="none";
   document.getElementById("inf-content").style.display="none";
   document.getElementById("inf-loading").style.display="block";
   document.getElementById("fmo-print").style.display="none";
-  document.getElementById("inf-loading-msg").textContent="Consultando datos de generación…";
+  document.getElementById("inf-loading-msg").textContent="Consultando generación…";
   document.getElementById("inf-loading-sub").textContent=sp;
   fmoChartInstances.forEach(function(c){try{c.destroy();}catch(e){}});
   fmoChartInstances=[];rptChartQueue={};_obsIdx=0;
 
-  // Cargar genProjects si no están listos (sin bloquear)
-  var projPromise=genProjects.length
-    ? Promise.resolve()
-    : new Promise(function(res){
-        apiGet({action:"getProjects"},10000)
-          .then(function(r){if(r&&r.ok&&r.projects)genProjects=r.projects;res();})
-          .catch(function(){res();});
-      });
-
-  projPromise.then(function(){
-    console.log("[FMO] Iniciando consulta de generación para:", sp, "período:", range.from, "→", range.to);
-    // 1. Generación
-    return apiGet({action:"getGeneration",sub_project:sp,date_from:range.from,date_to:range.to},30000)
-    .then(function(genR){
-      console.log("[FMO] Generación:", genR&&genR.ok?"OK ("+((genR.data||[]).length)+" registros)":"ERROR", genR&&genR.error||"");
-      document.getElementById("inf-loading-msg").textContent="Consultando datos FMO…";
-      document.getElementById("inf-loading-sub").textContent="";
-      // 2. FMO data — si falla, continúa sin datos de inversores/mantenimiento
-      return apiGet({action:"getFMOData",sub_project:sp,date_from:range.from,date_to:range.to},35000)
-      .catch(function(e){console.warn("[FMO] getFMOData no disponible:", e&&e.message);return {ok:false,error:"getFMOData timeout"};})
-      .then(function(fmoR){
-        console.log("[FMO] getFMOData:", fmoR&&fmoR.ok?"OK":"no disponible", fmoR&&fmoR.error||"");
-        document.getElementById("inf-loading").style.display="none";
-        if(!genR||!genR.ok){
-          var errMsg="Error al cargar generación: "+(genR&&genR.error||"sin datos para el período seleccionado");
-          document.getElementById("inf-content").innerHTML=
-            fmoErrHtml("Error: "+errMsg,"Proyecto: "+sp);
-          document.getElementById("inf-content").style.display="block";
-          return;
-        }
-        var mf=getFaultsForRange(sp,range);
-        var cfg=genProjects.find(function(p){return p.sub_project===sp;})
-          ||{nombre_clientes:sp,nombre_display:sp,sub_project:sp,municipio:"—"};
-        var contrato=fmoR&&fmoR.ok?fmoR.contrato:null;
-        var inverters=fmoR&&fmoR.ok?(fmoR.inverters||[]):[];
-        var invErr=fmoR&&fmoR.ok?fmoR.inverters_error:"Datos de inversores no disponibles";
-        var mant=fmoR&&fmoR.ok?(fmoR.mantenimientos||[]):[];
-        console.log("[FMO] Construyendo página: cfg=",cfg.nombre_clientes,"mf=",mf.length,"inv=",inverters.length,"mant=",mant.length);
-        try{
-          var html=buildFMOPage(cfg,genR,mf,range,inverters,invErr,mant,contrato);
-          document.getElementById("inf-content").innerHTML=html;
-          document.getElementById("inf-content").style.display="block";
-          document.getElementById("fmo-print").style.display="inline-flex";
-          setTimeout(function(){renderRptCharts();},150);
-          console.log("[FMO] ✅ Informe generado correctamente");
-        }catch(buildErr){
-          console.error("[FMO] Error en buildFMOPage:", buildErr);
-          document.getElementById("inf-content").innerHTML=
-            fmoErrHtml("Error al construir el informe",esc(String(buildErr)));
-          document.getElementById("inf-content").style.display="block";
-        }
-      });
-    });
-  }).catch(function(e){
-    console.error("[FMO] catch externo:", e);
+  function done(genR, fmoR){
     document.getElementById("inf-loading").style.display="none";
-    document.getElementById("inf-content").innerHTML=
-      fmoErrHtml("Error inesperado",esc(e&&e.message||String(e)));
-    document.getElementById("inf-content").style.display="block";
-  });
+    var data=(genR&&genR.data)||[];
+    var cfg = genProjects.find(function(p){return p.sub_project===sp;})
+              ||{nombre_clientes:sp,nombre_display:sp,sub_project:sp,municipio:"—"};
+    var contrato  = fmoR&&fmoR.contrato  || null;
+    var inverters = fmoR&&fmoR.inverters || [];
+    var invErr    = fmoR&&fmoR.inverters_error || null;
+    var mant      = fmoR&&fmoR.mantenimientos || [];
+    var mf        = getFaultsForRange(sp,range);
+    console.log("[FMO] done: gen="+data.length+" inv="+inverters.length+" mant="+mant.length+" mf="+mf.length);
+    try{
+      var html=buildFMOPage(cfg,genR||{ok:true,data:[]},mf,range,inverters,invErr,mant,contrato);
+      document.getElementById("inf-content").innerHTML=html;
+      document.getElementById("inf-content").style.display="block";
+      document.getElementById("fmo-print").style.display="inline-flex";
+      setTimeout(function(){renderRptCharts();},200);
+    }catch(e2){
+      console.error("[FMO] buildFMOPage error:",e2);
+      document.getElementById("inf-content").innerHTML=
+        fmoErrHtml("Error al construir el informe",esc(String(e2)));
+      document.getElementById("inf-content").style.display="block";
+    }
+  }
+
+  // Step 1: load genProjects if needed, then generación, then fmoData
+  function step1(){
+    if(!genProjects.length){
+      apiGet({action:"getProjects"},10000)
+        .then(function(r){if(r&&r.ok&&r.projects)genProjects=r.projects;})
+        .catch(function(){})
+        .then(step2);
+    } else { step2(); }
+  }
+
+  function step2(){
+    apiGet({action:"getGeneration",sub_project:sp,date_from:range.from,date_to:range.to},30000)
+    .then(function(genR){
+      console.log("[FMO] genR ok="+(!!(genR&&genR.ok))+" records="+((genR&&genR.data)||[]).length);
+      document.getElementById("inf-loading-msg").textContent="Consultando inversores…";
+      document.getElementById("inf-loading-sub").textContent="";
+      apiGet({action:"getFMOData",sub_project:sp,date_from:range.from,date_to:range.to},35000)
+        .then(function(fmoR){done(genR,fmoR);})
+        .catch(function(e){console.warn("[FMO] getFMOData skip:",e&&e.message);done(genR,{});});
+    })
+    .catch(function(e){
+      console.error("[FMO] getGeneration error:",e&&e.message);
+      document.getElementById("inf-loading").style.display="none";
+      document.getElementById("inf-content").innerHTML=
+        fmoErrHtml("Error al cargar generación",esc(e&&e.message||"timeout"));
+      document.getElementById("inf-content").style.display="block";
+    });
+  }
+
+  step1();
 }
+
 
 /* ── FMO: construir página ── */
 function buildFMOPage(cfg,genRes,mf,range,inverters,invErr,mant,contrato){
@@ -3339,13 +3337,12 @@ function rkpiRow(ico,lbl,val,col){
 }
 
 // FMO listeners
-// Register generateFMOInforme globally so onclick attribute can reach it
-window._fmoGenerar=function(){
-  if(typeof userRole!=="undefined"&&userRole==="cliente")return;
+var _fmoGen=document.getElementById("fmo-gen");
+if(_fmoGen)_fmoGen.onclick=function(){
+  console.log("[FMO] botón clickeado, userRole=",userRole,"sp=",(document.getElementById("fmo-proj")||{}).value);
+  if(userRole==="cliente")return;
   generateFMOInforme();
 };
-var _fmoGen=document.getElementById("fmo-gen");
-if(_fmoGen){_fmoGen.onclick=function(){window._fmoGenerar();};} 
 var _fmoPrint=document.getElementById("fmo-print");
 if(_fmoPrint)_fmoPrint.addEventListener("click",function(){window.print();});
 
