@@ -2324,6 +2324,8 @@ document.addEventListener("DOMContentLoaded",function(){
     var btnGo=document.getElementById("li-email-go");if(btnGo)btnGo.disabled=false;
     setTimeout(function(){var el=document.getElementById("li-email");if(el)el.focus();},200);
   }
+setInterval(function(){if(userRole!=="none")loadFaults();},60000);
+});
 /* ══════════════════════════════════════════════════
    INFORME OPERACIONAL MENSUAL — v2
 ══════════════════════════════════════════════════ */
@@ -2839,8 +2841,7 @@ var _ip=document.getElementById("inf-print");if(_ip)_ip.addEventListener("click"
 /* ══════════════════════════════════════════════════
    INFORME FMO — Contrato O&M
 ══════════════════════════════════════════════════ */
-  setInterval(function(){if(userRole!=="none")loadFaults();},60000);
-});
+  
 
 function fmoErrHtml(msg,detail){
   return '<div style="padding:30px;background:#1a1025;border:1px solid #FF575740;border-radius:12px;color:#FF5757;font-size:13px">'
@@ -2976,7 +2977,13 @@ function generateFMOInforme(){
   if(!sp){toast("⚠ Selecciona un proyecto FMO");return;}
   if(!ym){toast("⚠ Selecciona el mes");return;}
 
-  var range=getMonthRange(ym);
+  // Build range from fmo-month value
+  var _p=ym.split("-"),_y=parseInt(_p[0]),_m=parseInt(_p[1]);
+  var _last=new Date(_y,_m,0).getDate();
+  var _pad=function(n){return String(n).padStart(2,"0");};
+  var range={from:_y+"-"+_pad(_m)+"-01",to:_y+"-"+_pad(_m)+"-"+_pad(_last),
+    year:_y,month:_m,monthName:MESES_LARG[_m-1],lastDay:_last,
+    headerPeriod:MESES_LARG[_m-1]+" "+_y,isCustom:false,totalDays:_last};
 
   // Reset UI
   document.getElementById("inf-empty").style.display="none";
@@ -3342,12 +3349,7 @@ function rkpiRow(ico,lbl,val,col){
 }
 
 // FMO listeners
-var _fmoGen=document.getElementById("fmo-gen");
-if(_fmoGen)_fmoGen.onclick=function(){
-  console.log("[FMO] botón clickeado, userRole=",userRole,"sp=",(document.getElementById("fmo-proj")||{}).value);
-  if(userRole==="cliente")return;
-  generateFMOInforme();
-};
+// fmo-gen uses inline onclick="generateFMOInforme()"
 var _fmoPrint=document.getElementById("fmo-print");
 if(_fmoPrint)_fmoPrint.addEventListener("click",function(){window.print();});
 
