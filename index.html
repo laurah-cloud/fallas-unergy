@@ -611,8 +611,8 @@ body.client-mode #tab-inf{display:none!important}
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <!-- Tipo de informe -->
         <div style="display:flex;gap:0;background:#1a1025;border:1px solid var(--br);border-radius:8px;overflow:hidden">
-          <button class="inf-type-btn" data-t="operacional" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s">📊 Operacional</button>
-          <button class="inf-type-btn" data-t="fmo" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s">📋 FMO</button>
+          <button class="inf-type-btn" data-t="operacional" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:var(--pu);color:var(--cr);cursor:pointer;transition:all .18s" onclick="switchInfType('operacional',this)">📊 Operacional</button>
+          <button class="inf-type-btn" data-t="fmo" style="padding:7px 14px;font-size:11px;font-weight:700;border:none;background:transparent;color:var(--mu);cursor:pointer;transition:all .18s" onclick="switchInfType('fmo',this)">📋 FMO</button>
         </div>
         <!-- Controles solo operacional -->
         <div id="inf-oper-toggles" style="display:flex;gap:8px;flex-wrap:wrap">
@@ -641,8 +641,8 @@ body.client-mode #tab-inf{display:none!important}
     <div id="inf-fmo-controls" style="display:none;gap:9px;align-items:center;flex-wrap:wrap">
       <select class="fi fsel" id="fmo-proj" style="min-width:220px;font-size:13px"><option value="">Selecciona proyecto FMO…</option></select>
       <input type="month" class="fi" id="fmo-month" style="width:150px;font-size:13px;color-scheme:dark"/>
-      <button class="btn btn-pu" id="fmo-gen" style="padding:7px 18px;font-size:13px" >Generar FMO ↻</button>
-      <button class="btn btn-ye" id="fmo-print" style="padding:7px 14px;font-size:13px;display:none">🖨 Imprimir / PDF</button>
+      <button class="btn btn-pu" id="fmo-gen" style="padding:7px 18px;font-size:13px" onclick="generateFMOInforme()" >Generar FMO ↻</button>
+      <button class="btn btn-ye" id="fmo-print" style="padding:7px 14px;font-size:13px;display:none" onclick="window.print()">🖨 Imprimir / PDF</button>
     </div>
   </div>
   <!-- Empty state -->
@@ -2839,6 +2839,8 @@ var _ip=document.getElementById("inf-print");if(_ip)_ip.addEventListener("click"
 /* ══════════════════════════════════════════════════
    INFORME FMO — Contrato O&M
 ══════════════════════════════════════════════════ */
+  setInterval(function(){if(userRole!=="none")loadFaults();},60000);
+});
 
 function fmoErrHtml(msg,detail){
   return '<div style="padding:30px;background:#1a1025;border:1px solid #FF575740;border-radius:12px;color:#FF5757;font-size:13px">'
@@ -2913,39 +2915,42 @@ function updateFMODeadline(){
   }
 }
 
-/* ── Toggle tipo informe ── */
-document.querySelectorAll(".inf-type-btn").forEach(function(btn){
-  btn.addEventListener("click",function(){
-    infType=this.dataset.t;
-    document.querySelectorAll(".inf-type-btn").forEach(function(b){b.style.background="transparent";b.style.color="var(--mu)";});
-    this.style.background="var(--pu)";this.style.color="var(--cr)";
-    var oper=document.getElementById("inf-oper-controls");
-    var fmo=document.getElementById("inf-fmo-controls");
-    var tog=document.getElementById("inf-oper-toggles");
-    var bar=document.getElementById("fmo-deadline-bar");
-    var title=document.getElementById("inf-panel-title");
-    if(infType==="fmo"){
-      if(oper)oper.style.display="none";
-      if(fmo){fmo.style.display="flex";}
-      if(tog)tog.style.display="none";
-      if(title)title.textContent="📋 Informe FMO — Contrato O&M";
-      updateFMODeadline();
-      loadContratos();
-    }else{
-      if(oper)oper.style.display="flex";
-      if(fmo)fmo.style.display="none";
-      if(tog)tog.style.display="flex";
-      if(bar)bar.style.display="none";
-      if(title)title.textContent="📄 Informe Operacional";
-    }
-    // Reset output
-    document.getElementById("inf-empty").style.display="block";
-    document.getElementById("inf-content").style.display="none";
-    document.getElementById("inf-print"  ).style.display="none";
-    document.getElementById("fmo-print"  ).style.display="none";
-    document.getElementById("inf-loading").style.display="none";
-  });
-});
+/* ── switchInfType: global function called by onclick ── */
+function switchInfType(t, btn){
+  infType=t;
+  document.querySelectorAll(".inf-type-btn").forEach(function(b){b.style.background="transparent";b.style.color="var(--mu)";});
+  if(btn){btn.style.background="var(--pu)";btn.style.color="var(--cr)";}
+  var oper  = document.getElementById("inf-oper-controls");
+  var fmoC  = document.getElementById("inf-fmo-controls");
+  var tog   = document.getElementById("inf-oper-toggles");
+  var bar   = document.getElementById("fmo-deadline-bar");
+  var title = document.getElementById("inf-panel-title");
+  if(t==="fmo"){
+    if(oper) oper.style.display="none";
+    if(fmoC){fmoC.style.display="flex";}
+    if(tog)  tog.style.display="none";
+    if(title)title.textContent="📋 Informe FMO — Contrato O&M";
+    updateFMODeadline();
+    loadContratos();
+  }else{
+    if(oper) oper.style.display="flex";
+    if(fmoC) fmoC.style.display="none";
+    if(tog)  tog.style.display="flex";
+    if(bar)  bar.style.display="none";
+    if(title)title.textContent="📄 Informe Operacional";
+  }
+  var ec=document.getElementById("inf-empty");
+  var cc=document.getElementById("inf-content");
+  var pc=document.getElementById("inf-print");
+  var fp=document.getElementById("fmo-print");
+  var lc=document.getElementById("inf-loading");
+  if(ec)ec.style.display="block";
+  if(cc)cc.style.display="none";
+  if(pc)pc.style.display="none";
+  if(fp)fp.style.display="none";
+  if(lc)lc.style.display="none";
+}
+
 
 /* ── FMO: calcular SLA contractual por falla ── */
 function calcSLA(f){
@@ -3372,8 +3377,8 @@ if(_ti)_ti.addEventListener("click",function(){
   if(fm&&!fm.value)fm.value=ym;
 })();
 
-  setInterval(function(){if(userRole!=="none")loadFaults();},60000);
-});
+
+
 </script>
 </body>
 </html>
